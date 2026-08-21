@@ -475,6 +475,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 @property(nonatomic,strong) UIView *profileOptionMenu;
 @property(nonatomic) NSInteger profileOptionMode;
 @property(nonatomic,strong) NSTimer *profileControlsTimer;
+@property(nonatomic) BOOL profileFlowLocksLaunch;
 @property(nonatomic,copy) NSString *skinImportProfileIdentifier;
 @property(nonatomic,weak) UIButton *profileOptionAnchor;
 @property (nonatomic, strong) UIButton *skinButton;
@@ -867,6 +868,8 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
     };
 
     self.loginPanel.onProfileCreated=^{
+        weakSelf.profileFlowLocksLaunch=NO;
+
         [weakSelf pclLoginTransition:^{
             [weakSelf reloadState];
         }];
@@ -1073,7 +1076,8 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
         hasInstance ? @"启动游戏" : @"下载游戏";
 
     BOOL canLaunch =
-        hasInstance ? hasProfile : YES;
+        !self.profileFlowLocksLaunch &&
+        (hasInstance ? hasProfile : YES);
 
     self.launchButton.enabled =
         canLaunch;
@@ -1102,6 +1106,9 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 - (void)launchPressed {
+    if (!self.launchButton.enabled)
+        return;
+
     if (self.onLaunch)
         self.onLaunch();
 }
@@ -1176,6 +1183,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
     if ([self.expandedProfileIdentifier isEqual:pid]) {
         self.expandedProfileIdentifier=nil;
         [PCLProfileStore selectProfileWithIdentifier:pid];
+        self.profileFlowLocksLaunch=NO;
 
         [self pclLoginTransition:^{
             [self reloadState];
@@ -1299,8 +1307,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 - (void)grayLaunchForProfileSelection {
-    if (![self.launchTitleLabel.text
-        isEqualToString:@"启动游戏"]) return;
+    self.profileFlowLocksLaunch=YES;
 
     UIColor *gray=PCLColor(0xA6A6A6);
     self.launchButton.enabled=NO;

@@ -1,20 +1,7 @@
 #import "PCLInstanceStore.h"
 
-static NSString *const PCLMinecraftRootKey =
-
-    @"PCLMinecraftRoot";
-
 static NSString *const PCLSelectedInstanceKey =
-
     @"PCLSelectedInstance";
-
-static NSString *const PCLSelectedInstancePathKey =
-
-    @"PCLSelectedInstancePath";
-
-static NSString *const PCLInstanceFirstScanKey =
-
-    @"PCLInstanceFirstScanFinished";
 
 @implementation PCLInstance
 
@@ -23,71 +10,27 @@ static NSString *const PCLInstanceFirstScanKey =
 @implementation PCLInstanceStore
 
 + (NSString *)minecraftRoot {
+    const char *gameDir=getenv("POJAV_GAME_DIR");
 
-    NSUserDefaults *d=
+    if (gameDir && gameDir[0])
+        return @(gameDir);
 
-        NSUserDefaults.standardUserDefaults;
+    const char *pojavHome=getenv("POJAV_HOME");
 
-    NSString *saved=
-
-        [d stringForKey:PCLMinecraftRootKey];
-
-    if (saved.length)
-
-        return saved.stringByStandardizingPath;
-
-    NSString *documents=
-
-        NSSearchPathForDirectoriesInDomains(
-
-            NSDocumentDirectory,
-
-            NSUserDomainMask,
-
-            YES).firstObject;
-
-    if (!documents.length)
-
-        documents=NSHomeDirectory();
-
-    return [[documents
-
-        stringByAppendingPathComponent:@".minecraft"]
-
-        stringByStandardizingPath];
-
-}
-
-+ (void)setMinecraftRoot:(NSString *)root {
-
-    NSUserDefaults *d=
-
-        NSUserDefaults.standardUserDefaults;
-
-    if (!root.length) {
-
-        [d removeObjectForKey:PCLMinecraftRootKey];
-
-        return;
-
+    if (pojavHome && pojavHome[0]) {
+        return [@(pojavHome)
+            stringByAppendingPathComponent:
+                @"Library/Application Support/minecraft"];
     }
 
-    [d setObject:root.stringByStandardizingPath
-
-          forKey:PCLMinecraftRootKey];
-
-}
-
-
-+ (NSString *)minecraftRoot {
     NSString *documents=
         NSSearchPathForDirectoriesInDomains(
             NSDocumentDirectory,
             NSUserDomainMask,
             YES).firstObject;
 
-    return [documents
-        stringByAppendingPathComponent:@".minecraft"];
+    return [documents stringByAppendingPathComponent:
+        @"Library/Application Support/minecraft"];
 }
 
 + (NSArray<PCLInstance *> *)scanInstances {

@@ -1,7 +1,6 @@
 #import "PCLLaunchViewController.h"
 #import "PCLLaunchLeftView.h"
 #import "PCLLaunchRightView.h"
-#import "PCLInstanceStore.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PCLLaunchViewController ()
@@ -9,7 +8,7 @@
 @property (nonatomic, strong) PCLLaunchLeftView *leftView;
 @property (nonatomic, strong) PCLLaunchRightView *rightView;
 
-@property (nonatomic, copy) NSArray<PCLInstance *> *instances;
+@property (nonatomic, copy) NSArray *instances;
 
 @property (nonatomic, strong) CAGradientLayer *backgroundGradient;
 @property (nonatomic, strong) UIView *leftShadowView;
@@ -123,14 +122,11 @@
 }
 
 - (void)reloadInstances {
-    self.instances=
-        [PCLInstanceStore scanInstances];
+    self.instances=@[];
 
-    PCLInstance *selected=
-        [PCLInstanceStore
-            selectedInstance:self.instances];
+    [NSUserDefaults.standardUserDefaults
+        removeObjectForKey:@"PCLSelectedInstance"];
 
-    [PCLInstanceStore selectInstance:selected];
     [self.leftView reloadState];
 }
 

@@ -6,6 +6,7 @@ options:
 settings:
   base:
     CLANG_ENABLE_OBJC_ARC: YES
+    IPHONEOS_DEPLOYMENT_TARGET: "14.0"
 targets:
   PCL-iOS:
     type: application
@@ -13,12 +14,33 @@ targets:
     deploymentTarget: "14.0"
     sources:
       - path: Sources/App
+        excludes:
+          - "PCLJavaManager.h"
+          - "PCLJavaManager.m"
+      - path: Sources/App/Core/config.h
+        buildPhase: none
       - path: Resources
+      - path: depends/Frameworks
+        buildPhase: resources
+        optional: true
+        type: folder
+      - path: depends/libs
+        buildPhase: resources
+        optional: true
+      - path: depends/libs/caciocavallo
+        buildPhase: resources
+        optional: true
+      - path: depends/libs/caciocavallo17
+        buildPhase: resources
+        optional: true
     dependencies:
       - sdk: QuartzCore.framework
       - sdk: GameController.framework
       - sdk: AuthenticationServices.framework
       - sdk: Security.framework
+      - sdk: Metal.framework
+      - sdk: MetalKit.framework
+      - sdk: UIKit.framework
     settings:
       base:
         INFOPLIST_FILE: Resources/Info.plist
@@ -26,3 +48,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.pcl-ios.pcl
         PRODUCT_NAME: PCL-iOS
         TARGETED_DEVICE_FAMILY: "1,2"
+        GCC_PREPROCESSOR_DEFINITIONS: "$(inherited) GLES_SILENT_DEPRECATION=1"
+        COPY_PHASE_STRIP: NO
+        STRIP_INSTALLED_PRODUCT: NO
+        HEADER_SEARCH_PATHS: "$(inherited) depends/Headers"

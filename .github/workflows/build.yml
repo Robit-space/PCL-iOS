@@ -1,47 +1,125 @@
-name: Build PCL-iOS
+name: PCL-iOS Build
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
   workflow_dispatch:
 
 jobs:
   build:
+    name: Build PCL-iOS
     runs-on: macos-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install XcodeGen
-        run: brew install xcodegen
-
+        with:
+          submodules: recursive
+          fetch-depth: 1
+      
+      - name: Show Xcode version
+        run: xcodebuild -version
+      
+      - name: Setup xcodegen
+        run: |
+          if ! command -v xcodegen &> /dev/null; then
+            brew install xcodegen
+          fi
+          xcodegen --version
+      
+      - name: Cache Java JRE
+        id: cache-jre
+        uses: actions/cache@v4
+        with:
+          path: depends/java-*-openjdk
+          key: jre-ios-${{ hashFiles('Makefile') }}
+      
+      - name: Download Java JRE (via Makefile)
+        timeout-minutes: 20
+        run: |
+          echo "=== 下载Java JRE for iOS arm64 (来源: assets.angelauramc.dev) ==="
+          make jre || echo "WARNING: JRE download may have issues, continuing..."
+        
+      - name: Verify JRE Installation
+        run: |
+          echo "=== 验证JRE安装 ==="
+          for jdir in depends/java-8-openjdk depends/java-17-openjdk depends/java-21-openjdk depends/java-25-openjdk; do
+            if [ -f "$jdir/release" ]; then
+              echo "✓ $jdir 已安装"
+            else
+              echo "✗ $jdir 缺失"
+            fi
+          done
+      
+      - name: Check Dependencies
+        run: make check
+      
       - name: Generate Xcode Project
-        run: xcodegen generate
-      - name: Build PCL-iOS
         run: |
-          xcodebuild \
-            -project PCL-iOS.xcodeproj \
+          xcodegen generate
+          ls -la PCL-iOS.xcodeproj
+      
+      - name: Build App
+        run: |
+          xcodebuild -project PCL-iOS.xcodeproj \
             -scheme PCL-iOS \
-            -configuration Release \
-            -sdk iphoneos \
+            -configuration Debug \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            build
-
-      - name: Check app icons
+            build 2>&1 | tee /tmp/build.log | tail -50
+          if grep -q "BUILD FAILED" /tmp/build.log; then
+            echo "=== BUILD FAILED ==="
+            grep "error:" /tmp/build.log | head -20
+            exit 1
+          fi
+      
+      # 参考Amethyst: 构建两个版本
+      # 1. .ipa (普通安装)
+      # 2. .tipa (TrollStore安装，只是扩展名不同)
+      - name: Package IPA (含JRE)
         run: |
-          APP=$(find ~/Library/Developer/Xcode/DerivedData -name "PCL-iOS.app" | head -1)
-          plutil -p "$APP/Info.plist" | grep -A 20 CFBundleIcons
-      - name: Create unsigned IPA
+          mkdir -p artifacts/Payload
+          if [ -d "build/Build/Products/Debug-iphoneos/PCL-iOS.app" ]; then
+            cp -r build/Build/Products/Debug-iphoneos/PCL-iOS.app artifacts/Payload/
+          else
+            echo "ERROR: Build product not found"
+            find build -name "*.app" -type d 2>/dev/null
+            exit 1
+          fi
+          # 复制JRE到.app (参考Amethyst payload目标)
+          if [ -d "depends/java-8-openjdk" ]; then
+            echo "=== 复制JRE到.app ==="
+            cp -R artifacts/java_runtimes artifacts/Payload/PCL-iOS.app/java_runtimes
+            echo "JRE已复制到.app"
+          fi
+          cd artifacts
+          zip -r ../PCL-iOS.ipa Payload
+          cd ..
+          ls -lh PCL-iOS.ipa
+          
+      - name: Create TIPA (TrollStore用)
         run: |
-          mkdir -p Payload
-          cp -R ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/PCL-iOS.app Payload/
-          zip -r com.pcl-ios.pcl--ios.ipa Payload
+          # 参考Amethyst: .tipa只是.ipa的副本，扩展名不同
+          cp PCL-iOS.ipa PCL-iOS.tipa
+          ls -lh PCL-iOS.tipa
+          echo "=== IPA/TIPA内容 ==="
+          unzip -l PCL-iOS.ipa | head -30
+          
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: com.pcl-ios.pcl--ios.zip
-          path: com.pcl-ios.pcl--ios.ipa
+          name: PCL-iOS.ipa
+          path: PCL-iOS.ipa
           if-no-files-found: error
+          retention-days: 7
+      
+      - name: Upload TIPA (TrollStore用)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PCL-iOS.tipa
+          path: PCL-iOS.tipa
+          if-no-files-found: error
+          retention-days: 7

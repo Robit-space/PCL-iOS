@@ -1,5 +1,8 @@
 #import <UIKit/UIKit.h>
-@interface PCLRootViewController : UIViewController
-- (void)playEntranceAnimation;
-@end
+#import "PCLSidebarView.h"
 
+@interface PCLRootViewController : UIViewController <PCLSidebarViewDelegate>
+
+@property (nonatomic, readonly) PCLSidebarPage currentPage;
+
+@end

@@ -311,8 +311,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         } completion:^(BOOL finished) {
 
             [splash removeFromSuperview];
-
-            [root playEntranceAnimation];
         }];
     });
 

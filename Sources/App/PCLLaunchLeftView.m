@@ -687,6 +687,9 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 - (void)reloadProfileList {
     NSArray *profiles=[PCLProfileStore profiles];
 
+    if (profiles.count==0)
+        self.profileFlowLocksLaunch=NO;
+
     for (UIButton *row in self.profileRows)
         [row removeFromSuperview];
     [self.profileRows removeAllObjects];
@@ -857,12 +860,12 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 
     __weak typeof(self) weakSelf=self;
     self.loginPanel.onClose=^{
-        [weakSelf reloadProfileList];
         [weakSelf pclLoginTransition:^{
             weakSelf.loginPanel.hidden=YES;
             weakSelf.profileSkinView.hidden=YES;
             weakSelf.profileSelectView.hidden=NO;
-            [weakSelf grayLaunchForProfileSelection];
+
+            [weakSelf reloadState];
             [weakSelf setNeedsLayout];
         }];
     };
@@ -1284,8 +1287,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
         self.expandedProfileIdentifier=nil;
         self.pendingDeleteIdentifier=nil;
 
-        [self reloadProfileList];
-        [self grayLaunchForProfileSelection];
+        [self reloadState];
         return;
     }
 

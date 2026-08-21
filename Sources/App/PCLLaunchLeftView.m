@@ -1035,14 +1035,15 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
     BOOL hasInstance =
         instance.length > 0;
 
-    self.profileSelectView.hidden =
-        hasProfile;
+    if (!self.profileFlowLocksLaunch) {
+        self.profileSelectView.hidden=
+            hasProfile;
 
-    self.profileSkinView.hidden =
-        !hasProfile;
+        self.profileSkinView.hidden=
+            !hasProfile;
 
-    if (hasProfile)
         self.loginPanel.hidden=YES;
+    }
 
     self.usernameLabel.text =
         hasProfile
@@ -1279,7 +1280,12 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
         self.pendingDeleteIdentifier=nil;
         self.expandedProfileIdentifier=nil;
         [PCLProfileStore removeProfileWithIdentifier:pid];
+
+        self.expandedProfileIdentifier=nil;
+        self.pendingDeleteIdentifier=nil;
+
         [self reloadProfileList];
+        [self grayLaunchForProfileSelection];
         return;
     }
 
@@ -1308,6 +1314,9 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 
 - (void)grayLaunchForProfileSelection {
     self.profileFlowLocksLaunch=YES;
+
+    self.expandedProfileIdentifier=nil;
+    self.pendingDeleteIdentifier=nil;
 
     UIColor *gray=PCLColor(0xA6A6A6);
     self.launchButton.enabled=NO;
@@ -2131,7 +2140,20 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 
+- (void)restoreMainProfileState {
+    _profileFlowLocksLaunch=NO;
+
+    self.expandedProfileIdentifier=nil;
+    self.pendingDeleteIdentifier=nil;
+
+    self.loginPanel.hidden=YES;
+
+    [self reloadState];
+}
+
 - (void)prepareCEEnterAnimation {
+    [self restoreMainProfileState];
+
     CALayer *layer=self.transitionContentView.layer;
 
     [layer removeAllAnimations];

@@ -241,10 +241,19 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	@# 参考Amethyst: 签名整个app + 二进制加entitlements
-	@# 使用METHOD_MACHO_SIGN_APP排除JRE目录(ldi对某些JRE dylib会assert)
-	$(call METHOD_MACHO_SIGN_APP,$(OUTPUTDIR)/Payload/$(APP_NAME).app)
-	@# 主二进制加entitlements
+	@# Debug: 列出.app中所有文件, 用于排查ldi assert
+	@echo "=== App bundle contents ==="
+	@find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f | head -50
+	@echo "=== 测试每个Mach-O文件 ==="
+	@for f in $$(find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f -not -path "*/java_runtimes/*"); do \
+		if [ -f "$$f" ] && [[ "$$(file -b $$f 2>/dev/null)" == *"Mach-O"* ]]; then \
+			echo -n "  Testing: $$f ... "; \
+			if ldid -S "$$f" 2>/dev/null; then echo "OK"; else echo "FAILED"; fi \
+		fi; \
+	done; \
+	echo "=== 找到问题文件 ==="
+	@# 主二进制签名 + entitlements (参考Amethyst)
+	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)
 	@if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
 		ldid -S$(OUTPUTDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
 	else \

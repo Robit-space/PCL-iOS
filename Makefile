@@ -243,9 +243,10 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	@# 参考Amethyst: 递归签名整个app + 二进制加entitlements
-	@# 使用ldid -S -M (ad-hoc签名), 因为ldid -S对libshaderc/libvirgl_test_server会assert
-	$(call METHOD_MACHO_SIGN_APP,$(OUTPUTDIR)/Payload/$(APP_NAME).app)
+	@# 主二进制签名 (唯一必须的签名, 否则app无法运行)
+	@# 注: ldid 2.1.5.1 (Procursus) 对libshaderc.dylib / libvirgl_test_server.dylib
+	@# 等dylib会触发assert, 因此只签名主二进制
+	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)
 	@# 主二进制加entitlements (参考Amethyst sign_macho)
 	@if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
 		ldid -S$(OUTPUTDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
@@ -278,7 +279,12 @@ payload: build entitlements
 	chmod -R 755 $(OUTPUTDIR)/Payload
 	@# 平台重打标 - 对所有Mach-O文件执行vtool + ldid -S -M (参考Amethyst METHOD_MACHO)
 	@echo "[PCL-iOS] 平台重打标..."
-	$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/$(APP_NAME).app,$(call METHOD_CHANGE_PLAT,$$file))
+	@for file in $$(find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f); do \
+		if [[ "$$(file -b $$file 2>/dev/null)" == *"Mach-O"* ]]; then \
+			vtool -arch arm64 -set-build-version $(PLATFORM) 14.0 16.0 -replace -output $$file $$file 2>/dev/null || true; \
+			ldid -S -M $$file 2>/dev/null || true; \
+		fi; \
+	done
 	@echo "[PCL-iOS] payload - end"
 
 # ============================================================================

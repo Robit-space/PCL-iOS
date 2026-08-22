@@ -8,6 +8,10 @@ on:
   workflow_dispatch:
 
 # 并发控制：同一分支新的推送会取消旧的构建，避免 runner 资源浪费
+permissions:
+  contents: read
+  statuses: write
+
 concurrency:
   group: pcl-build-${{ github.ref }}
   cancel-in-progress: true
@@ -100,12 +104,18 @@ jobs:
       - name: Build App
         timeout-minutes: 10
         run: |
+          set +e
           set -o pipefail
           gmake build RELEASE=0 2>&1 | tee build.log
           status=${PIPESTATUS[0]}
+          set -e
           if [ $status -ne 0 ]; then
             echo "=== BUILD ERRORS ==="
             grep -n "error:" build.log | tail -60 || true
+
+            FIRST_ERROR=$(grep -m1 "error:" build.log | cut -c1-120 || true)
+            echo "FIRST_ERROR=$FIRST_ERROR"
+
             exit $status
           fi
       

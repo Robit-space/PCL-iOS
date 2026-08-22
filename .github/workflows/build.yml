@@ -15,7 +15,8 @@ concurrency:
 jobs:
   build:
     name: Build PCL-iOS
-    runs-on: macos-14
+    # 使用 macos-latest 获取 Xcode 26.x（支持 project 格式 v77）
+    runs-on: macos-latest
     
     env:
       APP_NAME: PCL-iOS

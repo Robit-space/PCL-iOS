@@ -2,12 +2,14 @@
 #import "PCLRootViewController.h"
 #import "PCLMouseSupport.h"
 #import "PCLGlobalButtonHover.h"
+#import "PCLVersionManager.h"
 
 @implementation PCLAppDelegate
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     PCLStartMouseMonitoring();
+    [[PCLVersionManager sharedManager] gamesDirectory];
     self.window = [[UIWindow alloc]
         initWithFrame:[UIScreen mainScreen].bounds];
 

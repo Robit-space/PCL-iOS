@@ -57,7 +57,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
 }
 
 - (NSString *)instancesDirectory {
-    NSString *path = [[self documentsDirectory] stringByAppendingPathComponent:@"instances"];
+    NSString *path = [[self gamesDirectory] stringByAppendingPathComponent:@"instances"];
     [self ensureDirectory:path];
     return path;
 }

@@ -15,6 +15,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 @interface PCLDownloadVersionCell : UITableViewCell
+@property (nonatomic, strong) UIImageView *versionIcon;
 @property (nonatomic, strong) UILabel *versionLabel;
 @property (nonatomic, strong) UILabel *typeLabel;
 @property (nonatomic, strong) UILabel *dateLabel;
@@ -36,9 +37,15 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)setupUI {
     self.backgroundColor = [UIColor clearColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
+    self.contentView.backgroundColor=[UIColor colorWithWhite:1 alpha:.88];
+    self.contentView.clipsToBounds=YES;
+    self.versionIcon=[[UIImageView alloc] init];
+    self.versionIcon.contentMode=UIViewContentModeScaleAspectFit;
+    self.versionIcon.translatesAutoresizingMaskIntoConstraints=NO;
+    [self.contentView addSubview:self.versionIcon];
     
     self.versionLabel = [[UILabel alloc] init];
-    self.versionLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+    self.versionLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
     self.versionLabel.textColor = PCLColor(0x343D4A);
     self.versionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.versionLabel];
@@ -87,9 +94,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.typeLabel.heightAnchor constraintEqualToConstant:18],
         [self.typeLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.downloadButton.leadingAnchor constant:-12],
         
-        [self.dateLabel.topAnchor constraintEqualToAnchor:self.versionLabel.bottomAnchor constant:4],
+        [self.dateLabel.topAnchor constraintEqualToAnchor:self.versionLabel.bottomAnchor constant:1],
         [self.dateLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16],
-        [self.dateLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-14],
+        [self.dateLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-5],
         
         [self.downloadButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
         [self.downloadButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-25],
@@ -127,6 +134,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UILabel *emptyLabel;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *downloadProgress;
+@property (nonatomic, strong) NSMutableSet<NSNumber *> *expandedSections;
+- (NSArray *)versionsForSection:(NSInteger)section;
+- (void)updateVersionTableHeight;
 @end
 
 @implementation PCLDownloadRightView
@@ -139,6 +149,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         _gameVersions = [NSMutableArray array];
         _currentTab = PCLDownloadTabMinecraft;
         _downloadProgress = [NSMutableDictionary dictionary];
+        _expandedSections=[NSMutableSet setWithObject:@0];
         _selectedGameVersion = @"1.20.4";
         [_gameVersions addObjectsFromArray:@[@"1.21.4", @"1.21.3", @"1.21.2", @"1.21.1", @"1.21", @"1.20.6", @"1.20.4", @"1.20.2", @"1.20.1", @"1.20", @"1.19.4", @"1.19.2", @"1.18.2", @"1.17.1", @"1.16.5", @"1.12.2"]];
         [self setupView];
@@ -284,10 +295,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)buildVersionListCard {
     UIView *listCard = [[UIView alloc] init];
-    listCard.backgroundColor = [UIColor whiteColor];
-    listCard.layer.cornerRadius = 10;
+    listCard.backgroundColor = UIColor.clearColor;
+    listCard.layer.cornerRadius = 0;
     listCard.layer.shadowColor = [UIColor blackColor].CGColor;
-    listCard.layer.shadowOpacity = 0.06;
+    listCard.layer.shadowOpacity = 0;
     listCard.layer.shadowRadius = 8;
     listCard.layer.shadowOffset = CGSizeMake(0, 2);
     listCard.translatesAutoresizingMaskIntoConstraints = NO;
@@ -297,6 +308,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     listTitle.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
     listTitle.textColor = PCLColor(0x343D4A);
     listTitle.translatesAutoresizingMaskIntoConstraints = NO;
+    listTitle.hidden=YES;
     [listCard addSubview:listTitle];
     
     self.versionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -305,9 +317,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.dataSource = self;
     self.versionTableView.backgroundColor = [UIColor clearColor];
     self.versionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.versionTableView.rowHeight = 60;
+    self.versionTableView.rowHeight = 42;
+    self.versionTableView.sectionHeaderHeight=55;
+    self.versionTableView.estimatedSectionHeaderHeight=0;
+    self.versionTableView.sectionFooterHeight=.01;
     self.versionTableView.scrollEnabled = NO;
-    self.versionTableView.allowsSelection = NO;
+    self.versionTableView.allowsSelection = YES;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
     [listCard addSubview:self.versionTableView];
     
@@ -325,7 +340,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [listTitle.leadingAnchor constraintEqualToAnchor:listCard.leadingAnchor constant:16],
         [listTitle.trailingAnchor constraintEqualToAnchor:listCard.trailingAnchor constant:-16],
         
-        [self.versionTableView.topAnchor constraintEqualToAnchor:listTitle.bottomAnchor constant:12],
+        [self.versionTableView.topAnchor constraintEqualToAnchor:listCard.topAnchor],
         [self.versionTableView.leadingAnchor constraintEqualToAnchor:listCard.leadingAnchor],
         [self.versionTableView.trailingAnchor constraintEqualToAnchor:listCard.trailingAnchor],
         [self.versionTableView.bottomAnchor constraintEqualToAnchor:listCard.bottomAnchor constant:-8],
@@ -656,15 +671,17 @@ static UIColor *PCLColor(NSUInteger rgb) {
     
     [self.versionTableView reloadData];
     
-    CGFloat rowHeight = 60;
-    CGFloat headers=[self numberOfSectionsInTableView:self.versionTableView]>1?120:0;
-    CGFloat tableHeight=MAX(200,self.filteredVersions.count*rowHeight+headers);
-    for (NSLayoutConstraint *constraint in self.versionTableView.constraints) {
-        if (constraint.firstAttribute == NSLayoutAttributeHeight) {
-            constraint.constant = tableHeight;
-            break;
-        }
-    }
+    [self updateVersionTableHeight];
+}
+- (void)updateVersionTableHeight {
+ NSInteger sections=[self numberOfSectionsInTableView:self.versionTableView],rows=0;
+ if(sections==1)rows=self.filteredVersions.count;
+ else for(NSInteger n=0;n<sections;n++)
+  if([self.expandedSections containsObject:@(n)])
+   rows+=[self versionsForSection:n].count;
+ CGFloat height=MAX(200,rows*42+(sections>1?sections*55:0));
+ for(NSLayoutConstraint *c in self.versionTableView.constraints)
+  if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=height;break;}
 }
 
 #pragma mark - UITableViewDataSource
@@ -728,7 +745,69 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 }
 
+- (CGFloat)tableView:(UITableView *)t heightForHeaderInSection:(NSInteger)s {
+
+ return [self numberOfSectionsInTableView:t]>1?55:.01;
+
+}
+
+- (UIView *)tableView:(UITableView *)t viewForHeaderInSection:(NSInteger)n {
+
+ if([self numberOfSectionsInTableView:t]==1)return nil;
+
+ CGFloat w=CGRectGetWidth(t.bounds); BOOL open=[self.expandedSections containsObject:@(n)];
+UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
+
+ UIView *c=[[UIView alloc]initWithFrame:CGRectMake(0,15,w,40)];
+
+ c.backgroundColor=[UIColor colorWithWhite:1 alpha:.9];c.layer.cornerRadius=6;
+
+ c.autoresizingMask=UIViewAutoresizingFlexibleWidth;[v addSubview:c];
+
+ NSArray *a=[self versionsForSection:n],*names=@[@"最新版本",@"正式版",@"快照版",@"远古版"];
+
+ UILabel *l=[[UILabel alloc]initWithFrame:CGRectMake(16,0,w-64,40)];
+
+ l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)a.count]:names[n];
+
+ l.font=[UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];[c addSubview:l];
+
+ UIButton *b=[[UIButton alloc]initWithFrame:c.bounds];b.tag=n;
+
+ [b setImage:[UIImage systemImageNamed:open?@"chevron.down":@"chevron.right"]
+
+    forState:UIControlStateNormal];
+
+ b.contentHorizontalAlignment=UIControlContentHorizontalAlignmentRight;
+
+ b.contentEdgeInsets=UIEdgeInsetsMake(0,0,0,16);
+ [b addTarget:self action:@selector(toggleVersionSection:)
+
+    forControlEvents:UIControlEventTouchUpInside];[c addSubview:b];return v;
+
+}
+
+- (void)toggleVersionSection:(UIButton *)b {
+
+ NSNumber *n=@(b.tag);
+
+ if([self.expandedSections containsObject:n])[self.expandedSections removeObject:n];
+
+ else [self.expandedSections addObject:n];
+
+ [self.versionTableView reloadSections:[NSIndexSet indexSetWithIndex:b.tag]
+
+    withRowAnimation:UITableViewRowAnimationFade];
+
+ [self updateVersionTableHeight];
+
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if([self numberOfSectionsInTableView:tableView]>1&&
+
+       ![self.expandedSections containsObject:@(section)])return 0;
+
     return [self versionsForSection:section].count;
 }
 

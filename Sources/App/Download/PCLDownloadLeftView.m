@@ -57,7 +57,7 @@ typedef struct {
     [self addSubview:self.scrollView];
     
     [NSLayoutConstraint activateConstraints:@[
-        [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:8],
+        [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:12],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8]
@@ -120,8 +120,8 @@ typedef struct {
             [container addSubview:header];
             
             [NSLayoutConstraint activateConstraints:@[
-                [header.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:16],
-                [header.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-16],
+                [header.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:13],
+                [header.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-5],
                 [header.topAnchor constraintEqualToAnchor:container.topAnchor constant:12],
                 [header.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-4],
                 [container.heightAnchor constraintEqualToConstant:32]
@@ -170,6 +170,17 @@ typedef struct {
     [btn.heightAnchor constraintEqualToConstant:36].active = YES;
     
     [btn addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIImageView *refresh=[[UIImageView alloc]
+      initWithImage:[UIImage systemImageNamed:@"arrow.clockwise"]];
+    refresh.tag=701; refresh.tintColor=PCLColor(0x697482);
+    refresh.translatesAutoresizingMaskIntoConstraints=NO;
+    [btn addSubview:refresh];
+    [NSLayoutConstraint activateConstraints:@[
+      [refresh.trailingAnchor constraintEqualToAnchor:btn.trailingAnchor constant:-13],
+      [refresh.centerYAnchor constraintEqualToAnchor:btn.centerYAnchor],
+      [refresh.widthAnchor constraintEqualToConstant:14],
+      [refresh.heightAnchor constraintEqualToConstant:14]]];
+
     
     btn.backgroundColor = [UIColor clearColor];
     

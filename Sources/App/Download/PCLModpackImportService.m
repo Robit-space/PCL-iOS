@@ -33,7 +33,7 @@
 
 - (NSString *)instancesDirectory {
     NSString *docs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    NSString *path = [docs stringByAppendingPathComponent:@"instances"];
+    NSString *path = [docs stringByAppendingPathComponent:@".minecraft/instances"];
     if (![self.fm fileExistsAtPath:path]) {
         [self.fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }

@@ -27,7 +27,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
 }
 
 - (NSString *)gamesDirectory {
-    NSString *path = [[self documentsDirectory] stringByAppendingPathComponent:@"PCL Games"];
+    NSString *path = [[self documentsDirectory] stringByAppendingPathComponent:@".minecraft"];
     [self ensureDirectory:path];
     return path;
 }

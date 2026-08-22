@@ -110,7 +110,7 @@ static UIColor *C(NSUInteger x) {
 
     name.tag=104;
 
-    name.text=@"PCL Games";
+    name.text=@".minecraft";
 
     name.font=[UIFont systemFontOfSize:14
 

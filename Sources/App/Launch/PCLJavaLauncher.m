@@ -37,7 +37,8 @@
 
 - (void)setupEnvironment:(NSString *)gameVersion mcVersion:(NSString *)mcVersion {
     NSDictionary *env = @{
-        @"POJAV_HOME": [NSString stringWithFormat:@"%@/PCL Games", NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject],
+        @"POJAV_HOME": NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject,
+        @"POJAV_GAME_DIR": [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:@".minecraft"],
         @"MESA_GL_VERSION_OVERRIDE": @"4.1",
         @"LIBGL_NORMALIZE": @"1",
         @"LIBGL_NOINTOVLHACK": @"1",
@@ -106,7 +107,7 @@
     if (self.account) {
         [argv addObject:[NSString stringWithFormat:@"--username=%@", self.account]];
         [argv addObject:@"--version=1.20.4"];
-        [argv addObject:[NSString stringWithFormat:@"--gameDir=%@/instances/default", _environment[@"POJAV_HOME"]]];
+        [argv addObject:[NSString stringWithFormat:@"--gameDir=%@", _environment[@"POJAV_GAME_DIR"]]];
         [argv addObject:[NSString stringWithFormat:@"--width=%d", self.gameWidth]];
         [argv addObject:[NSString stringWithFormat:@"--height=%d", self.gameHeight]];
     }

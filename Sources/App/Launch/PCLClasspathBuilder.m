@@ -45,7 +45,7 @@
 
 + (NSString *)librariesDirectory {
     NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    path = [path stringByAppendingPathComponent:@"PCL Games/libraries"];
+    path = [path stringByAppendingPathComponent:@".minecraft/libraries"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:path]) {
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];

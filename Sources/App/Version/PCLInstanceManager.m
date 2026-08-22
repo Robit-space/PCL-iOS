@@ -73,7 +73,7 @@ NSString *const PCLCurrentInstanceNameKey = @"PCLCurrentInstanceName";
     self = [super init];
     if (self) {
         NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-        _instancesDirectory = [docsDir stringByAppendingPathComponent:@"instances"];
+        _instancesDirectory = [docsDir stringByAppendingPathComponent:@".minecraft/instances"];
         [self ensureDirectory:_instancesDirectory];
     }
     return self;

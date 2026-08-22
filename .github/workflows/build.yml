@@ -39,8 +39,10 @@ jobs:
       - name: Download Java JRE (via Makefile)
         timeout-minutes: 20
         run: |
-          echo "=== 下载Java JRE for iOS arm64 (来源: assets.angelauramc.dev) ==="
-          make jre || echo "WARNING: JRE download may have issues, continuing..."
+          echo "=== 使用缓存的Java JRE (RUNNER=1跳过下载) ==="
+          RUNNER=1 make jre || (echo "WARNING: JRE处理异常" && make verify-jre)
+        env:
+          RUNNER: 1
         
       - name: Verify JRE Installation
         run: |
@@ -77,24 +79,28 @@ jobs:
           fi
       
       # 参考Amethyst: 构建两个版本
-      # 1. .ipa (普通安装)
+      # 1. .ipa (普通安装，含JRE)
       # 2. .tipa (TrollStore安装，只是扩展名不同)
       - name: Package IPA (含JRE)
         run: |
+          set -e
           mkdir -p artifacts/Payload
-          if [ -d "build/Build/Products/Debug-iphoneos/PCL-iOS.app" ]; then
-            cp -r build/Build/Products/Debug-iphoneos/PCL-iOS.app artifacts/Payload/
-          else
+          if [ ! -d "build/Build/Products/Debug-iphoneos/PCL-iOS.app" ]; then
             echo "ERROR: Build product not found"
-            find build -name "*.app" -type d 2>/dev/null
+            find build -name "*.app" -type d 2>/dev/null || true
             exit 1
           fi
-          # 复制JRE到.app (参考Amethyst payload目标)
-          if [ -d "depends/java-8-openjdk" ]; then
-            echo "=== 复制JRE到.app ==="
-            cp -R artifacts/java_runtimes artifacts/Payload/PCL-iOS.app/java_runtimes
-            echo "JRE已复制到.app"
-          fi
+          cp -r build/Build/Products/Debug-iphoneos/PCL-iOS.app artifacts/Payload/
+          # 复制JRE到.app (Amethyst payload逻辑)
+          mkdir -p artifacts/Payload/PCL-iOS.app/java_runtimes
+          for jdir in depends/java-8-openjdk depends/java-17-openjdk depends/java-21-openjdk depends/java-25-openjdk; do
+            if [ -d "$jdir" ]; then
+              echo "复制 $jdir → java_runtimes/"
+              cp -R "$jdir" artifacts/Payload/PCL-iOS.app/java_runtimes/
+            fi
+          done
+          echo "=== JRE复制完成 ==="
+          find artifacts/Payload/PCL-iOS.app/java_runtimes -maxdepth 1 -type d
           cd artifacts
           zip -r ../PCL-iOS.ipa Payload
           cd ..

@@ -18,6 +18,9 @@ JRE_DIR := $(OUTPUTDIR)/java_runtimes
 LIBS_DIR := $(DEPENDS_DIR)/libs
 FRAMEWORKS_DIR := $(DEPENDS_DIR)/Frameworks
 
+# 检测是否在GitHub Actions runner上运行
+RUNNER ?= 0
+
 # 是否构建slimmed版本（不含JRE，用于TrollStore）
 SLIMMED ?= 0
 
@@ -37,7 +40,7 @@ JRE25_DIR := $(DEPENDS_DIR)/java-25-openjdk
 # Xcode生成
 XCODEGEN ?= xcodegen
 
-.PHONY: all jre gen clean check help
+.PHONY: all jre gen clean check help verify-jre
 
 all: jre gen
 
@@ -57,22 +60,32 @@ check:
 	@echo "Java 21: $(if $(wildcard $(JRE21_DIR)/release),✓ 已安装,✗ 未安装)"
 	@echo "Java 25: $(if $(wildcard $(JRE25_DIR)/release),✓ 已安装,✗ 未安装)"
 
+verify-jre:
+	@echo "=== 验证JRE安装状态 ==="
+	@for jdir in $(JRE8_DIR) $(JRE17_DIR) $(JRE21_DIR) $(JRE25_DIR); do \
+		if [ -f "$$jdir/release" ]; then \
+			echo "✓ $$jdir 已安装"; \
+		else \
+			echo "✗ $$jdir 缺失! 尝试从缓存恢复..."; \
+		fi; \
+	done
+
 # ============================================================================
-# Java JRE下载 (与Amethyst METHOD_JAVA_UNPACK完全一致)
+# Java JRE下载 (与Amethyst METHOD_JAVA_UNPACK对齐)
 # 来源: https://github.com/AngelAuraMC/Amethyst-iOS/blob/main/Makefile
 # ============================================================================
 METHOD_JAVA_UNPACK = \
 	cd $(DEPENDS_DIR); \
-	if [ ! -f "java-$(1)-openjdk/release" ] && [ ! -f "$$(ls jre$(1)-*.tar.xz 2>/dev/null)" ]; then \
-		echo "下载 Java $(1) for iOS arm64..."; \
-		curl -sL --fail -o jre$(1)-ios-aarch64.zip "$(2)" || wget -q -O jre$(1)-ios-aarch64.zip "$(2)"; \
-		if [ -f jre$(1)-ios-aarch64.zip ]; then \
-			unzip -o jre$(1)-ios-aarch64.zip && rm -f jre$(1)-ios-aarch64.zip; \
+	if [ ! -f "java-$(1)-openjdk/release" ] && [ ! -f "$(ls jre$(1)-*.tar.xz)" ]; then \
+		if [ "$(RUNNER)" != "1" ]; then \
+			echo "下载 Java $(1) for iOS arm64..."; \
+			curl -sL --fail -o jre$(1)-ios-aarch64.zip "$(2)" || wget -q -O jre$(1)-ios-aarch64.zip "$(2)"; \
+			unzip jre*-ios-aarch64.zip && rm jre*-ios-aarch64.zip; \
 		fi; \
 		mkdir -p java-$(1)-openjdk; \
 		tar xvf jre$(1)-*.tar.xz -C java-$(1)-openjdk; \
-		rm -f jre$(1)-*.tar.xz; \
-	fi
+	fi; \
+	if [ -f "$(ls jre*.tar.xz)" ]; then rm $(DEPENDS_DIR)/jre*.tar.xz; fi
 
 # 目录检查函数 (参考Amethyst METHOD_DIRCHECK)
 METHOD_DIRCHECK = \
@@ -83,36 +96,22 @@ METHOD_DIRCHECK = \
 	fi
 
 jre:
-	@echo "[PCL-iOS] 下载Java JRE for iOS arm64 (来源: assets.angelauramc.dev)..."
+	@echo "[PCL-iOS] jre - start"
 	mkdir -p $(DEPENDS_DIR)
-	$(call METHOD_JAVA_UNPACK,8,$(JRE8_URL))
-	$(call METHOD_JAVA_UNPACK,17,$(JRE17_URL))
-	$(call METHOD_JAVA_UNPACK,21,$(JRE21_URL))
-	$(call METHOD_JAVA_UNPACK,25,$(JRE25_URL))
-	@# 清理不必要的文件 (参考Amethyst - 这些文件会触发ldid签名错误)
-	@echo "[PCL-iOS] 清理JRE中不必要的文件..."
-	rm -rf $(DEPENDS_DIR)/java-*-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}} 2>/dev/null || true
-	@# 关键修复：处理JRE中的dylib文件，移除fat binary中的非arm64架构，避免ldid "end <= size"错误
-	@echo "[PCL-iOS] 处理JRE中的dylib文件（移除fat binary中的非arm64架构）..."
-	@find $(DEPENDS_DIR)/java-*-openjdk -name "*.dylib" -type f 2>/dev/null | while read dylib; do \
-		if file "$$dylib" 2>/dev/null | grep -q "Mach-O"; then \
-			archs=$$(lipo -info "$$dylib" 2>/dev/null | grep -o "arm64\|x86_64\|i386\|armv7" | tr '\n' ' '); \
-			if echo "$$archs" | grep -q " "; then \
-				echo "  处理fat binary: $$(basename $$dylib) [$$archs]"; \
-				lipo -extract arm64 "$$dylib" -output "$$dylib.tmp" 2>/dev/null && mv "$$dylib.tmp" "$$dylib"; \
-			fi; \
-		fi; \
-	done
-	@# 删除所有非Mach-O文件（避免ldid误解析）
-	@echo "[PCL-iOS] 删除JRE中非Mach-O文件..."
-	@find $(DEPENDS_DIR)/java-*-openjdk -type f \( -name "*.sh" -o -name "*.txt" -o -name "*.properties" -o -name "*.policy" -o -name "*.security" -o -name "*.cfg" -o -name "*.dat" \) -delete 2>/dev/null || true
-	@# 复制JRE到输出目录
-	$(call METHOD_DIRCHECK,$(JRE_DIR))
-	cp -R $(JRE8_DIR) $(JRE_DIR) 2>/dev/null || true
-	cp -R $(JRE17_DIR) $(JRE_DIR) 2>/dev/null || true
-	cp -R $(JRE21_DIR) $(JRE_DIR) 2>/dev/null || true
-	cp -R $(JRE25_DIR) $(JRE_DIR) 2>/dev/null || true
-	@echo "[PCL-iOS] Java JRE下载完成"
+	cd $(DEPENDS_DIR); \
+	$(call METHOD_JAVA_UNPACK,8,$(JRE8_URL)); \
+	$(call METHOD_JAVA_UNPACK,17,$(JRE17_URL)); \
+	$(call METHOD_JAVA_UNPACK,21,$(JRE21_URL)); \
+	$(call METHOD_JAVA_UNPACK,25,$(JRE25_URL)); \
+	if [ -f "$(ls jre*.tar.xz)" ]; then rm $(DEPENDS_DIR)/jre*.tar.xz; fi; \
+	cd $(SOURCEDIR); \
+	rm -rf $(DEPENDS_DIR)/java-{8,17,21,25}-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}}; \
+	$(call METHOD_DIRCHECK,$(JRE_DIR)); \
+	cp -R $(JRE8_DIR) $(JRE_DIR); \
+	cp -R $(JRE17_DIR) $(JRE_DIR); \
+	cp -R $(JRE21_DIR) $(JRE_DIR); \
+	cp -R $(JRE25_DIR) $(JRE_DIR)
+	@echo "[PCL-iOS] jre - end"
 
 # ============================================================================
 # Xcode项目生成

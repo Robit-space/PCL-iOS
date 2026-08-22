@@ -475,7 +475,6 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 @property(nonatomic,strong) UIView *profileOptionMenu;
 @property(nonatomic) NSInteger profileOptionMode;
 @property(nonatomic,strong) NSTimer *profileControlsTimer;
-@property(nonatomic) BOOL profileFlowLocksLaunch;
 @property(nonatomic,copy) NSString *skinImportProfileIdentifier;
 @property(nonatomic,weak) UIButton *profileOptionAnchor;
 @property (nonatomic, strong) UIButton *skinButton;
@@ -687,9 +686,6 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 - (void)reloadProfileList {
     NSArray *profiles=[PCLProfileStore profiles];
 
-    if (profiles.count==0)
-        self.profileFlowLocksLaunch=NO;
-
     for (UIButton *row in self.profileRows)
         [row removeFromSuperview];
     [self.profileRows removeAllObjects];
@@ -860,19 +856,17 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 
     __weak typeof(self) weakSelf=self;
     self.loginPanel.onClose=^{
+        [weakSelf reloadProfileList];
         [weakSelf pclLoginTransition:^{
             weakSelf.loginPanel.hidden=YES;
             weakSelf.profileSkinView.hidden=YES;
             weakSelf.profileSelectView.hidden=NO;
-
-            [weakSelf reloadState];
+            [weakSelf grayLaunchForProfileSelection];
             [weakSelf setNeedsLayout];
         }];
     };
 
     self.loginPanel.onProfileCreated=^{
-        weakSelf.profileFlowLocksLaunch=NO;
-
         [weakSelf pclLoginTransition:^{
             [weakSelf reloadState];
         }];
@@ -1038,15 +1032,14 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
     BOOL hasInstance =
         instance.length > 0;
 
-    if (!self.profileFlowLocksLaunch) {
-        self.profileSelectView.hidden=
-            hasProfile;
+    self.profileSelectView.hidden =
+        hasProfile;
 
-        self.profileSkinView.hidden=
-            !hasProfile;
+    self.profileSkinView.hidden =
+        !hasProfile;
 
+    if (hasProfile)
         self.loginPanel.hidden=YES;
-    }
 
     self.usernameLabel.text =
         hasProfile
@@ -1080,8 +1073,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
         hasInstance ? @"启动游戏" : @"下载游戏";
 
     BOOL canLaunch =
-        !self.profileFlowLocksLaunch &&
-        (hasInstance ? hasProfile : YES);
+        hasInstance ? hasProfile : YES;
 
     self.launchButton.enabled =
         canLaunch;
@@ -1110,9 +1102,6 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 - (void)launchPressed {
-    if (!self.launchButton.enabled)
-        return;
-
     if (self.onLaunch)
         self.onLaunch();
 }
@@ -1187,7 +1176,6 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
     if ([self.expandedProfileIdentifier isEqual:pid]) {
         self.expandedProfileIdentifier=nil;
         [PCLProfileStore selectProfileWithIdentifier:pid];
-        self.profileFlowLocksLaunch=NO;
 
         [self pclLoginTransition:^{
             [self reloadState];
@@ -1283,11 +1271,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
         self.pendingDeleteIdentifier=nil;
         self.expandedProfileIdentifier=nil;
         [PCLProfileStore removeProfileWithIdentifier:pid];
-
-        self.expandedProfileIdentifier=nil;
-        self.pendingDeleteIdentifier=nil;
-
-        [self reloadState];
+        [self reloadProfileList];
         return;
     }
 
@@ -1315,10 +1299,8 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 - (void)grayLaunchForProfileSelection {
-    self.profileFlowLocksLaunch=YES;
-
-    self.expandedProfileIdentifier=nil;
-    self.pendingDeleteIdentifier=nil;
+    if (![self.launchTitleLabel.text
+        isEqualToString:@"启动游戏"]) return;
 
     UIColor *gray=PCLColor(0xA6A6A6);
     self.launchButton.enabled=NO;
@@ -2142,20 +2124,7 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 }
 
 
-- (void)restoreMainProfileState {
-    _profileFlowLocksLaunch=NO;
-
-    self.expandedProfileIdentifier=nil;
-    self.pendingDeleteIdentifier=nil;
-
-    self.loginPanel.hidden=YES;
-
-    [self reloadState];
-}
-
 - (void)prepareCEEnterAnimation {
-    [self restoreMainProfileState];
-
     CALayer *layer=self.transitionContentView.layer;
 
     [layer removeAllAnimations];

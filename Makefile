@@ -226,10 +226,8 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	@# 先对app包签名
 	ldid -S "$(OUTPUTDIR)/Payload/$(APP_NAME).app"
-	@# 对二进制应用entitlements（参考Amethyst签名方式）
-	ldid -S"$(OUTPUTDIR)/entitlements.sideload.xml" "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
+	ldid -S "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
 	@echo "[PCL-iOS] 签名完成"
 
 # ============================================================================

@@ -64,6 +64,9 @@ jobs:
           submodules: recursive
           fetch-depth: 1
       
+      - name: Prepare ldid-compatible renderer libraries
+        run: python3 scripts/prepare_renderer_libs.py
+
       # === JRE 缓存 ===
       # 缓存键使用固定前缀（JRE URL在Makefile中硬编码，变更极少）
       # 需手动递增版本号（jre-cache-v3）来强制刷新缓存

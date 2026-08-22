@@ -29,12 +29,9 @@ while IFS= read -r -d '' file; do
         echo "  -> thinned to arm64"
     fi
 
-    codesign --remove-signature "$file" \
-        >/dev/null 2>&1 || true
-
-    if ! ldid -S -M "$file"; then
-        echo "ERROR: ldid failed on:"
-        echo "$file"
+    info="$(lipo -info "$file" 2>&1 || true)"
+    if ! echo "$info" | grep -qw arm64; then
+        echo "ERROR: Mach-O is not arm64: $file"
         exit 1
     fi
 

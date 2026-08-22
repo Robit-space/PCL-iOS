@@ -345,7 +345,6 @@
     [self.launchVC.view setNeedsLayout];
     [self.downloadVC.view setNeedsLayout];
     [self.settingsVC.view setNeedsLayout];
-    [self.launchVC.view setNeedsLayout];
 }
 
 - (BOOL)prefersStatusBarHidden {

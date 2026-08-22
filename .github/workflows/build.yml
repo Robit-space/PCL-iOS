@@ -100,10 +100,13 @@ jobs:
       - name: Build App
         timeout-minutes: 10
         run: |
-          gmake build RELEASE=0 2>&1 | tail -30
-          if [ ${PIPESTATUS[0]} -ne 0 ]; then
-            echo "=== BUILD FAILED ==="
-            exit 1
+          set -o pipefail
+          gmake build RELEASE=0 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ $status -ne 0 ]; then
+            echo "=== BUILD ERRORS ==="
+            grep -n "error:" build.log | tail -60 || true
+            exit $status
           fi
       
       # === Payload: 复制JRE + ldid 签名 ===
@@ -127,14 +130,6 @@ jobs:
           gmake package TROLLSTORE_JIT_ENT=1
           ls -lh artifacts/*.tipa
       
-      - name: Verify IPA/TIPA structure
-        run: |
-          set -e
-          for f in artifacts/*.ipa artifacts/*.tipa; do
-            echo "Checking $f"
-            unzip -Z1 "$f" | grep -Eq '^Payload/[^/]+\.app/Info\.plist$'
-          done
-
       - name: Verify IPA structure
         run: |
           set -e

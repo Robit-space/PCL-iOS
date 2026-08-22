@@ -124,6 +124,18 @@ jobs:
         timeout-minutes: 5
         run: gmake payload
       
+      - name: Verify bundled Mach-O
+        run: |
+          set -e
+          find artifacts/Payload/PCL-iOS.app -type f -print0 | while IFS= read -r -d '' f; do
+            info=$(lipo -info "$f" 2>/dev/null || true)
+            if echo "$info" | grep -q "Architectures in the fat file"; then
+              echo "ERROR: fat Mach-O remains: $f"
+              echo "$info"
+              exit 1
+            fi
+          done
+
       # === dSYM 生成 (调试符号 - 对崩溃排查至关重要) ===
       - name: Generate dSYM
         run: gmake dsym

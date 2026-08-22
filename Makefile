@@ -273,6 +273,20 @@ payload: build entitlements
 	cp -R build/Build/Products/$(BUILD_CONFIG)-iphoneos/$(APP_NAME).app $(OUTPUTDIR)/Payload/
 	@# 复制 JRE 到 .app (参考Amethyst)
 	cp -R $(OUTPUTDIR)/java_runtimes $(OUTPUTDIR)/Payload/$(APP_NAME).app/
+	@# TrollStore/ldid 只保留 arm64 Mach-O
+	@echo "[PCL-iOS] 检查并精简 fat Mach-O..."
+	@find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f -print0 | \
+	while IFS= read -r -d '' file; do \
+		info=$$(lipo -info "$$file" 2>/dev/null || true); \
+		if echo "$$info" | grep -q "Architectures in the fat file"; then \
+			echo "  fat: $$file -> $$info"; \
+			if ! echo "$$info" | grep -qw arm64; then \
+				echo "ERROR: fat Mach-O 不含 arm64: $$file"; exit 1; \
+			fi; \
+			lipo "$$file" -thin arm64 -output "$$file.thin"; \
+			mv "$$file.thin" "$$file"; \
+		fi; \
+	done
 	@# ldid 签名 (参考Amethyst sign_macho)
 	$(MAKE) sign
 	@# 设置权限 (参考Amethyst)

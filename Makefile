@@ -218,45 +218,7 @@ build:
 # ============================================================================
 entitlements:
 	@echo "[PCL-iOS] 生成 entitlements..."
-	@if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
-		cat > $(OUTPUTDIR)/entitlements.sideload.xml << 'XMLEOF'\
-<?xml version="1.0" encoding="UTF-8"?>\
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTD/PropertyList-1.0.dtd">\
-<plist version="1.0">\
-<dict>\
-	<key>platform-application</key>\
-	<true/>\
-	<key>get-task-allow</key>\
-	<true/>\
-	<key>com.apple.p.security.jit-allow</key>\
-	<true/>\
-	<key>com.apple.private.cs.debugger</key>\
-	<true/>\
-	<key>com.apple.private.skip-library-validation</key>\
-	<true/>\
-	<key>com.apple.private.security.container-required</key>\
-	<true/>\
-	<key>com.apple.private.security.no-container</key>\
-	<true/>\
-	<key>com.apple.private.security.no-sandbox</key>\
-	<true/>\
-</dict>\
-</plist>\
-XMLEOF\
-	else \
-		cat > $(OUTPUTDIR)/entitlements.sideload.xml << 'XMLEOF'\
-<?xml version="1.0" encoding="UTF-8"?>\
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTD/PropertyList-1.0.dtd">\
-<plist version="1.0">\
-<dict>\
-	<key>platform-application</key>\
-	<true/>\
-	<key>com.apple.private.security.container-required</key>\
-	<true/>\
-</dict>\
-</plist>\
-XMLEOF\
-	fi
+	bash scripts/gen_entitlements.sh "$(OUTPUTDIR)" "$(TROLLSTORE_JIT_ENT)"
 	@echo "[PCL-iOS] entitlements 生成完成"
 
 # ============================================================================
@@ -264,9 +226,8 @@ XMLEOF\
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	ldid -S$(OUTPUTDIR)/entitlements.sideload.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)
-	ldid -S -M $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)
-	$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/$(APP_NAME).app/Frameworks,ldid -S -M $$file)
+	ldid -S "$(OUTPUTDIR)/entitlements.sideload.xml" "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
+	ldid -S -M "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
 	@echo "[PCL-iOS] 签名完成"
 
 # ============================================================================

@@ -154,15 +154,19 @@ METHOD_PACKAGE = \
 # ============================================================================
 METHOD_JAVA_UNPACK = \
 	cd $(DEPENDS_DIR); \
-	if [ ! -f "java-$(1)-openjdk/release" ] && [ ! -f "$(ls jre$(1)-*.tar.xz)" ]; then \
-		if [ "$(RUNNER)" != "1" ]; then \
+	if [ ! -f "java-$(1)-openjdk/release" ]; then \
+		if [ ! -f "$$(ls jre$(1)-*.tar.xz 2>/dev/null)" ]; then \
 			echo "下载 Java $(1) for iOS arm64..."; \
-			wget '$(2)' -q --show-progress -O jre$(1)-ios-aarch64.zip || \
+			wget '$(2)' -q --show-progress -O jre$(1)-ios-aarch64.zip 2>/dev/null || \
 				curl -sL --fail -o jre$(1)-ios-aarch64.zip "$(2)"; \
-			unzip -o jre$(1)-ios-aarch64.zip && rm -f jre$(1)-ios-aarch64.zip; \
+			if [ -f jre$(1)-ios-aarch64.zip ]; then \
+				unzip -o jre$(1)-ios-aarch64.zip && rm -f jre$(1)-ios-aarch64.zip; \
+			fi; \
 		fi; \
-		mkdir -p java-$(1)-openjdk; \
-		tar xvf jre$(1)-*.tar.xz -C java-$(1)-openjdk; \
+		if [ -f "$$(ls jre$(1)-*.tar.xz 2>/dev/null)" ]; then \
+			mkdir -p java-$(1)-openjdk; \
+			tar xvf jre$(1)-*.tar.xz -C java-$(1)-openjdk; \
+		fi; \
 	fi
 
 # ============================================================================

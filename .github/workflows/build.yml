@@ -55,6 +55,8 @@ jobs:
           fetch-depth: 1
       
       # === JRE 缓存 ===
+      # 缓存键使用固定前缀（JRE URL在Makefile中硬编码，变更极少）
+      # 需手动递增版本号（jre-cache-v3）来强制刷新缓存
       - name: Cache Java JRE
         id: cache-jre
         uses: actions/cache@v4
@@ -64,18 +66,19 @@ jobs:
             depends/java-17-openjdk
             depends/java-21-openjdk
             depends/java-25-openjdk
-          key: jre-ios-v2-${{ hashFiles('Makefile') }}
+          key: jre-cache-v3
           restore-keys: |
-            jre-ios-v2-
-            jre-ios-
+            jre-cache-
       
       - name: Download Java JRE (via Makefile)
-        timeout-minutes: 15
+        timeout-minutes: 20
         run: |
-          echo "=== 使用缓存的Java JRE (RUNNER=1跳过下载) ==="
-          RUNNER=1 gmake jre
-        env:
-          RUNNER: 1
+          echo "=== 准备Java JRE（缓存命中则直接解包，未命中则自动下载） ==="
+          gmake jre 2>&1 | tail -20
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "ERROR: JRE准备失败"
+            exit 1
+          fi
       
       - name: Verify JRE
         run: gmake verify-jre

@@ -23,6 +23,8 @@
 @implementation PCLRootViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(showInstanceBar:) name:@"PCLShowInstanceBar" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(hideInstanceBar:) name:@"PCLHideInstanceBar" object:nil];
 
     self.view.backgroundColor =
         [UIColor systemBackgroundColor];
@@ -45,6 +47,10 @@
     self.topBar.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self.view addSubview:self.topBar];
+    UIButton *sub=[UIButton buttonWithType:UIButtonTypeSystem]; sub.tag=909; sub.hidden=YES; sub.backgroundColor=self.topBar.backgroundColor;
+    [sub setTitle:@"  实例选择" forState:UIControlStateNormal]; [sub setImage:[UIImage systemImageNamed:@"arrow.left"] forState:UIControlStateNormal];
+    [sub setTitleColor:UIColor.whiteColor forState:UIControlStateNormal]; sub.tintColor=UIColor.whiteColor; sub.titleLabel.font=[UIFont systemFontOfSize:15]; sub.contentHorizontalAlignment=UIControlContentHorizontalAlignmentLeft;
+    [sub addTarget:self action:@selector(instanceBack) forControlEvents:UIControlEventTouchUpInside]; [self.topBar addSubview:sub];
 
     [NSLayoutConstraint activateConstraints:@[
         [self.topBar.topAnchor
@@ -337,6 +343,7 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [self.topBar layoutIfNeeded];
+    [self.topBar viewWithTag:909].frame=self.topBar.bounds;
     CGFloat leftW=[self.topBar launchButtonCenterX];
     self.launchVC.leftPanelWidth=leftW;
     self.downloadVC.leftPanelWidth=leftW;
@@ -346,6 +353,10 @@
     [self.downloadVC.view setNeedsLayout];
     [self.settingsVC.view setNeedsLayout];
 }
+
+- (void)showInstanceBar:(NSNotification *)n {UIView *v=[self.topBar viewWithTag:909];v.hidden=NO;v.alpha=0;[UIView animateWithDuration:.2 animations:^{v.alpha=1;}];}
+- (void)hideInstanceBar:(NSNotification *)n {UIView *v=[self.topBar viewWithTag:909];[UIView animateWithDuration:.15 animations:^{v.alpha=0;} completion:^(BOOL x){v.hidden=YES;}];}
+- (void)instanceBack {[self.launchVC dismissTransientUI];}
 
 - (BOOL)prefersStatusBarHidden {
     return YES;

@@ -83,11 +83,6 @@ static UIColor *C(NSUInteger x) {
         [UIColor colorWithWhite:.98 alpha:.96];
     [self.view addSubview:self.leftPanel];
 
-    UIButton *back=[self button:@"返回"
-        icon:@"chevron.left" action:@selector(backPressed)];
-    back.tag=101;
-    [self.leftPanel addSubview:back];
-
     UILabel *title=[[UILabel alloc] init];
     title.tag=102;
     title.text=@"Minecraft 文件夹";
@@ -213,16 +208,15 @@ static UIColor *C(NSUInteger x) {
     CGFloat leftW=self.leftPanelWidth>0?self.leftPanelWidth:w*.35;
     self.leftPanel.frame=CGRectMake(0,0,leftW,h);
     self.rightPanel.frame=CGRectMake(leftW,0,w-leftW,h);
-    [self.leftPanel viewWithTag:101].frame=CGRectMake(12,8,leftW-24,34);
-    [self.leftPanel viewWithTag:102].frame=CGRectMake(13,52,leftW-26,18);
+    [self.leftPanel viewWithTag:102].frame=CGRectMake(13,18,leftW-26,18);
 
     UIView *folder=[self.leftPanel viewWithTag:103];
-    folder.frame=CGRectMake(10,73,leftW-20,44);
+    folder.frame=CGRectMake(10,43,leftW-20,44);
     [folder viewWithTag:104].frame=CGRectMake(14,4,leftW-54,19);
     [folder viewWithTag:105].frame=CGRectMake(14,23,leftW-54,15);
-    [self.leftPanel viewWithTag:106].frame=CGRectMake(13,128,leftW-26,18);
-    self.createButton.frame=CGRectMake(10,150,leftW-20,34);
-    [self.leftPanel viewWithTag:107].frame=CGRectMake(10,150,leftW-20,34);
+    [self.leftPanel viewWithTag:106].frame=CGRectMake(13,101,leftW-26,18);
+    self.createButton.frame=CGRectMake(10,123,leftW-20,34);
+    [self.leftPanel viewWithTag:107].frame=CGRectMake(10,123,leftW-20,34);
 
     CGFloat rw=self.rightPanel.bounds.size.width;
     self.searchBar.frame=CGRectMake(25,15,rw-50,36);

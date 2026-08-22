@@ -159,6 +159,7 @@
     v.view.frame=self.view.bounds;
     [self.view addSubview:v.view];
     [v didMoveToParentViewController:self];
+    [NSNotificationCenter.defaultCenter postNotificationName:@"PCLShowInstanceBar" object:nil];
 }
 
 - (void)closeInstanceSelector {
@@ -168,6 +169,7 @@
     [v.view removeFromSuperview];
     [v removeFromParentViewController];
     self.instanceSelectVC=nil;
+    [NSNotificationCenter.defaultCenter postNotificationName:@"PCLHideInstanceBar" object:nil];
     [self reloadInstances];
 }
 

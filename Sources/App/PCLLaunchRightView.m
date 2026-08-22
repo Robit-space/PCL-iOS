@@ -102,7 +102,7 @@ static UIColor *PCLRightColor(NSUInteger rgb) {
 
 - (void)buildHintCard {
     self.hintCard = [[PCLCardView alloc] init];
-    self.hintCard.titleLabel.text = @"PCL [iOS] 提示";
+    self.hintCard.titleLabel.text = @"正在开发";
 
     [self.mainView addSubview:self.hintCard];
 
@@ -431,6 +431,7 @@ static UIColor *PCLRightColor(NSUInteger rgb) {
 - (void)prepareCEEnterAnimation {
     for (UIView *view in [self ceAnimatedViews]) {
         [view.layer removeAllAnimations];
+        view.alpha=1.0;
 
         view.layer.opacity=0.0;
         [view.layer setValue:@(-16.0)

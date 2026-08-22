@@ -1,12 +1,17 @@
 #import "PCLLaunchViewController.h"
 #import "PCLLaunchLeftView.h"
 #import "PCLLaunchRightView.h"
+#import "PCLInstanceSelectViewController.h"
+#import "PCLInstanceManager.h"
+#import "PCLGameLauncher.h"
+#import "PCLProfileStore.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PCLLaunchViewController ()
 
 @property (nonatomic, strong) PCLLaunchLeftView *leftView;
 @property (nonatomic, strong) PCLLaunchRightView *rightView;
+@property (nonatomic, strong) PCLInstanceSelectViewController *instanceSelectVC;
 
 @property (nonatomic, copy) NSArray *instances;
 
@@ -119,20 +124,51 @@
     self.rightView.frame=CGRectMake(leftW,y,MAX(0,w-leftW),pageH);
     self.leftShadowView.frame=CGRectMake(leftW,y,4*scale,pageH);
     self.leftShadowGradient.frame=self.leftShadowView.bounds;
+    self.instanceSelectVC.leftPanelWidth=leftW;
+    self.instanceSelectVC.view.frame=self.view.bounds;
 }
 
 - (void)reloadInstances {
-    self.instances=@[];
-
-    [NSUserDefaults.standardUserDefaults
+    PCLInstanceManager *m=[PCLInstanceManager sharedManager];
+    self.instances=[m allInstances];
+    PCLInstance *i=[m currentInstance];
+    if(i.name.length)[NSUserDefaults.standardUserDefaults
+        setObject:i.name forKey:@"PCLSelectedInstance"];
+    else [NSUserDefaults.standardUserDefaults
         removeObjectForKey:@"PCLSelectedInstance"];
-
     [self.leftView reloadState];
 }
 
 - (void)selectInstance {
-    [self temporaryMessage:
-        @"实例选择页正在按 PCL CE 重做。"];
+    if(self.instanceSelectVC)return;
+    PCLInstanceSelectViewController *v=
+        [[PCLInstanceSelectViewController alloc]init];
+    v.leftPanelWidth=self.leftPanelWidth;
+    __weak typeof(self) w=self;
+    v.onBack=^{[w closeInstanceSelector];};
+    v.onSelect=^(PCLInstance *i){
+        [w reloadInstances];
+        [w closeInstanceSelector];
+    };
+    v.onDownload=^{
+        [w closeInstanceSelector];
+        if(w.onOpenDownload)w.onOpenDownload();
+    };
+    self.instanceSelectVC=v;
+    [self addChildViewController:v];
+    v.view.frame=self.view.bounds;
+    [self.view addSubview:v.view];
+    [v didMoveToParentViewController:self];
+}
+
+- (void)closeInstanceSelector {
+    PCLInstanceSelectViewController *v=self.instanceSelectVC;
+    if(!v)return;
+    [v willMoveToParentViewController:nil];
+    [v.view removeFromSuperview];
+    [v removeFromParentViewController];
+    self.instanceSelectVC=nil;
+    [self reloadInstances];
 }
 
 - (void)instanceSettings {
@@ -175,6 +211,7 @@
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];
+    [self closeInstanceSelector];
 }
 
 - (void)prepareCEEnterAnimation {

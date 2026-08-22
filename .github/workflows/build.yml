@@ -127,6 +127,14 @@ jobs:
           gmake package TROLLSTORE_JIT_ENT=1
           ls -lh artifacts/*.tipa
       
+      - name: Verify IPA/TIPA structure
+        run: |
+          set -e
+          for f in artifacts/*.ipa artifacts/*.tipa; do
+            echo "Checking $f"
+            unzip -Z1 "$f" | grep -Eq '^Payload/[^/]+\.app/Info\.plist$'
+          done
+
       # === 构建信息 ===
       - name: Build Info
         run: |

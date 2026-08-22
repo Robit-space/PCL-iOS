@@ -162,8 +162,8 @@ METHOD_PACKAGE = \
 		IPA_SUFFIX=".ipa"; \
 	fi; \
 	rm -f $(OUTPUTDIR)/$(APP_BUNDLE_ID)-$(APP_VERSION)-ios$$IPA_SUFFIX; \
-	cd $(OUTPUTDIR)/Payload; \
-	zip --symlinks -r $(OUTPUTDIR)/$(APP_BUNDLE_ID)-$(APP_VERSION)-ios$$IPA_SUFFIX .
+	cd $(OUTPUTDIR); \
+	zip --symlinks -r $(OUTPUTDIR)/$(APP_BUNDLE_ID)-$(APP_VERSION)-ios$$IPA_SUFFIX Payload
 
 # ============================================================================
 # Java JRE下载 (与Amethyst METHOD_JAVA_UNPACK对齐)

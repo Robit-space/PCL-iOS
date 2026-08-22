@@ -156,55 +156,6 @@ static UIColor *C(NSUInteger x) {
 
 
 
-    UILabel *name=[[UILabel alloc] init];
-
-    name.tag=104;
-
-    name.text=@"PCL Games";
-
-    name.font=[UIFont systemFontOfSize:14
-
-        weight:UIFontWeightSemibold];
-
-    name.textColor=C(0x343D4A);
-
-    [folder addSubview:name];
-
-    UILabel *path=[[UILabel alloc] init];
-
-    path.tag=105;
-
-    path.text=[[PCLVersionManager sharedManager] gamesDirectory];
-
-    path.font=[UIFont systemFontOfSize:10.5];
-
-    path.textColor=C(0x6F7A88);
-
-    path.lineBreakMode=NSLineBreakByTruncatingMiddle;
-
-    [folder addSubview:path];
-
-    self.createButton=[self button:@"新建实例"
-
-        icon:@"plus" action:@selector(createPressed)];
-
-    self.createButton.tag=106;
-
-    [self.leftPanel addSubview:self.createButton];
-
-    UIButton *download=[self button:@"下载新游戏"
-
-        icon:@"square.and.arrow.down"
-
-        action:@selector(downloadPressed)];
-
-    download.tag=107;
-
-    [self.leftPanel addSubview:download];
-
-}
-
-
 - (void)buildRight {
     self.rightPanel=[[UIView alloc] init];
     [self.view addSubview:self.rightPanel];
@@ -237,15 +188,12 @@ static UIColor *C(NSUInteger x) {
     self.emptyTitle.textColor=C(0x1370F3);
     [self.emptyCard addSubview:self.emptyTitle];
 
-    self.emptyText=[[UILabel alloc] init];
-    self.emptyText.numberOfLines=0;
-    self.emptyText.textAlignment=NSTextAlignmentCenter;
-    [self.emptyCard addSubview:self.emptyText];
-
-    self.emptyText=[[UILabel alloc] init];
-    self.emptyText.numberOfLines=0;
-    self.emptyText.textAlignment=NSTextAlignmentCenter;
-    [self.emptyCard addSubview:self.emptyText];
+    self.emptyDownload=[UIButton buttonWithType:UIButtonTypeSystem];
+    [self.emptyDownload setTitle:@"下载游戏" forState:UIControlStateNormal];
+    [self.emptyDownload addTarget:self action:@selector(downloadPressed)
+        forControlEvents:UIControlEventTouchUpInside];
+    [self.emptyCard addSubview:self.emptyDownload];
+}
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];

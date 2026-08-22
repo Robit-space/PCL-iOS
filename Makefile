@@ -226,8 +226,9 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	ldid -S "$(OUTPUTDIR)/entitlements.sideload.xml" "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
-	ldid -S -M "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
+	@# 先清除已有签名(-M)，再使用entitlements签名
+	ldid -S -M "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)" 2>/dev/null || true
+	ldid -S "$(OUTPUTDIR)/entitlements.sideload.xml" -M "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
 	@echo "[PCL-iOS] 签名完成"
 
 # ============================================================================

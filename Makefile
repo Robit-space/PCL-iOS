@@ -36,6 +36,9 @@ SLIMMED ?= 0
 # 代码签名标识（-1表示跳过正式签名）
 SIGNING_TEAMID ?= -1
 
+# 目标平台 (参考Amethyst, 2=iOS)
+PLATFORM ?= 2
+
 ifeq (1,$(RELEASE))
 BUILD_CONFIG := Release
 else
@@ -131,8 +134,10 @@ METHOD_MACHO = \
 
 # ============================================================================
 # 平台重打标方法 (参考Amethyst METHOD_CHANGE_PLAT)
+# iOS=2, vtool设置build version + ldid -S -M 重新签名
 # ============================================================================
 METHOD_CHANGE_PLAT = \
+	vtool -arch arm64 -set-build-version $(PLATFORM) 14.0 16.0 -replace -output $(1) $(1); \
 	ldid -S -M $(1)
 
 # ============================================================================
@@ -222,12 +227,16 @@ entitlements:
 	@echo "[PCL-iOS] entitlements 生成完成"
 
 # ============================================================================
-# 签名
+# 签名 (参考Amethyst sign_macho)
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	@# 只对主二进制签名（对整个app递归会因JRE dylib导致ldid断言失败）
-	ldid -S "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
+	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app; \
+	if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
+		ldid -S$(OUTPUTDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
+	else \
+		ldid -S$(OUTPUTDIR)/entitlements.sideload.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
+	fi
 	@echo "[PCL-iOS] 签名完成"
 
 # ============================================================================
@@ -246,12 +255,15 @@ payload: build entitlements
 	$(call METHOD_DIRCHECK,$(OUTPUTDIR)/Payload)
 	@# 复制 .app
 	cp -R build/Build/Products/$(BUILD_CONFIG)-iphoneos/$(APP_NAME).app $(OUTPUTDIR)/Payload/
-	@# 复制 JRE 到 .app
+	@# 复制 JRE 到 .app (参考Amethyst)
 	cp -R $(OUTPUTDIR)/java_runtimes $(OUTPUTDIR)/Payload/$(APP_NAME).app/
-	@# ldid 签名
+	@# ldid 签名 (参考Amethyst sign_macho)
 	$(MAKE) sign
-	@# 设置权限
+	@# 设置权限 (参考Amethyst)
 	chmod -R 755 $(OUTPUTDIR)/Payload
+	@# 平台重打标 - 对所有Mach-O文件执行vtool + ldid -S -M (参考Amethyst METHOD_MACHO)
+	@echo "[PCL-iOS] 平台重打标..."
+	$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/$(APP_NAME).app,$(call METHOD_CHANGE_PLAT,$$file))
 	@echo "[PCL-iOS] payload - end"
 
 # ============================================================================

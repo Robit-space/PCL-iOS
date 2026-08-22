@@ -133,6 +133,16 @@ METHOD_MACHO = \
 	done
 
 # ============================================================================
+# Mach-O 签名 (排除JRE目录, 避免ldi对JRE dylib assert失败)
+# ============================================================================
+METHOD_MACHO_SIGN_APP = \
+	for file in $$(find $(1) -type f -not -path "*/java_runtimes/*"); do \
+		if [[ "$$(file -b $$file 2>/dev/null)" == *"Mach-O"* ]]; then \
+			ldid -S $$file; \
+		fi; \
+	done
+
+# ============================================================================
 # 平台重打标方法 (参考Amethyst METHOD_CHANGE_PLAT)
 # iOS=2, vtool设置build version + ldid -S -M 重新签名
 # ============================================================================
@@ -231,8 +241,11 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app; \
-	if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
+	@# 参考Amethyst: 签名整个app + 二进制加entitlements
+	@# 使用METHOD_MACHO_SIGN_APP排除JRE目录(ldi对某些JRE dylib会assert)
+	$(call METHOD_MACHO_SIGN_APP,$(OUTPUTDIR)/Payload/$(APP_NAME).app)
+	@# 主二进制加entitlements
+	@if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
 		ldid -S$(OUTPUTDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
 	else \
 		ldid -S$(OUTPUTDIR)/entitlements.sideload.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \

@@ -136,6 +136,18 @@ jobs:
             fi
           done
 
+      - name: Verify Mach-O signing
+        run: |
+          echo "=== Mach-O validation ==="
+          find artifacts/Payload -type f -print0 |
+          while IFS= read -r -d '' file; do
+            if file -b "$file" | grep -q "Mach-O"; then
+              echo "$file"
+              lipo -info "$file" || exit 1
+              ldid -e "$file" >/dev/null || exit 1
+            fi
+          done
+
       # === dSYM 生成 (调试符号 - 对崩溃排查至关重要) ===
       - name: Generate dSYM
         run: gmake dsym

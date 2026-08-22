@@ -246,7 +246,7 @@ sign:
 	@# 主二进制签名 (唯一必须的签名, 否则app无法运行)
 	@# 注: ldid 2.1.5.1 (Procursus) 对libshaderc.dylib / libvirgl_test_server.dylib
 	@# 等dylib会触发assert, 因此只签名主二进制
-	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)
+	ldid -S $(OUTPUTDIR)/Payload/$(APP_NAME).app
 	@# 主二进制加entitlements (参考Amethyst sign_macho)
 	@if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
 		ldid -S$(OUTPUTDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME); \
@@ -273,6 +273,8 @@ payload: build entitlements
 	cp -R build/Build/Products/$(BUILD_CONFIG)-iphoneos/$(APP_NAME).app $(OUTPUTDIR)/Payload/
 	@# 复制 JRE 到 .app (参考Amethyst)
 	cp -R $(OUTPUTDIR)/java_runtimes $(OUTPUTDIR)/Payload/$(APP_NAME).app/
+	@# 清理并验证所有 Mach-O，确保设备端 ldid 可重新签名
+	bash scripts/sanitize_macho.sh $(OUTPUTDIR)/Payload/$(APP_NAME).app
 	@# TrollStore/ldid 只保留 arm64 Mach-O
 	@echo "[PCL-iOS] 检查并精简 fat Mach-O..."
 	@find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f -print0 | \

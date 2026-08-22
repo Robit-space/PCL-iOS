@@ -50,7 +50,17 @@
     UIButton *sub=[UIButton buttonWithType:UIButtonTypeSystem]; sub.tag=909; sub.hidden=YES; sub.backgroundColor=self.topBar.backgroundColor;
     [sub setTitle:@"  实例选择" forState:UIControlStateNormal]; [sub setImage:[UIImage systemImageNamed:@"arrow.left"] forState:UIControlStateNormal];
     [sub setTitleColor:UIColor.whiteColor forState:UIControlStateNormal]; sub.tintColor=UIColor.whiteColor; sub.titleLabel.font=[UIFont systemFontOfSize:15]; sub.contentHorizontalAlignment=UIControlContentHorizontalAlignmentLeft;
-    [sub addTarget:self action:@selector(instanceBack) forControlEvents:UIControlEventTouchUpInside]; [self.topBar addSubview:sub];
+    [sub addTarget:self action:@selector(instanceBack) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *back=[UIButton buttonWithType:UIButtonTypeSystem];
+    back.tag=910; back.tintColor=UIColor.whiteColor;
+    [back setImage:[UIImage systemImageNamed:@"arrow.left"] forState:UIControlStateNormal];
+    UILabel *title=[[UILabel alloc] init]; title.tag=911;
+    title.text=@"实例选择"; title.textColor=UIColor.whiteColor;
+    title.textAlignment=NSTextAlignmentCenter;
+    [sub setTitle:nil forState:UIControlStateNormal];
+    [sub setImage:nil forState:UIControlStateNormal];
+    [sub addSubview:back]; [sub addSubview:title];
+    [self.topBar addSubview:sub];
 
     [NSLayoutConstraint activateConstraints:@[
         [self.topBar.topAnchor

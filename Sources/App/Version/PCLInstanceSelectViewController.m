@@ -282,11 +282,36 @@ static UIColor *C(NSUInteger x) {
     [self.tableView reloadData];
 }
 
+- (BOOL)isUncommon:(PCLInstance *)i {
+
+ NSString *v=i.versionId.lowercaseString;
+
+ return [v containsString:@"snapshot"]||[v containsString:@"pre"]||
+
+ [v containsString:@"-rc"]||[v containsString:@"alpha"]||
+
+ [v containsString:@"beta"]||[v containsString:@"w"];
+
+}
+
+- (NSArray *)instancesInSection:(NSInteger)n {
+
+ return [self.shown filteredArrayUsingPredicate:
+
+ [NSPredicate predicateWithBlock:^BOOL(PCLInstance *i,NSDictionary *x){
+
+  return n?[self isUncommon:i]:![self isUncommon:i];
+
+ }]];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)t{return 2;}
+
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s {
-    return self.shown.count;
+    return s&&!self.uncommonExpanded?0:[self instancesInSection:s].count;
 }
 - (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
-    return @"常规实例";
+    return s?@"不常用版本":@"常规版本";
 }
 
 - (UIView *)tableView:(UITableView *)t viewForHeaderInSection:(NSInteger)s {

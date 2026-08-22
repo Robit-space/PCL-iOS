@@ -226,7 +226,7 @@ entitlements:
 # ============================================================================
 sign:
 	@echo "[PCL-iOS] ldid 签名..."
-	ldid -S "$(OUTPUTDIR)/Payload/$(APP_NAME).app"
+	@# 只对主二进制签名（对整个app递归会因JRE dylib导致ldid断言失败）
 	ldid -S "$(OUTPUTDIR)/Payload/$(APP_NAME).app/$(APP_NAME)"
 	@echo "[PCL-iOS] 签名完成"
 

@@ -278,13 +278,15 @@ payload: build entitlements
 	@# 设置权限 (参考Amethyst)
 	chmod -R 755 $(OUTPUTDIR)/Payload
 	@# 平台重打标 - 对所有Mach-O文件执行vtool + ldid -S -M (参考Amethyst METHOD_MACHO)
-	@echo "[PCL-iOS] 平台重打标..."
-	@for file in $$(find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f); do \
-		if [[ "$$(file -b $$file 2>/dev/null)" == *"Mach-O"* ]]; then \
-			vtool -arch arm64 -set-build-version $(PLATFORM) 14.0 16.0 -replace -output $$file $$file 2>/dev/null || true; \
-			ldid -S -M $$file 2>/dev/null || true; \
-		fi; \
-	done
+	@if [ '$(PLATFORM)' != '2' ]; then \
+		echo "[PCL-iOS] 平台重打标..."; \
+		for file in $$(find $(OUTPUTDIR)/Payload/$(APP_NAME).app -type f); do \
+			if [[ "$$(file -b $$file)" == *"Mach-O"* ]]; then \
+				vtool -arch arm64 -set-build-version $(PLATFORM) 14.0 16.0 -replace -output $$file $$file; \
+				ldid -S -M $$file; \
+			fi; \
+		done; \
+	fi
 	@echo "[PCL-iOS] payload - end"
 
 # ============================================================================

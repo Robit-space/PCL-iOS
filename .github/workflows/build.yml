@@ -135,6 +135,15 @@ jobs:
             unzip -Z1 "$f" | grep -Eq '^Payload/[^/]+\.app/Info\.plist$'
           done
 
+      - name: Verify IPA structure
+        run: |
+          set -e
+          for f in artifacts/*.ipa artifacts/*.tipa; do
+            echo "Checking $f"
+            unzip -Z1 "$f" | grep -Eq '^Payload/[^/]+\.app/Info\.plist$'
+            unzip -Z1 "$f" | grep -Eq '^Payload/[^/]+\.app/PCL-iOS$'
+          done
+
       # === 构建信息 ===
       - name: Build Info
         run: |

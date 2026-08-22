@@ -167,7 +167,7 @@ typedef struct {
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, iconName.length > 0 ? 8 : 16, 0, 0);
     
-    [btn.heightAnchor constraintEqualToConstant:42].active = YES;
+    [btn.heightAnchor constraintEqualToConstant:36].active = YES;
     
     [btn addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     

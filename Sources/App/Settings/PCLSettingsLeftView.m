@@ -135,7 +135,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     btn.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightMedium];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
-    [btn.heightAnchor constraintEqualToConstant:42].active = YES;
+    [btn.heightAnchor constraintEqualToConstant:36].active = YES;
     btn.backgroundColor = [UIColor clearColor];
     
     [btn addTarget:self action:@selector(tabPressed:) forControlEvents:UIControlEventTouchUpInside];

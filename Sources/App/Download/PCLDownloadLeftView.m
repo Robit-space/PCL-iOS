@@ -84,22 +84,22 @@ typedef struct {
 
 - (void)buildTabs {
     PCLDownloadTabInfo tabs[] = {
-        {PCLDownloadTabMinecraft, @"Minecraft", @"TopBarPlay", NO},
+        {PCLDownloadTabMinecraft, @"Minecraft", @"shippingbox.fill", NO},
         {999, @"社区资源", @"", YES},
-        {PCLDownloadTabMod, @"Mod", @"", NO},
-        {PCLDownloadTabModpack, @"整合包", @"", NO},
-        {PCLDownloadTabDataPack, @"数据包", @"", NO},
-        {PCLDownloadTabResourcePack, @"资源包", @"", NO},
-        {PCLDownloadTabShader, @"光影", @"", NO},
-        {PCLDownloadTabWorld, @"世界", @"", NO},
-        {PCLDownloadTabFavorites, @"收藏", @"", NO},
-        {999, @"安装", @"", YES},
-        {PCLDownloadTabClientInstall, @"客户端", @"", NO},
-        {PCLDownloadTabOptiFine, @"OptiFine", @"", NO},
-        {PCLDownloadTabForge, @"Forge", @"", NO},
-        {PCLDownloadTabNeoForge, @"NeoForge", @"", NO},
-        {PCLDownloadTabFabric, @"Fabric", @"", NO},
-        {PCLDownloadTabLiteLoader, @"LiteLoader", @"", NO},
+        {PCLDownloadTabMod, @"Mod", @"puzzlepiece.extension.fill", NO},
+        {PCLDownloadTabModpack, @"整合包", @"shippingbox", NO},
+        {PCLDownloadTabDataPack, @"数据包", @"doc.zipper", NO},
+        {PCLDownloadTabResourcePack, @"资源包", @"square.3.layers.3d", NO},
+        {PCLDownloadTabShader, @"光影", @"sparkles", NO},
+        {PCLDownloadTabWorld, @"世界", @"globe.asia.australia.fill", NO},
+        {PCLDownloadTabFavorites, @"收藏", @"star.fill", NO},
+        {999, @"独立安装", @"", YES},
+        {PCLDownloadTabClientInstall, @"Minecraft", @"shippingbox.fill", NO},
+        {PCLDownloadTabOptiFine, @"OptiFine", @"wand.and.stars", NO},
+        {PCLDownloadTabForge, @"Forge", @"hammer.fill", NO},
+        {PCLDownloadTabNeoForge, @"NeoForge", @"hammer.circle.fill", NO},
+        {PCLDownloadTabFabric, @"Fabric", @"square.stack.3d.up.fill", NO},
+        {PCLDownloadTabLiteLoader, @"LiteLoader", @"bolt.fill", NO},
     };
     
     int tabCount = sizeof(tabs) / sizeof(tabs[0]);
@@ -145,11 +145,11 @@ typedef struct {
     btn.tab = tab;
     btn.iconName = iconName;
     
-    btn.layer.cornerRadius = 8;
+    btn.layer.cornerRadius = 6;
     btn.clipsToBounds = YES;
     
     if (iconName.length > 0) {
-        UIImage *icon = [[UIImage imageNamed:iconName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *icon = [[UIImage systemImageNamed:iconName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         [btn setImage:icon forState:UIControlStateNormal];
         btn.tintColor = PCLColor(0x1370F3);
         btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -188,9 +188,9 @@ typedef struct {
 - (void)updateTabAppearance {
     for (PCLDownloadTabButton *btn in self.tabButtons) {
         BOOL selected = (btn.tab == self.selectedTab);
-        btn.backgroundColor = selected ? PCLColor(0x1370F3) : [UIColor clearColor];
-        [btn setTitleColor:selected ? [UIColor whiteColor] : PCLColor(0x343D4A) forState:UIControlStateNormal];
-        btn.tintColor = selected ? [UIColor whiteColor] : PCLColor(0x1370F3);
+        btn.backgroundColor = selected ? PCLColor(0xE8F0FE) : [UIColor clearColor];
+        [btn setTitleColor:selected ? PCLColor(0x1370F3) : PCLColor(0x343D4A) forState:UIControlStateNormal];
+        btn.tintColor = selected ? PCLColor(0x1370F3) : PCLColor(0x697482);
     }
 }
 

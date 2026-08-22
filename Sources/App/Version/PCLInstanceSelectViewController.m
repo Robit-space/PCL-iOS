@@ -23,6 +23,7 @@ static UIColor *C(NSUInteger x) {
 @property NSArray<PCLInstance *> *instances;
 @property NSArray<PCLInstance *> *shown;
 @property NSString *selectedName;
+@property BOOL uncommonExpanded;
 @end
 
 @implementation PCLInstanceSelectViewController
@@ -79,13 +80,12 @@ static UIColor *C(NSUInteger x) {
 
 - (void)buildLeft {
     self.leftPanel=[[UIView alloc] init];
-    self.leftPanel.backgroundColor=
-        [UIColor colorWithWhite:.98 alpha:.96];
+    self.leftPanel.backgroundColor=UIColor.clearColor;
     [self.view addSubview:self.leftPanel];
 
     UILabel *title=[[UILabel alloc] init];
     title.tag=102;
-    title.text=@"Minecraft 文件夹";
+    title.text=@"文件夹列表";
     title.font=[UIFont systemFontOfSize:12
         weight:UIFontWeightSemibold];
     title.textColor=C(0x697482);
@@ -98,6 +98,10 @@ static UIColor *C(NSUInteger x) {
     folder.layer.borderWidth=0;
     folder.layer.borderColor=C(0x1370F3).CGColor;
     [self.leftPanel addSubview:folder];
+    UIView *accent=[[UIView alloc] init];
+    accent.tag=108; accent.backgroundColor=C(0x1370F3);
+    accent.layer.cornerRadius=1.5;
+    [folder addSubview:accent];
 
 
     UILabel *name=[[UILabel alloc] init];
@@ -159,13 +163,13 @@ static UIColor *C(NSUInteger x) {
     [self.rightPanel addSubview:self.searchBar];
 
     self.tableView=[[UITableView alloc]
-        initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
+        initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.backgroundColor=UIColor.clearColor;
     self.tableView.separatorStyle=
         UITableViewCellSeparatorStyleNone;
-    self.tableView.rowHeight=44;
+    self.tableView.rowHeight=54;
     self.tableView.contentInset=
-        UIEdgeInsetsMake(0,7,10,7);
+        UIEdgeInsetsMake(0,25,10,25);
     self.tableView.dataSource=self;
     self.tableView.delegate=self;
     [self.rightPanel addSubview:self.tableView];
@@ -211,12 +215,12 @@ static UIColor *C(NSUInteger x) {
     [self.leftPanel viewWithTag:102].frame=CGRectMake(13,18,leftW-26,18);
 
     UIView *folder=[self.leftPanel viewWithTag:103];
-    folder.frame=CGRectMake(10,43,leftW-20,44);
-    [folder viewWithTag:104].frame=CGRectMake(14,4,leftW-54,19);
-    [folder viewWithTag:105].frame=CGRectMake(14,23,leftW-54,15);
-    [self.leftPanel viewWithTag:106].frame=CGRectMake(13,101,leftW-26,18);
-    self.createButton.frame=CGRectMake(10,123,leftW-20,34);
-    [self.leftPanel viewWithTag:107].frame=CGRectMake(10,123,leftW-20,34);
+    folder.frame=CGRectMake(10,43,leftW-20,40);
+    [folder viewWithTag:108].frame=CGRectMake(0,5,3,30);
+    [folder viewWithTag:104].frame=CGRectMake(14,3,leftW-54,18);
+    [folder viewWithTag:105].frame=CGRectMake(14,21,leftW-54,14);
+    [self.leftPanel viewWithTag:106].frame=CGRectMake(13,96,leftW-26,18);
+    self.createButton.frame=CGRectMake(10,118,leftW-20,34);
 
     CGFloat rw=self.rightPanel.bounds.size.width;
     self.searchBar.frame=CGRectMake(25,15,rw-50,36);
@@ -285,19 +289,56 @@ static UIColor *C(NSUInteger x) {
     return @"常规实例";
 }
 
+- (UIView *)tableView:(UITableView *)t viewForHeaderInSection:(NSInteger)s {
+
+    UIButton *h=[UIButton buttonWithType:UIButtonTypeSystem];
+
+    NSString *a=self.uncommonExpanded?@"▾":@"›";
+
+    [h setTitle:s?[NSString stringWithFormat:@"%@  不常用版本",a]:@"常规版本"
+
+       forState:UIControlStateNormal];
+
+    [h setTitleColor:C(0x697482) forState:UIControlStateNormal];
+
+    h.contentHorizontalAlignment=UIControlContentHorizontalAlignmentLeft;
+    h.contentEdgeInsets=UIEdgeInsetsMake(0,12,0,0);
+
+    if(s)[h addTarget:self action:@selector(toggleUncommon)
+
+       forControlEvents:UIControlEventTouchUpInside];
+
+    return h;
+
+}
+
+- (void)toggleUncommon {
+
+    self.uncommonExpanded=!self.uncommonExpanded;
+
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1]
+
+      withRowAnimation:UITableViewRowAnimationFade];
+
+}
+
 - (UITableViewCell *)tableView:(UITableView *)t
         cellForRowAtIndexPath:(NSIndexPath *)x {
     static NSString *ID=@"PCLInstanceCell";
     UITableViewCell *c=[t dequeueReusableCellWithIdentifier:ID];
     if(!c)c=[[UITableViewCell alloc]
         initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:ID];
-    PCLInstance *i=self.shown[x.row];
+    PCLInstance *i=[self instancesInSection:x.section][x.row];
     c.textLabel.text=i.name;
     c.detailTextLabel.text=[NSString stringWithFormat:@"Minecraft %@",i.versionId];
 
     c.imageView.image=[UIImage systemImageNamed:@"cube.fill"];
     c.imageView.tintColor=C(0x1370F3);
-    c.backgroundColor=[UIColor colorWithWhite:1 alpha:.88];
+    c.backgroundColor=UIColor.clearColor;
+    c.contentView.backgroundColor=[UIColor colorWithWhite:1 alpha:.88];
+    c.contentView.layer.cornerRadius=6;
+    c.contentView.layer.borderWidth=.5;
+    c.contentView.layer.borderColor=C(0xE3E8EF).CGColor;
     c.accessoryType=[i.name isEqualToString:self.selectedName]?
         UITableViewCellAccessoryCheckmark:
         UITableViewCellAccessoryDetailButton;
@@ -313,7 +354,7 @@ static UIColor *C(NSUInteger x) {
 }
 
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)x {
-    PCLInstance *i=[self persist:self.shown[x.row]];
+    PCLInstance *i=[self persist:[self instancesInSection:x.section][x.row]];
     if(!i)return;
     [[PCLInstanceManager sharedManager] selectInstance:i];
     [NSUserDefaults.standardUserDefaults
@@ -325,7 +366,7 @@ static UIColor *C(NSUInteger x) {
 
 - (void)tableView:(UITableView *)t
  accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)x {
-    PCLInstance *i=self.shown[x.row];
+    PCLInstance *i=[self instancesInSection:x.section][x.row];
     UIAlertController *m=[UIAlertController
         alertControllerWithTitle:i.name message:i.versionId
         preferredStyle:UIAlertControllerStyleActionSheet];

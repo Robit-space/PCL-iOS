@@ -79,7 +79,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     
     [NSLayoutConstraint activateConstraints:@[
         [self.versionLabel.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:14],
-        [self.versionLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16],
+        [self.versionLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:25],
         
         [self.typeLabel.centerYAnchor constraintEqualToAnchor:self.versionLabel.centerYAnchor],
         [self.typeLabel.leadingAnchor constraintEqualToAnchor:self.versionLabel.trailingAnchor constant:8],
@@ -92,7 +92,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.dateLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-14],
         
         [self.downloadButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
-        [self.downloadButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16],
+        [self.downloadButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-25],
         [self.downloadButton.widthAnchor constraintEqualToConstant:72],
         [self.downloadButton.heightAnchor constraintEqualToConstant:32],
         
@@ -167,17 +167,17 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.cardStackView = [[UIStackView alloc] init];
     self.cardStackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cardStackView.axis = UILayoutConstraintAxisVertical;
-    self.cardStackView.spacing = 16;
+    self.cardStackView.spacing = 12;
     self.cardStackView.alignment = UIStackViewAlignmentFill;
     self.cardStackView.distribution = UIStackViewDistributionFill;
     [self.scrollView addSubview:self.cardStackView];
     
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor constant:16],
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor constant:10],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor constant:16],
         [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor constant:-16],
-        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.bottomAnchor constant:-16],
-        [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.widthAnchor constant:-32]
+        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.bottomAnchor constant:-25],
+        [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.widthAnchor constant:-50]
     ]];
     
     [self buildVersionPickerCard];
@@ -293,7 +293,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     listCard.translatesAutoresizingMaskIntoConstraints = NO;
     
     UILabel *listTitle = [[UILabel alloc] init];
-    listTitle.text = @"可用版本";
+    listTitle.text = @"Minecraft 版本";
     listTitle.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
     listTitle.textColor = PCLColor(0x343D4A);
     listTitle.translatesAutoresizingMaskIntoConstraints = NO;
@@ -305,7 +305,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.dataSource = self;
     self.versionTableView.backgroundColor = [UIColor clearColor];
     self.versionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.versionTableView.rowHeight = 72;
+    self.versionTableView.rowHeight = 60;
     self.versionTableView.scrollEnabled = NO;
     self.versionTableView.allowsSelection = NO;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
@@ -374,6 +374,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)switchToTab:(PCLDownloadTab)tab {
     self.currentTab = tab;
+    BOOL minecraft=tab==PCLDownloadTabMinecraft||
+        tab==PCLDownloadTabClientInstall;
+    self.versionPickerContainer.hidden=minecraft;
+    self.filterCard.hidden=YES;
     
     NSString *titles[] = {
         @"Minecraft", @"Mod", @"整合包", @"数据包", @"资源包", @"光影", @"世界", @"收藏",
@@ -652,8 +656,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
     
     [self.versionTableView reloadData];
     
-    CGFloat rowHeight = 72;
-    CGFloat tableHeight = MAX(200, self.filteredVersions.count * rowHeight);
+    CGFloat rowHeight = 60;
+    CGFloat headers=[self numberOfSectionsInTableView:self.versionTableView]>1?120:0;
+    CGFloat tableHeight=MAX(200,self.filteredVersions.count*rowHeight+headers);
     for (NSLayoutConstraint *constraint in self.versionTableView.constraints) {
         if (constraint.firstAttribute == NSLayoutAttributeHeight) {
             constraint.constant = tableHeight;
@@ -664,14 +669,73 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 #pragma mark - UITableViewDataSource
 
+- (NSArray *)versionsForSection:(NSInteger)section {
+
+    BOOL mc=self.currentTab==PCLDownloadTabMinecraft||
+
+      self.currentTab==PCLDownloadTabClientInstall;
+
+    if(!mc)return self.filteredVersions;
+
+    NSMutableArray *r=[NSMutableArray array],*s=[NSMutableArray array],
+
+      *o=[NSMutableArray array];
+
+    for(NSDictionary *v in self.filteredVersions){
+
+      NSString *t=v[@"type"]?:@"";
+
+      if([t isEqualToString:@"release"])[r addObject:v];
+
+      else if([t isEqualToString:@"snapshot"])[s addObject:v];
+
+      else [o addObject:v];
+
+    }
+
+    if(section==0){
+      NSMutableArray *n=[NSMutableArray array];
+
+      if(r.count)[n addObject:r.firstObject];
+
+      if(s.count)[n addObject:s.firstObject];
+
+      return n;
+
+    }
+
+    if(section==1)return r.count>1?[r subarrayWithRange:NSMakeRange(1,r.count-1)]:@[];
+
+    if(section==2)return s.count>1?[s subarrayWithRange:NSMakeRange(1,s.count-1)]:@[];
+
+    return o;
+
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)t {
+
+    return self.currentTab==PCLDownloadTabMinecraft||
+
+      self.currentTab==PCLDownloadTabClientInstall?4:1;
+
+}
+
+- (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
+
+    if([self numberOfSectionsInTableView:t]==1)return nil;
+
+    return @[@"最新版本",@"正式版",@"快照版",@"远古版"][s];
+
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.filteredVersions.count;
+    return [self versionsForSection:section].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLDownloadVersionCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VersionCell" forIndexPath:indexPath];
     
-    NSDictionary *version = self.filteredVersions[indexPath.row];
+    NSDictionary *version = [self versionsForSection:indexPath.section][indexPath.row];
     NSString *versionId = version[@"id"] ?: version[@"version"] ?: @"";
     NSString *type = version[@"type"] ?: @"";
     NSString *releaseTime = version[@"releaseTime"] ?: @"";

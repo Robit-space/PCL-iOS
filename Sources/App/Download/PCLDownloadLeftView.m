@@ -66,7 +66,7 @@ typedef struct {
     self.stackView = [[UIStackView alloc] init];
     self.stackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.stackView.axis = UILayoutConstraintAxisVertical;
-    self.stackView.spacing = 2;
+    self.stackView.spacing = 0;
     self.stackView.alignment = UIStackViewAlignmentFill;
     self.stackView.distribution = UIStackViewDistributionFill;
     [self.scrollView addSubview:self.stackView];
@@ -148,7 +148,7 @@ typedef struct {
     btn.tab = tab;
     btn.iconName = iconName;
     
-    btn.layer.cornerRadius = 6;
+    btn.layer.cornerRadius = 5;
     btn.clipsToBounds = YES;
     
     if (iconName.length > 0) {
@@ -176,7 +176,7 @@ typedef struct {
     UIImageView *refresh=[[UIImageView alloc]
       initWithImage:[UIImage systemImageNamed:@"arrow.clockwise"]];
     refresh.tag=701; refresh.tintColor=PCLColor(0x697482);
-    refresh.translatesAutoresizingMaskIntoConstraints=NO;
+    refresh.translatesAutoresizingMaskIntoConstraints=NO; refresh.hidden=YES;
     [btn addSubview:refresh];
     [NSLayoutConstraint activateConstraints:@[
       [refresh.trailingAnchor constraintEqualToAnchor:btn.trailingAnchor constant:-13],
@@ -202,9 +202,10 @@ typedef struct {
 - (void)updateTabAppearance {
     for (PCLDownloadTabButton *btn in self.tabButtons) {
         BOOL selected = (btn.tab == self.selectedTab);
-        btn.backgroundColor = selected ? PCLColor(0xE8F0FE) : [UIColor clearColor];
+        btn.backgroundColor = selected ? [PCLColor(0xE0EAFD) colorWithAlphaComponent:.75] : UIColor.clearColor;
         [btn setTitleColor:selected ? PCLColor(0x1370F3) : PCLColor(0x343D4A) forState:UIControlStateNormal];
-        btn.tintColor = selected ? PCLColor(0x1370F3) : PCLColor(0x697482);
+        btn.tintColor=selected?PCLColor(0x0B5BCB):PCLColor(0x697482);
+        [btn viewWithTag:701].hidden=!selected;
     }
 }
 

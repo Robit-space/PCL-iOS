@@ -37,7 +37,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)setupUI {
     self.backgroundColor = [UIColor clearColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.contentView.backgroundColor=[UIColor colorWithWhite:1 alpha:.88];
+    self.contentView.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.82];
     self.contentView.clipsToBounds=YES;
     self.versionIcon=[[UIImageView alloc] init];
     self.versionIcon.contentMode=UIViewContentModeScaleAspectFit;
@@ -45,7 +45,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.contentView addSubview:self.versionIcon];
     
     self.versionLabel = [[UILabel alloc] init];
-    self.versionLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
+    self.versionLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
     self.versionLabel.textColor = PCLColor(0x343D4A);
     self.versionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.versionLabel];
@@ -58,7 +58,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.typeLabel.clipsToBounds = YES;
     self.typeLabel.textAlignment = NSTextAlignmentCenter;
     self.typeLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.contentView addSubview:self.typeLabel];
+    [self.contentView addSubview:self.typeLabel]; self.typeLabel.hidden=YES;
     
     self.dateLabel = [[UILabel alloc] init];
     self.dateLabel.font = [UIFont systemFontOfSize:12];
@@ -75,7 +75,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.downloadButton.clipsToBounds = YES;
     self.downloadButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.downloadButton addTarget:self action:@selector(downloadTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.downloadButton];
+    [self.contentView addSubview:self.downloadButton]; self.downloadButton.hidden=YES;
     
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -184,11 +184,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.scrollView addSubview:self.cardStackView];
     
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor constant:10],
-        [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor constant:16],
-        [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor constant:-16],
-        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.bottomAnchor constant:-25],
-        [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.widthAnchor constant:-50]
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:25],
+        [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
+        [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.trailingAnchor constant:-25],
+        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor constant:-25],
+        [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.frameLayoutGuide.widthAnchor constant:-50]
     ]];
     
     [self buildVersionPickerCard];
@@ -721,9 +721,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     }
 
-    if(section==1)return r.count>1?[r subarrayWithRange:NSMakeRange(1,r.count-1)]:@[];
+    if(section==1)return r;
 
-    if(section==2)return s.count>1?[s subarrayWithRange:NSMakeRange(1,s.count-1)]:@[];
+    if(section==2)return s;
 
     return o;
 
@@ -760,7 +760,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  UIView *c=[[UIView alloc]initWithFrame:CGRectMake(0,15,w,40)];
 
- c.backgroundColor=[UIColor colorWithWhite:1 alpha:.9];c.layer.cornerRadius=6;
+ c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.82];c.layer.cornerRadius=5;
 
  c.autoresizingMask=UIViewAutoresizingFlexibleWidth;[v addSubview:c];
 
@@ -770,7 +770,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)a.count]:names[n];
 
- l.font=[UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];[c addSubview:l];
+ l.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];[c addSubview:l];
 
  UIButton *b=[[UIButton alloc]initWithFrame:c.bounds];b.tag=n;
 
@@ -889,6 +889,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
     
     return cell;
 }
+- (void)tableView:(UITableView*)t didSelectRowAtIndexPath:(NSIndexPath*)p{PCLDownloadVersionCell*c=[t cellForRowAtIndexPath:p];if(c.onDownload)c.onDownload();}
 
 - (void)downloadVersion:(NSString *)versionId url:(NSString *)urlString type:(NSString *)type {
     if (urlString.length == 0) {

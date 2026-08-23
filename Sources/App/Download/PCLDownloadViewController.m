@@ -71,4 +71,17 @@
     [self.rightView dismissTransientUI];
 }
 
+- (void)prepareCEEnterAnimation {
+ [self.leftView prepareCEEnterAnimation];
+ [self.rightView prepareCEEnterAnimation];
+}
+- (void)playCEEnterAnimation {
+ [self.leftView playCEEnterAnimation];
+ [self.rightView playCEEnterAnimation];
+}
+- (void)playCEExitAnimation {
+ [self.leftView playCEExitAnimation];
+ [self.rightView playCEExitAnimation];
+}
+
 @end

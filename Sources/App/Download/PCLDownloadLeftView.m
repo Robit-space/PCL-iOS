@@ -98,7 +98,10 @@ typedef struct {
         {PCLDownloadTabOptiFine, @"OptiFine", @"wand.and.stars", NO},
         {PCLDownloadTabForge, @"Forge", @"hammer.fill", NO},
         {PCLDownloadTabNeoForge, @"NeoForge", @"hammer.circle.fill", NO},
+        {PCLDownloadTabCleanroom, @"Cleanroom", @"drop.triangle.fill", NO},
         {PCLDownloadTabFabric, @"Fabric", @"square.stack.3d.up.fill", NO},
+        {PCLDownloadTabLegacyFabric, @"Legacy Fabric", @"scroll.fill", NO},
+        {PCLDownloadTabLabyMod, @"LabyMod", @"cube.box.fill", NO},
         {PCLDownloadTabLiteLoader, @"LiteLoader", @"bolt.fill", NO},
     };
     

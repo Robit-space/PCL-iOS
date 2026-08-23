@@ -14,7 +14,10 @@ typedef NS_ENUM(NSInteger, PCLDownloadTab) {
     PCLDownloadTabForge,
     PCLDownloadTabNeoForge,
     PCLDownloadTabFabric,
-    PCLDownloadTabLiteLoader
+    PCLDownloadTabLiteLoader,
+    PCLDownloadTabCleanroom,
+    PCLDownloadTabLegacyFabric,
+    PCLDownloadTabLabyMod
 };
 
 @interface PCLDownloadViewController : UIViewController
@@ -23,5 +26,8 @@ typedef NS_ENUM(NSInteger, PCLDownloadTab) {
 @property (nonatomic, copy) void (^onSelectInstallTab)(PCLDownloadTab tab);
 
 - (void)dismissTransientUI;
+- (void)prepareCEEnterAnimation;
+- (void)playCEEnterAnimation;
+- (void)playCEExitAnimation;
 
 @end

@@ -356,10 +356,11 @@
     UIView *sub=[self.topBar viewWithTag:909]; sub.frame=self.topBar.bounds;
     [sub viewWithTag:910].frame=CGRectMake(12,0,48,56);
     [sub viewWithTag:911].frame=CGRectMake(70,0,CGRectGetWidth(sub.bounds)-140,56);
-    CGFloat leftW=MIN(300.0,CGRectGetWidth(self.contentView.bounds));
-    self.launchVC.leftPanelWidth=leftW;
-    self.downloadVC.leftPanelWidth=leftW;
-    self.settingsVC.leftPanelWidth=leftW;
+    CGFloat launchLeftW=[self.topBar launchButtonCenterX];
+    CGFloat pageLeftW=MIN(300.0,CGRectGetWidth(self.contentView.bounds));
+    self.launchVC.leftPanelWidth=launchLeftW;
+    self.downloadVC.leftPanelWidth=pageLeftW;
+    self.settingsVC.leftPanelWidth=pageLeftW;
 
     [self.launchVC.view setNeedsLayout];
     [self.downloadVC.view setNeedsLayout];

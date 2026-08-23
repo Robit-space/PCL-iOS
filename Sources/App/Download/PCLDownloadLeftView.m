@@ -25,8 +25,9 @@ typedef struct {
 - (void)layoutSubviews {
  [super layoutSubviews];
  CGFloat h=self.bounds.size.height,w=self.bounds.size.width;
- self.imageView.frame=CGRectMake(13,(h-18)/2,18,18);
- self.titleLabel.frame=CGRectMake(43,0,MAX(0,w-78),h);
+ self.imageView.frame=CGRectMake(13,(h-20)/2,20,20);
+ self.titleLabel.frame=CGRectMake(44,0,MAX(0,w-79),h);
+    [self viewWithTag:702].frame=CGRectMake(-1,(h-20)/2,5,20);
  [self viewWithTag:701].frame=CGRectMake(w-28,(h-14)/2,14,14);
 }
 @end
@@ -101,7 +102,7 @@ typedef struct {
         {PCLDownloadTabWorld, @"世界", @"CEDLGlobe", NO},
         {PCLDownloadTabFavorites, @"收藏", @"CEDLHeart", NO},
         {999, @"独立安装", @"", YES},
-        {PCLDownloadTabClientInstall, @"Minecraft", @"CEDLBoxes", NO},
+        {PCLDownloadTabClientInstall, @"Minecraft", @"CEDLPackage", NO},
         {PCLDownloadTabOptiFine, @"OptiFine", @"CEDLGauge", NO},
         {PCLDownloadTabForge, @"Forge", @"CEDLAnvil", NO},
         {PCLDownloadTabNeoForge, @"NeoForge", @"CEDLCat", NO},
@@ -109,7 +110,7 @@ typedef struct {
         {PCLDownloadTabFabric, @"Fabric", @"CEDLScroll", NO},
         {PCLDownloadTabLegacyFabric, @"Legacy Fabric", @"CEDLScroll", NO},
         {PCLDownloadTabLabyMod, @"LabyMod", @"CEDLBox", NO},
-        {PCLDownloadTabLiteLoader, @"LiteLoader", @"bolt.fill", NO},
+        {PCLDownloadTabLiteLoader, @"LiteLoader", @"CEDLEgg", NO},
     };
     
     int tabCount = sizeof(tabs) / sizeof(tabs[0]);
@@ -121,8 +122,8 @@ typedef struct {
             UILabel *header = [[UILabel alloc] init];
             header.translatesAutoresizingMaskIntoConstraints = NO;
             header.text = info.title;
-            header.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
-            header.textColor = PCLColor(0x8C8C8C);
+            header.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+            header.textColor=[PCLColor(0x343D4A) colorWithAlphaComponent:.6];
             header.textAlignment = NSTextAlignmentLeft;
             
             UIView *container = [[UIView alloc] init];

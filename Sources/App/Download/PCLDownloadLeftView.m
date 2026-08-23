@@ -224,25 +224,12 @@ typedef struct {
 }
 
 - (void)prepareCEEnterAnimation {
-    for (UIView *view in self.tabButtons) {
-        view.alpha = 0;
-        view.transform = CGAffineTransformMakeTranslation(-20, 0);
-    }
-    for (UIView *view in self.headerLabels) {
-        view.alpha = 0;
-    }
+ [self.scrollView setContentOffset:CGPointMake(0,-self.scrollView.adjustedContentInset.top) animated:NO];
+ for(UIView*v in self.tabButtons){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;}
+ for(UIView*v in self.headerLabels)v.alpha=1;
 }
-
-- (void)playCEEnterAnimation {
-    [PCLCEPageAnimator showLeftItems:self.tabButtons];
-    for (UIView *view in self.headerLabels) {
-        view.alpha = 1;
-    }
-}
-
-- (void)playCEExitAnimation {
-    [PCLCEPageAnimator hideLeftItems:self.tabButtons];
-}
+- (void)playCEEnterAnimation {[PCLCEPageAnimator showLeftItems:self.tabButtons];}
+- (void)playCEExitAnimation {[PCLCEPageAnimator hideLeftItems:self.tabButtons];}
 
 - (void)reloadState {
 }

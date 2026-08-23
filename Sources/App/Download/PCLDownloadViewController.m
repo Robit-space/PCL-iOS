@@ -2,6 +2,7 @@
 #import "PCLDownloadLeftView.h"
 #import "PCLDownloadRightView.h"
 #import <QuartzCore/QuartzCore.h>
+#import "PCLCEPageAnimator.h"
 
 @interface PCLDownloadViewController ()
 @property(nonatomic,strong) PCLDownloadLeftView *leftView;
@@ -74,15 +75,18 @@
 
 - (void)prepareCEEnterAnimation {
  [self.leftView prepareCEEnterAnimation];
- [self.rightView prepareCEEnterAnimation];
+ if(self.resourceVC.view.hidden)[self.rightView prepareCEEnterAnimation];
+ else{self.resourceVC.view.alpha=1;self.resourceVC.view.transform=CGAffineTransformIdentity;}
 }
 - (void)playCEEnterAnimation {
  [self.leftView playCEEnterAnimation];
- [self.rightView playCEEnterAnimation];
+ if(self.resourceVC.view.hidden)[self.rightView playCEEnterAnimation];
+ else [PCLCEPageAnimator showRightItems:@[self.resourceVC.view] scrollView:nil];
 }
 - (void)playCEExitAnimation {
  [self.leftView playCEExitAnimation];
- [self.rightView playCEExitAnimation];
+ if(self.resourceVC.view.hidden)[self.rightView playCEExitAnimation];
+ else [PCLCEPageAnimator hideRightItems:@[self.resourceVC.view] scrollView:nil];
 }
 
 @end

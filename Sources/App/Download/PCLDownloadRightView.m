@@ -973,18 +973,13 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 }
 
 - (void)prepareCEEnterAnimation {
-    self.filterCard.alpha = 0;
-    self.filterCard.transform = CGAffineTransformMakeTranslation(0, 20);
-    self.versionTableView.alpha = 0;
-    self.versionTableView.transform = CGAffineTransformMakeTranslation(0, 20);
+ for(UIView*v in self.cardStackView.arrangedSubviews){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;}
 }
-
 - (void)playCEEnterAnimation {
-    [PCLCEPageAnimator showRightItems:@[self.filterCard] scrollView:self.scrollView];
+ [PCLCEPageAnimator showRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
 }
-
 - (void)playCEExitAnimation {
-    [PCLCEPageAnimator hideRightItems:@[self.filterCard] scrollView:self.scrollView];
+ [PCLCEPageAnimator hideRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
 }
 
 - (void)reloadState {

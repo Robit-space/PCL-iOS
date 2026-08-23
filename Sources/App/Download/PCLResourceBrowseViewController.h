@@ -14,4 +14,5 @@ typedef NS_ENUM(NSInteger, PCLResourceTab) {
 @property (nonatomic, copy) void (^onBack)(void);
 @property (nonatomic, assign) PCLResourceTab initialTab;
 
+- (void)showTab:(PCLResourceTab)tab;
 @end

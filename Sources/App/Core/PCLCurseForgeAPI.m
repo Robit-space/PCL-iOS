@@ -41,7 +41,7 @@
     if (query.count > 0) {
         NSMutableArray *pairs = [NSMutableArray array];
         for (NSString *key in query) {
-            NSString *val = [query[key] stringValue];
+            NSString *val = [query[key] description];
             NSString *encoded = [val stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
             [pairs addObject:[NSString stringWithFormat:@"%@=%@", key, encoded]];
         }

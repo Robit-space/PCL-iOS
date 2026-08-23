@@ -84,30 +84,15 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.progressView.hidden = YES;
     [self.contentView addSubview:self.progressView];
     
-    [NSLayoutConstraint activateConstraints:@[
-        [self.versionLabel.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:14],
-        [self.versionLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:25],
-        
-        [self.typeLabel.centerYAnchor constraintEqualToAnchor:self.versionLabel.centerYAnchor],
-        [self.typeLabel.leadingAnchor constraintEqualToAnchor:self.versionLabel.trailingAnchor constant:8],
-        [self.typeLabel.widthAnchor constraintEqualToConstant:42],
-        [self.typeLabel.heightAnchor constraintEqualToConstant:18],
-        [self.typeLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.downloadButton.leadingAnchor constant:-12],
-        
-        [self.dateLabel.topAnchor constraintEqualToAnchor:self.versionLabel.bottomAnchor constant:1],
-        [self.dateLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16],
-        [self.dateLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-5],
-        
-        [self.downloadButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
-        [self.downloadButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-25],
-        [self.downloadButton.widthAnchor constraintEqualToConstant:72],
-        [self.downloadButton.heightAnchor constraintEqualToConstant:32],
-        
-        [self.progressView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16],
-        [self.progressView.trailingAnchor constraintEqualToAnchor:self.downloadButton.leadingAnchor constant:-12],
-        [self.progressView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-8]
-    ]];
+    
 }
+
+- (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
+
+ self.versionIcon.frame=CGRectMake(12,(h-28)/2,28,28);self.versionLabel.frame=CGRectMake(50,3,w-62,19);
+ self.dateLabel.frame=CGRectMake(50,21,w-62,16);self.progressView.frame=CGRectMake(50,h-2,w-62,2);}
+
+ 
 
 - (void)downloadTapped {
     if (self.onDownload) self.onDownload();
@@ -184,7 +169,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.scrollView addSubview:self.cardStackView];
     
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:25],
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:10],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
         [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.trailingAnchor constant:-25],
         [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor constant:-25],
@@ -271,7 +256,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     filterTitle.translatesAutoresizingMaskIntoConstraints = NO;
     [self.filterCard addSubview:filterTitle];
     
-    self.typeFilter = [[UISegmentedControl alloc] initWithItems:@[@"全部", @"正式版", @"快照版", @"旧版本"]];
+    self.typeFilter = [[UISegmentedControl alloc] initWithItems:@[@"全部", @"正式版", @"预览版", @"旧版本"]];
     self.typeFilter.selectedSegmentIndex = 0;
     self.typeFilter.translatesAutoresizingMaskIntoConstraints = NO;
     self.typeFilter.backgroundColor = PCLColor(0xF5F5F5);
@@ -741,7 +726,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     if([self numberOfSectionsInTableView:t]==1)return nil;
 
-    return @[@"最新版本",@"正式版",@"快照版",@"远古版"][s];
+    return @[@"最新版本",@"正式版",@"预览版",@"远古版"][s];
 
 }
 
@@ -764,7 +749,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  c.autoresizingMask=UIViewAutoresizingFlexibleWidth;[v addSubview:c];
 
- NSArray *a=[self versionsForSection:n],*names=@[@"最新版本",@"正式版",@"快照版",@"远古版"];
+ NSArray *a=[self versionsForSection:n],*names=@[@"最新版本",@"正式版",@"预览版",@"远古版"];
 
  UILabel *l=[[UILabel alloc]initWithFrame:CGRectMake(16,0,w-64,40)];
 
@@ -819,7 +804,8 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
     NSString *type = version[@"type"] ?: @"";
     NSString *releaseTime = version[@"releaseTime"] ?: @"";
     
-    cell.versionLabel.text = versionId;
+    cell.versionLabel.text=versionId;
+    cell.versionIcon.image=[UIImage imageNamed:[type isEqualToString:@"release"]?@"CEGrass":([type isEqualToString:@"snapshot"]?@"CECommandBlock":@"CEGoldBlock")];
     
     if ([type isEqualToString:@"release"]) {
         cell.typeLabel.text = @"正式版";

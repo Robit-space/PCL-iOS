@@ -58,10 +58,12 @@ typedef struct {
     
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.scrollView.showsVerticalScrollIndicator = NO;
+    self.scrollView.showsVerticalScrollIndicator = YES;
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.delegate = self;
-    self.scrollView.alwaysBounceVertical = YES;
+    self.scrollView.alwaysBounceVertical=YES;
+    self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
+    self.scrollView.verticalScrollIndicatorInsets=UIEdgeInsetsMake(4,0,4,2);
     [self addSubview:self.scrollView];
     
     [NSLayoutConstraint activateConstraints:@[
@@ -101,7 +103,7 @@ typedef struct {
         {PCLDownloadTabShader, @"光影", @"CEDLSparkles", NO},
         {PCLDownloadTabWorld, @"世界", @"CEDLGlobe", NO},
         {PCLDownloadTabFavorites, @"收藏", @"CEDLHeart", NO},
-        {999, @"独立安装", @"", YES},
+        {999, @"安装包", @"", YES},
         {PCLDownloadTabClientInstall, @"Minecraft", @"CEDLPackage", NO},
         {PCLDownloadTabOptiFine, @"OptiFine", @"CEDLGauge", NO},
         {PCLDownloadTabForge, @"Forge", @"CEDLAnvil", NO},
@@ -165,8 +167,8 @@ typedef struct {
         [btn setImage:icon forState:UIControlStateNormal];
         btn.tintColor = PCLColor(0x1370F3);
         btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        [btn.imageView.widthAnchor constraintEqualToConstant:18].active = YES;
-        [btn.imageView.heightAnchor constraintEqualToConstant:18].active = YES;
+        [btn.imageView.widthAnchor constraintEqualToConstant:21].active = YES;
+        [btn.imageView.heightAnchor constraintEqualToConstant:21].active = YES;
         btn.contentEdgeInsets = UIEdgeInsetsMake(0, 12, 0, 12);
         btn.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 8);
     }
@@ -175,7 +177,7 @@ typedef struct {
     [btn setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    btn.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
+    btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, iconName.length > 0 ? 8 : 16, 0, 0);
     
@@ -184,7 +186,7 @@ typedef struct {
     [btn addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIImageView *refresh=[[UIImageView alloc]
       initWithImage:[UIImage imageNamed:@"CEDLRefreshCw"]];
-    refresh.tag=701; refresh.tintColor=PCLColor(0x697482);
+    refresh.tag=701; refresh.tintColor=PCLColor(0x505A66);
     refresh.translatesAutoresizingMaskIntoConstraints=NO; refresh.hidden=YES;
     [btn addSubview:refresh];
     [NSLayoutConstraint activateConstraints:@[
@@ -213,7 +215,7 @@ typedef struct {
         BOOL selected = (btn.tab == self.selectedTab);
         btn.backgroundColor = selected ? [PCLColor(0xE0EAFD) colorWithAlphaComponent:.75] : UIColor.clearColor;
         [btn setTitleColor:selected ? PCLColor(0x1370F3) : PCLColor(0x343D4A) forState:UIControlStateNormal];
-        btn.tintColor=selected?PCLColor(0x0B5BCB):PCLColor(0x697482);
+        btn.tintColor=selected?PCLColor(0x0B5BCB):PCLColor(0x505A66);
         [btn viewWithTag:701].hidden=!selected;
     }
 }

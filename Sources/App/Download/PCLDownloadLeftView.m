@@ -22,6 +22,13 @@ typedef struct {
 @end
 
 @implementation PCLDownloadTabButton
+- (void)layoutSubviews {
+ [super layoutSubviews];
+ CGFloat h=self.bounds.size.height,w=self.bounds.size.width;
+ self.imageView.frame=CGRectMake(13,(h-18)/2,18,18);
+ self.titleLabel.frame=CGRectMake(43,0,MAX(0,w-78),h);
+ [self viewWithTag:701].frame=CGRectMake(w-28,(h-14)/2,14,14);
+}
 @end
 
 @interface PCLDownloadLeftView () <UIScrollViewDelegate>
@@ -57,7 +64,7 @@ typedef struct {
     [self addSubview:self.scrollView];
     
     [NSLayoutConstraint activateConstraints:@[
-        [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:12],
+        [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:10],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8]
@@ -84,24 +91,24 @@ typedef struct {
 
 - (void)buildTabs {
     PCLDownloadTabInfo tabs[] = {
-        {PCLDownloadTabMinecraft, @"Minecraft", @"shippingbox.fill", NO},
+        {PCLDownloadTabMinecraft, @"Minecraft", @"CEDLBoxes", NO},
         {999, @"社区资源", @"", YES},
-        {PCLDownloadTabMod, @"Mod", @"puzzlepiece.extension.fill", NO},
-        {PCLDownloadTabModpack, @"整合包", @"shippingbox", NO},
-        {PCLDownloadTabDataPack, @"数据包", @"doc.zipper", NO},
-        {PCLDownloadTabResourcePack, @"资源包", @"square.3.layers.3d", NO},
-        {PCLDownloadTabShader, @"光影", @"sparkles", NO},
-        {PCLDownloadTabWorld, @"世界", @"globe.asia.australia.fill", NO},
-        {PCLDownloadTabFavorites, @"收藏", @"star.fill", NO},
+        {PCLDownloadTabMod, @"Mod", @"CEDLPuzzle", NO},
+        {PCLDownloadTabModpack, @"整合包", @"CEDLPackage", NO},
+        {PCLDownloadTabDataPack, @"数据包", @"CEDLFileArchive", NO},
+        {PCLDownloadTabResourcePack, @"资源包", @"CEDLLayers", NO},
+        {PCLDownloadTabShader, @"光影", @"CEDLSparkles", NO},
+        {PCLDownloadTabWorld, @"世界", @"CEDLGlobe", NO},
+        {PCLDownloadTabFavorites, @"收藏", @"CEDLHeart", NO},
         {999, @"独立安装", @"", YES},
-        {PCLDownloadTabClientInstall, @"Minecraft", @"shippingbox.fill", NO},
-        {PCLDownloadTabOptiFine, @"OptiFine", @"wand.and.stars", NO},
-        {PCLDownloadTabForge, @"Forge", @"hammer.fill", NO},
-        {PCLDownloadTabNeoForge, @"NeoForge", @"hammer.circle.fill", NO},
-        {PCLDownloadTabCleanroom, @"Cleanroom", @"drop.triangle.fill", NO},
-        {PCLDownloadTabFabric, @"Fabric", @"square.stack.3d.up.fill", NO},
-        {PCLDownloadTabLegacyFabric, @"Legacy Fabric", @"scroll.fill", NO},
-        {PCLDownloadTabLabyMod, @"LabyMod", @"cube.box.fill", NO},
+        {PCLDownloadTabClientInstall, @"Minecraft", @"CEDLBoxes", NO},
+        {PCLDownloadTabOptiFine, @"OptiFine", @"CEDLGauge", NO},
+        {PCLDownloadTabForge, @"Forge", @"CEDLAnvil", NO},
+        {PCLDownloadTabNeoForge, @"NeoForge", @"CEDLCat", NO},
+        {PCLDownloadTabCleanroom, @"Cleanroom", @"CEDLFlaskConical", NO},
+        {PCLDownloadTabFabric, @"Fabric", @"CEDLScroll", NO},
+        {PCLDownloadTabLegacyFabric, @"Legacy Fabric", @"CEDLScroll", NO},
+        {PCLDownloadTabLabyMod, @"LabyMod", @"CEDLBox", NO},
         {PCLDownloadTabLiteLoader, @"LiteLoader", @"bolt.fill", NO},
     };
     
@@ -127,7 +134,7 @@ typedef struct {
                 [header.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-5],
                 [header.topAnchor constraintEqualToAnchor:container.topAnchor constant:12],
                 [header.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-4],
-                [container.heightAnchor constraintEqualToConstant:32]
+                [container.heightAnchor constraintEqualToConstant:30]
             ]];
             
             [self.stackView addArrangedSubview:container];
@@ -148,11 +155,12 @@ typedef struct {
     btn.tab = tab;
     btn.iconName = iconName;
     
-    btn.layer.cornerRadius = 5;
+    btn.layer.cornerRadius = 3;
     btn.clipsToBounds = YES;
     
     if (iconName.length > 0) {
-        UIImage *icon = [[UIImage systemImageNamed:iconName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *base=[UIImage imageNamed:iconName] ?: [UIImage systemImageNamed:iconName];
+        UIImage *icon=[base imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         [btn setImage:icon forState:UIControlStateNormal];
         btn.tintColor = PCLColor(0x1370F3);
         btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -166,7 +174,7 @@ typedef struct {
     [btn setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    btn.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightMedium];
+    btn.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, iconName.length > 0 ? 8 : 16, 0, 0);
     
@@ -174,7 +182,7 @@ typedef struct {
     
     [btn addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIImageView *refresh=[[UIImageView alloc]
-      initWithImage:[UIImage systemImageNamed:@"arrow.clockwise"]];
+      initWithImage:[UIImage imageNamed:@"CEDLRefreshCw"]];
     refresh.tag=701; refresh.tintColor=PCLColor(0x697482);
     refresh.translatesAutoresizingMaskIntoConstraints=NO; refresh.hidden=YES;
     [btn addSubview:refresh];

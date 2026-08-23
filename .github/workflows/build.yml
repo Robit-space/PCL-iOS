@@ -118,6 +118,7 @@ jobs:
 
             FIRST_ERROR=$(grep -m1 "error:" build.log | cut -c1-120 || true)
             echo "FIRST_ERROR=$FIRST_ERROR"
+            echo "::error title=First build error::$FIRST_ERROR"
 
             exit $status
           fi

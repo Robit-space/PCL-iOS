@@ -37,7 +37,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)setupUI {
     self.backgroundColor = [UIColor clearColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.contentView.backgroundColor=UIColor.clearColor;
+    self.contentView.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];
     self.contentView.clipsToBounds=YES;
     self.versionIcon=[[UIImageView alloc] init];
     self.versionIcon.contentMode=UIViewContentModeScaleAspectFit;
@@ -89,8 +89,8 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
 
- self.versionIcon.frame=CGRectMake(10,(h-36)/2,36,36);self.versionLabel.frame=CGRectMake(54,5,w-64,20);
- self.dateLabel.frame=CGRectMake(54,26,w-64,18);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
+ CGFloat z=MIN(32,h-8);self.versionIcon.frame=CGRectMake(10,(h-z)/2,z,z);self.versionLabel.frame=CGRectMake(50,2,w-60,20);
+ self.dateLabel.frame=CGRectMake(50,h-20,w-60,17);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
 
 
 
@@ -142,24 +142,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
     return self;
 }
 
-- (CGFloat)ce:(CGFloat)v{CGFloat w=self.bounds.size.width,h=self.bounds.size.height,k=MAX(1,MIN(1.22,MIN(w/650,h/650)));return(NSInteger)(v*k+.5);}
+- (CGFloat)ce:(CGFloat)v{CGFloat w=self.bounds.size.width,h=self.bounds.size.height,k=MAX(1,MIN(1.18,MIN(w/650,h/650)));return(NSInteger)(v*k+.5);}
 
-- (void)layoutCECards{
-
- for(UIView*v in[self.versionTableView.subviews copy])if(v.tag>=810&&v.tag<820)[v removeFromSuperview];
-
- NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat g=[self ce:15];
-
- for(NSInteger i=0;i<n;i++){CGRect r=[self.versionTableView rectForSection:i];if(i)r.size.height-=g;else{r.origin.y+=g;r.size.height-=g*2;}if(r.size.height<1)continue;
-
-  UIView*c=[[UIView alloc]initWithFrame:r];c.tag=810+i;c.userInteractionEnabled=NO;c.backgroundColor=[PCLColor(0xFBFBFB)colorWithAlphaComponent:.96];c.layer.cornerRadius=[self ce:5];c.layer.shadowColor=UIColor.blackColor.CGColor;c.layer.shadowOpacity=.07;c.layer.shadowRadius=[self ce:3];c.layer.shadowOffset=CGSizeMake(0,1);[self.versionTableView insertSubview:c atIndex:0];}
-}
-
-- (void)layoutSubviews{[super layoutSubviews];CGFloat z=[self ce:42],m=MAX(14,MIN(25,self.bounds.size.width*.035));self.versionTableView.rowHeight=z;
-
- for(NSLayoutConstraint*c in self.scrollView.constraints)if(c.firstItem==self.cardStackView){if(c.firstAttribute==NSLayoutAttributeLeading)c.constant=m;else if(c.firstAttribute==NSLayoutAttributeTrailing)c.constant=-m;else if(c.firstAttribute==NSLayoutAttributeWidth)c.constant=-m*2;}
-
- [self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];}
+- (void)layoutSubviews{[super layoutSubviews];self.versionTableView.rowHeight=[self ce:42];[self updateVersionTableHeight];}
 
 - (void)setupView {
     self.backgroundColor = [UIColor clearColor];
@@ -715,7 +700,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:[self ce:15],w,[self ce:40])];
 
- c.backgroundColor=UIColor.clearColor;c.layer.cornerRadius=0;
+ c.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];c.layer.cornerRadius=[self ce:5];c.layer.shadowColor=PCLColor(0x343D4A).CGColor;c.layer.shadowOpacity=.07;c.layer.shadowRadius=[self ce:3];
 
 
 
@@ -755,7 +740,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:18])];
 
- f.backgroundColor=UIColor.clearColor;f.layer.cornerRadius=0;
+ f.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];f.layer.cornerRadius=[self ce:5];f.layer.shadowColor=PCLColor(0x343D4A).CGColor;f.layer.shadowOpacity=.05;f.layer.shadowRadius=[self ce:3];
 
  f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;
 
@@ -778,6 +763,8 @@ static UIColor *PCLColor(NSUInteger rgb) {
  } completion:nil];
 
 }
+
+- (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{return [self ce:42];}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if([self numberOfSectionsInTableView:tableView]>1&&

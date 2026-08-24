@@ -363,7 +363,7 @@
  [self animateLeftTo:page];
 }
 
-- (void)animateLeftTo:(PCLPageType)p{CGFloat a=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270,b=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;if(p==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else if(p==PCLPageTypeDownload)[self.downloadVC animateLeftBackgroundFrom:a to:b];}
+- (void)animateLeftTo:(PCLPageType)p{CGFloat a=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270,b=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;if(a==b)return;if(p==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else if(p==PCLPageTypeDownload)[self.downloadVC animateLeftBackgroundFrom:a to:b];}
 
 
 - (void)viewDidLayoutSubviews {

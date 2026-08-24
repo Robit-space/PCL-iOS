@@ -21,10 +21,13 @@
 
     self.backgroundGradient=[CAGradientLayer layer];
     self.backgroundGradient.colors=@[
-        (id)[UIColor colorWithRed:.918 green:.949 blue:.996 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.973 green:.984 blue:.996 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.878 green:.918 blue:.992 alpha:1].CGColor
+        (id)[UIColor colorWithRed:.68 green:.80 blue:.98 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.92 green:.96 blue:1 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.76 green:.84 blue:.99 alpha:1].CGColor
     ];
+    self.backgroundGradient.locations=@[@0,@.4,@1];
+    self.backgroundGradient.startPoint=CGPointMake(.9,0);
+    self.backgroundGradient.endPoint=CGPointMake(.1,1);
     [self.view.layer insertSublayer:self.backgroundGradient atIndex:0];
 
     self.leftView=[[PCLDownloadLeftView alloc] init];

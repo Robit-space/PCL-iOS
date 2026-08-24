@@ -15,6 +15,8 @@
 
 @property (nonatomic) PCLPageType currentPage;
 @property (nonatomic) BOOL isPageTransitioning;
+@property (nonatomic) NSUInteger transitionToken;
+@property (nonatomic) PCLPageType visiblePage;
 
 - (void)transitionToPage:(PCLPageType)page;
 
@@ -36,6 +38,7 @@
     self.contentView.alpha = 0.0;
 
     self.currentPage=PCLPageTypeLaunch;
+    self.visiblePage=PCLPageTypeLaunch;
     self.isPageTransitioning=NO;
 
     [self showPage:PCLPageTypeLaunch];
@@ -176,64 +179,158 @@
 
     [self transitionToPage:page];
 }
-- (void)transitionToPage:(PCLPageType)page {
- if(page==self.currentPage||self.isPageTransitioning)return;
- BOOL pair=(self.currentPage==PCLPageTypeLaunch&&page==PCLPageTypeDownload)||(self.currentPage==PCLPageTypeDownload&&page==PCLPageTypeLaunch);
- if(pair){
-  self.isPageTransitioning=YES;PCLPageType old=self.currentPage;
-  CGFloat a=old==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270,b=page==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
-  UIView*from=old==PCLPageTypeLaunch?self.launchVC.view:self.downloadVC.view,*to=page==PCLPageTypeLaunch?self.launchVC.view:self.downloadVC.view;
-  [self.launchVC dismissTransientUI];[self.downloadVC dismissTransientUI];if(old==PCLPageTypeLaunch)[self.launchVC playCEExitWithCompletion:nil];else [self.downloadVC playCEExitAnimation];
-  if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=b;[self.launchVC prepareCEEnterAnimation];}else{self.downloadVC.leftPanelWidth=b;[self.downloadVC prepareCEEnterAnimation];}
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{to.hidden=NO;[to setNeedsLayout];[to layoutIfNeeded];[self.contentView bringSubviewToFront:to];
-  if(page==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else [self.downloadVC animateLeftBackgroundFrom:a to:b];});});});
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.27*NSEC_PER_SEC)),dispatch_get_main_queue(),^{if(page==PCLPageTypeLaunch)[self.launchVC playCEEnterAnimation];else [self.downloadVC playCEEnterAnimation];});
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.74*NSEC_PER_SEC)),dispatch_get_main_queue(),^{from.hidden=YES;self.currentPage=page;self.isPageTransitioning=NO;});return;
+- (void)transitionToPage:
+ (PCLPageType)page {
+ if(page==self.currentPage)return;
+
+ NSUInteger token=
+  ++self.transitionToken;
+
+ if(self.isPageTransitioning){
+  [self.contentView.layer
+   removeAllAnimations];
+  self.contentView.alpha=1;
  }
+
+ PCLPageType old=self.visiblePage;
+ self.currentPage=page;
  self.isPageTransitioning=YES;
 
- PCLPageType old=self.currentPage;
+ BOOL pair=
+  (old==PCLPageTypeLaunch&&
+   page==PCLPageTypeDownload)||
+  (old==PCLPageTypeDownload&&
+   page==PCLPageTypeLaunch);
 
- UIView*f=old==PCLPageTypeLaunch?
+ if(pair){
+  CGFloat a=old==PCLPageTypeLaunch?
+   [self.topBar launchButtonCenterX]:270;
+  CGFloat b=page==PCLPageTypeLaunch?
+   [self.topBar launchButtonCenterX]:270;
+  UIView *from=
+   old==PCLPageTypeLaunch?
+   self.launchVC.view:
+   self.downloadVC.view;
+  UIView *to=
+   page==PCLPageTypeLaunch?
+   self.launchVC.view:
+   self.downloadVC.view;
 
- self.launchVC.view:old==PCLPageTypeDownload?
+  if(old==PCLPageTypeLaunch)
+   [self.launchVC
+    playCEExitWithCompletion:nil];
+  else
+   [self.downloadVC
+    playCEExitAnimation];
 
- self.downloadVC.view:old==PCLPageTypeSettings?
+  if(page==PCLPageTypeLaunch){
+   self.launchVC.leftPanelWidth=b;
+   [self.launchVC
+    prepareCEEnterAnimation];
+  }else{
+   self.downloadVC.leftPanelWidth=b;
+   [self.downloadVC
+    prepareCEEnterAnimation];
+  }
+  UIView *from=
+   old==PCLPageTypeLaunch?
+   self.launchVC.view:
+   self.downloadVC.view;
+  UIView *to=
+   page==PCLPageTypeLaunch?
+   self.launchVC.view:
+   self.downloadVC.view;
 
- self.settingsVC.view:self.pageLabel;
+  if(old==PCLPageTypeLaunch)
+   [self.launchVC
+    playCEExitWithCompletion:nil];
+  else
+   [self.downloadVC
+    playCEExitAnimation];
 
- [UIView animateWithDuration:.12 animations:^{
+  if(page==PCLPageTypeLaunch){
+   self.launchVC.leftPanelWidth=b;
+   [self.launchVC
+    prepareCEEnterAnimation];
+  }else{
+   self.downloadVC.leftPanelWidth=b;
+   [self.downloadVC
+    prepareCEEnterAnimation];
+  }
+  dispatch_after(
+   dispatch_time(
+    DISPATCH_TIME_NOW,
+    .06*NSEC_PER_SEC),
+   dispatch_get_main_queue(),^{
+    if(token!=self.transitionToken)
+     return;
+    to.hidden=NO;
+    self.visiblePage=page;
+    [to setNeedsLayout];
+    [to layoutIfNeeded];
+    [self.contentView
+     bringSubviewToFront:to];
 
-  f.alpha=0;
+    if(page==PCLPageTypeLaunch)
+     [self.launchVC
+      animateLeftBackgroundFrom:a
+      to:b];
+    else
+     [self.downloadVC
+      animateLeftBackgroundFrom:a
+      to:b];
+   });
+  dispatch_after(
+   dispatch_time(
+    DISPATCH_TIME_NOW,
+    .14*NSEC_PER_SEC),
+   dispatch_get_main_queue(),^{
+    if(token!=self.transitionToken)
+     return;
+    if(page==PCLPageTypeLaunch)
+     [self.launchVC
+      playCEEnterAnimation];
+    else
+     [self.downloadVC
+      playCEEnterAnimation];
+   });
 
- } completion:^(BOOL d){
- [self showPage:page];
-
-  UIView*t=page==PCLPageTypeLaunch?
-
-  self.launchVC.view:page==PCLPageTypeDownload?
-
-  self.downloadVC.view:page==PCLPageTypeSettings?
-
-  self.settingsVC.view:self.pageLabel;
-
-  t.alpha=0;f.alpha=1;
-
-  [UIView animateWithDuration:.22 delay:.03
-
-   options:UIViewAnimationOptionCurveEaseOut
-
-   animations:^{t.alpha=1;}
-
-   completion:^(BOOL d){
-
-    self.currentPage=page;
-
+  dispatch_after(
+   dispatch_time(
+    DISPATCH_TIME_NOW,
+    .52*NSEC_PER_SEC),
+   dispatch_get_main_queue(),^{
+    if(token!=self.transitionToken)
+     return;
+    from.hidden=YES;
     self.isPageTransitioning=NO;
+   });
+  return;
+ }
+ [UIView animateWithDuration:.08
+  delay:0
+  options:
+   UIViewAnimationOptionBeginFromCurrentState|
+   UIViewAnimationOptionAllowUserInteraction
+  animations:^{
+   self.contentView.alpha=0;
+  } completion:^(BOOL done){
+   if(token!=self.transitionToken)return;
+   [self showPage:page];
+   self.visiblePage=page;
 
-   }];
-
- }];
+   [UIView animateWithDuration:.18
+    delay:0
+    options:
+     UIViewAnimationOptionBeginFromCurrentState|
+     UIViewAnimationOptionAllowUserInteraction
+    animations:^{
+     self.contentView.alpha=1;
+    } completion:^(BOOL done){
+     if(token==self.transitionToken)
+      self.isPageTransitioning=NO;
+    }];
+  }];
 }
 
 - (void)showPage:(PCLPageType)page{

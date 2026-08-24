@@ -97,7 +97,7 @@
     if(!self.animatingLeftBackground)self.shadowView.frame=CGRectMake(leftW,0,1,h);
 }
 
-- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.shadowView.frame;f.origin.x=a;self.shadowView.frame=f;[UIView animateWithDuration:.24 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.shadowView.frame;x.origin.x=b;self.shadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.shadowView.frame;f.origin.x=a;self.shadowView.frame=f;[UIView animateWithDuration:.16 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.shadowView.frame;x.origin.x=b;self.shadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];

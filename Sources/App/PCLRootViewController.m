@@ -183,15 +183,57 @@
   self.isPageTransitioning=YES;PCLPageType old=self.currentPage;
   CGFloat a=old==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270,b=page==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
   UIView*from=old==PCLPageTypeLaunch?self.launchVC.view:self.downloadVC.view,*to=page==PCLPageTypeLaunch?self.launchVC.view:self.downloadVC.view;
-  [self.launchVC dismissTransientUI];[self.downloadVC dismissTransientUI];
+  [self.launchVC dismissTransientUI];[self.downloadVC dismissTransientUI];if(old==PCLPageTypeLaunch)[self.launchVC playCEExitWithCompletion:nil];else [self.downloadVC playCEExitAnimation];
   if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=b;[self.launchVC prepareCEEnterAnimation];}else{self.downloadVC.leftPanelWidth=b;[self.downloadVC prepareCEEnterAnimation];}
-  to.hidden=NO;[to setNeedsLayout];[to layoutIfNeeded];[self.contentView bringSubviewToFront:to];
-  if(page==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else [self.downloadVC animateLeftBackgroundFrom:a to:b];
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.075*NSEC_PER_SEC)),dispatch_get_main_queue(),^{if(page==PCLPageTypeLaunch)[self.launchVC playCEEnterAnimation];else [self.downloadVC playCEEnterAnimation];});
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.42*NSEC_PER_SEC)),dispatch_get_main_queue(),^{from.hidden=YES;self.currentPage=page;self.isPageTransitioning=NO;});return;
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.11*NSEC_PER_SEC)),dispatch_get_main_queue(),^{to.hidden=NO;[to setNeedsLayout];[to layoutIfNeeded];[self.contentView bringSubviewToFront:to];
+  if(page==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else [self.downloadVC animateLeftBackgroundFrom:a to:b];});});});
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.27*NSEC_PER_SEC)),dispatch_get_main_queue(),^{if(page==PCLPageTypeLaunch)[self.launchVC playCEEnterAnimation];else [self.downloadVC playCEEnterAnimation];});
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.74*NSEC_PER_SEC)),dispatch_get_main_queue(),^{from.hidden=YES;self.currentPage=page;self.isPageTransitioning=NO;});return;
  }
- self.isPageTransitioning=YES;__weak typeof(self)w=self;
- [UIView animateWithDuration:.11 animations:^{w.pageLabel.alpha=0;} completion:^(BOOL d){[w showPage:page];w.currentPage=page;dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.03*NSEC_PER_SEC)),dispatch_get_main_queue(),^{w.pageLabel.alpha=1;w.isPageTransitioning=NO;});}];
+ self.isPageTransitioning=YES;
+
+ PCLPageType old=self.currentPage;
+
+ UIView*f=old==PCLPageTypeLaunch?
+
+ self.launchVC.view:old==PCLPageTypeDownload?
+
+ self.downloadVC.view:old==PCLPageTypeSettings?
+
+ self.settingsVC.view:self.pageLabel;
+
+ [UIView animateWithDuration:.12 animations:^{
+
+  f.alpha=0;
+
+ } completion:^(BOOL d){
+ [self showPage:page];
+
+  UIView*t=page==PCLPageTypeLaunch?
+
+  self.launchVC.view:page==PCLPageTypeDownload?
+
+  self.downloadVC.view:page==PCLPageTypeSettings?
+
+  self.settingsVC.view:self.pageLabel;
+
+  t.alpha=0;f.alpha=1;
+
+  [UIView animateWithDuration:.22 delay:.03
+
+   options:UIViewAnimationOptionCurveEaseOut
+
+   animations:^{t.alpha=1;}
+
+   completion:^(BOOL d){
+
+    self.currentPage=page;
+
+    self.isPageTransitioning=NO;
+
+   }];
+
+ }];
 }
 
 - (void)showPage:(PCLPageType)page{

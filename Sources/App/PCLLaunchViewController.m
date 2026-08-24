@@ -41,11 +41,11 @@
 - (void)buildCEBackground {
     self.backgroundGradient = [CAGradientLayer layer];
     self.backgroundGradient.colors = @[
-        (id)[UIColor colorWithRed:.68 green:.80 blue:.98 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.92 green:.96 blue:1 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.76 green:.84 blue:.99 alpha:1].CGColor
+        (id)[UIColor colorWithRed:.82 green:.89 blue:1 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.98 green:.99 blue:1 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.88 green:.93 blue:1 alpha:1].CGColor
     ];
-    self.backgroundGradient.locations = @[@0,@.4,@1];
+    self.backgroundGradient.locations = @[@0,@.52,@1];
     self.backgroundGradient.startPoint = CGPointMake(.9,0);
     self.backgroundGradient.endPoint = CGPointMake(.1,1);
     [self.view.layer insertSublayer:self.backgroundGradient atIndex:0];
@@ -213,7 +213,7 @@
             name]];
 }
 
-- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.leftShadowView.frame;f.origin.x=a;self.leftShadowView.frame=f;[UIView animateWithDuration:.10 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.leftShadowView.frame;x.origin.x=b;self.leftShadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.leftShadowView.frame;f.origin.x=a;self.leftShadowView.frame=f;[UIView animateWithDuration:.32 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.leftShadowView.frame;x.origin.x=b;self.leftShadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];
@@ -228,8 +228,7 @@
 }
 
 - (void)playCEEnterAnimation {
-    [self.leftView playCEEnterAnimation];
-    [self.rightView playCEEnterAnimation];
+    [self.leftView playCEEnterAnimation];dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.13*NSEC_PER_SEC)),dispatch_get_main_queue(),^{[self.rightView playCEEnterAnimation];});
 
     dispatch_after(
         dispatch_time(DISPATCH_TIME_NOW,

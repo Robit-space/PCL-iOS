@@ -174,7 +174,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.scrollView addSubview:self.cardStackView];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:10],
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:18],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
         [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.trailingAnchor constant:-25],
         [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor constant:-25],
@@ -701,19 +701,76 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)toggleVersionSection:(UIButton*)b{
 
- NSNumber*n=@(b.tag);BOOL open=![self.expandedSections containsObject:n];
+ NSInteger n=b.tag;
 
- if(open)[self.expandedSections addObject:n];else [self.expandedSections removeObject:n];
+ NSNumber*k=@(n);
 
- [self.versionTableView reloadSections:[NSIndexSet indexSetWithIndex:b.tag]
+ BOOL o=![self.expandedSections containsObject:k];
 
-  withRowAnimation:UITableViewRowAnimationNone];
+ NSInteger c=[self versionsForSection:n].count;
 
- [UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+ NSMutableArray*r=[NSMutableArray array];
 
-  [self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];[self layoutIfNeeded];
+ for(NSInteger i=0;i<c;i++){
 
- } completion:nil];
+  NSIndexPath*p=
+
+   [NSIndexPath indexPathForRow:i inSection:n];
+
+  [r addObject:p];
+
+ }
+
+ [self.versionTableView beginUpdates];
+
+ if(o){
+
+  [self.expandedSections addObject:k];
+
+  [self.versionTableView
+
+   insertRowsAtIndexPaths:r
+
+   withRowAnimation:UITableViewRowAnimationFade];
+
+ }else{
+  [self.expandedSections removeObject:k];
+
+  [self.versionTableView
+
+   deleteRowsAtIndexPaths:r
+
+   withRowAnimation:UITableViewRowAnimationFade];
+
+ }
+
+ [self.versionTableView endUpdates];
+
+ [self updateVersionTableHeight];
+
+ b.superview.layer.maskedCorners=o?3:15;
+
+ NSUInteger z=
+
+  UIViewAnimationOptionCurveEaseInOut|
+
+  UIViewAnimationOptionBeginFromCurrentState|
+
+  UIViewAnimationOptionAllowUserInteraction;
+
+ [UIView animateWithDuration:.25
+
+  delay:0 options:z animations:^{
+
+   b.imageView.transform=o?
+
+    CGAffineTransformMakeRotation(3.14159):
+
+    CGAffineTransformIdentity;
+
+   [self layoutIfNeeded];
+
+  } completion:nil];
 
 }
 
@@ -919,9 +976,16 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (NSArray*)ceSection:(NSInteger)n{NSMutableArray*a=[NSMutableArray array];UIView*c=[self.versionTableView viewWithTag:810+n],*h=[self.versionTableView viewWithTag:820+n];if(n&&c&&!c.hidden)[a addObject:c];if(h)[a addObject:h];for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*v=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(v)[a addObject:v];}return a;}
 
+- (void)resetCESections{
+ [self.expandedSections removeAllObjects];
+ [self.expandedSections addObject:@0];
+ [self.versionTableView reloadData];
+ [self updateVersionTableHeight];
+}
+
 - (void)dismissTransientUI{}
 
-- (void)prepareCEEnterAnimation{[self.versionTableView layoutIfNeeded];[self layoutCECards];for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++)for(UIView*v in[self ceSection:n]){[v.layer removeAllAnimations];v.alpha=0;v.transform=CGAffineTransformMakeTranslation(0,-10);}}
+- (void)prepareCEEnterAnimation{[self resetCESections];[self.versionTableView layoutIfNeeded];[self layoutCECards];for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++)for(UIView*v in[self ceSection:n]){[v.layer removeAllAnimations];v.alpha=0;v.transform=CGAffineTransformMakeTranslation(0,-10);}}
 - (void)playCEEnterAnimation{for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){NSArray*a=[self ceSection:n];[UIView animateWithDuration:.15 delay:.025*n options:UIViewAnimationOptionCurveEaseOut animations:^{for(UIView*v in a){v.alpha=1;v.transform=CGAffineTransformIdentity;}} completion:nil];}}
 
 - (void)playCEExitAnimation{for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){NSArray*a=[self ceSection:n];[UIView animateWithDuration:.07 delay:.01*n options:UIViewAnimationOptionCurveEaseIn animations:^{for(UIView*v in a){v.alpha=0;v.transform=CGAffineTransformMakeTranslation(0,-8);}} completion:nil];}}

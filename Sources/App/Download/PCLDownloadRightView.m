@@ -122,6 +122,29 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) NSMutableSet<NSNumber *> *expandedSections;
 - (NSArray *)versionsForSection:(NSInteger)section;
 - (void)updateVersionTableHeight;
+- (void)layoutCECards;
+@end
+
+@implementation PCLDownloadRightView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _allVersions = [NSMutableArray array];
+        _filteredVersions = [NSMutableArray array];
+        _gameVersions = [NSMutableArray array];
+        _currentTab = PCLDownloadTabMinecraft;
+        _downloadProgress = [NSMutableDictionary dictionary];
+        _expandedSections=[NSMutableSet setWithObject:@0];
+        _selectedGameVersion = @"1.20.4";
+        [_gameVersions addObjectsFromArray:@[@"1.21.4", @"1.21.3", @"1.21.2", @"1.21.1", @"1.21", @"1.20.6", @"1.20.4", @"1.20.2", @"1.20.1", @"1.20", @"1.19.4", @"1.19.2", @"1.18.2", @"1.17.1", @"1.16.5", @"1.12.2"]];
+        [self setupView];
+    }
+    return self;
+}
+
+- (CGFloat)ce:(CGFloat)v{CGFloat k=MAX(.82,MIN(1.18,MIN(self.bounds.size.width/650,self.bounds.size.height/650)));return(NSInteger)(v*k+.5);}
+- (void)layoutSubviews{[super layoutSubviews];self.versionTableView.rowHeight=[self ce:44];[self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];}
 - (void)layoutCECards{for(NSInteger i=1;i<5;i++)[self.versionTableView viewWithTag:810+i].hidden=YES;}
 
 - (void)setupView {

@@ -232,35 +232,10 @@
    [self.downloadVC
     prepareCEEnterAnimation];
   }
-  UIView *from=
-   old==PCLPageTypeLaunch?
-   self.launchVC.view:
-   self.downloadVC.view;
-  UIView *to=
-   page==PCLPageTypeLaunch?
-   self.launchVC.view:
-   self.downloadVC.view;
-
-  if(old==PCLPageTypeLaunch)
-   [self.launchVC
-    playCEExitWithCompletion:nil];
-  else
-   [self.downloadVC
-    playCEExitAnimation];
-
-  if(page==PCLPageTypeLaunch){
-   self.launchVC.leftPanelWidth=b;
-   [self.launchVC
-    prepareCEEnterAnimation];
-  }else{
-   self.downloadVC.leftPanelWidth=b;
-   [self.downloadVC
-    prepareCEEnterAnimation];
-  }
   dispatch_after(
    dispatch_time(
     DISPATCH_TIME_NOW,
-    .06*NSEC_PER_SEC),
+    (int64_t)(.06*NSEC_PER_SEC)),
    dispatch_get_main_queue(),^{
     if(token!=self.transitionToken)
      return;
@@ -283,7 +258,7 @@
   dispatch_after(
    dispatch_time(
     DISPATCH_TIME_NOW,
-    .14*NSEC_PER_SEC),
+    (int64_t)(.14*NSEC_PER_SEC)),
    dispatch_get_main_queue(),^{
     if(token!=self.transitionToken)
      return;
@@ -298,7 +273,7 @@
   dispatch_after(
    dispatch_time(
     DISPATCH_TIME_NOW,
-    .52*NSEC_PER_SEC),
+    (int64_t)(.52*NSEC_PER_SEC)),
    dispatch_get_main_queue(),^{
     if(token!=self.transitionToken)
      return;

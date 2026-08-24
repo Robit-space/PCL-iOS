@@ -2155,13 +2155,16 @@ static UIImage *PCLHeadFromSkin(UIImage *skin) {
 
 - (void)prepareCEEnterAnimation{
  [self.transitionContentView.layer removeAllAnimations];
- self.transitionContentView.layer.opacity=0;
+ self.transitionContentView.layer.opacity=1;
  self.transitionContentView.transform=CGAffineTransformIdentity;
- self.transitionContentView.alpha=1;
+ self.transitionContentView.alpha=0;
  [self restoreMainProfileState];
 }
 - (void)playCEEnterAnimation{
  [PCLCEPageAnimator showSimpleLeftPage:self.transitionContentView];
+ [UIView animateWithDuration:.10 animations:^{
+  self.transitionContentView.alpha=1;
+ }];
 }
 
 - (void)playCEExitAnimation {

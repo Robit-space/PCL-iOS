@@ -187,7 +187,7 @@
   if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=b;[self.launchVC prepareCEEnterAnimation];}else{self.downloadVC.leftPanelWidth=b;[self.downloadVC prepareCEEnterAnimation];}
   to.hidden=NO;[to setNeedsLayout];[to layoutIfNeeded];[self.contentView bringSubviewToFront:to];
   if(page==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else [self.downloadVC animateLeftBackgroundFrom:a to:b];
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.045*NSEC_PER_SEC)),dispatch_get_main_queue(),^{if(page==PCLPageTypeLaunch)[self.launchVC playCEEnterAnimation];else [self.downloadVC playCEEnterAnimation];});
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.075*NSEC_PER_SEC)),dispatch_get_main_queue(),^{if(page==PCLPageTypeLaunch)[self.launchVC playCEEnterAnimation];else [self.downloadVC playCEEnterAnimation];});
   dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.42*NSEC_PER_SEC)),dispatch_get_main_queue(),^{from.hidden=YES;self.currentPage=page;self.isPageTransitioning=NO;});return;
  }
  self.isPageTransitioning=YES;__weak typeof(self)w=self;

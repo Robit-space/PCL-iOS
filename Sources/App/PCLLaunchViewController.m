@@ -213,7 +213,7 @@
             name]];
 }
 
-- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.leftShadowView.frame;f.origin.x=a;self.leftShadowView.frame=f;[UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.leftShadowView.frame;x.origin.x=b;self.leftShadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.leftShadowView.frame;f.origin.x=a;self.leftShadowView.frame=f;[UIView animateWithDuration:.10 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.leftShadowView.frame;x.origin.x=b;self.leftShadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];

@@ -664,7 +664,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
  else for(NSInteger n=0;n<sections;n++)
   if([self.expandedSections containsObject:@(n)])
    rows+=[self versionsForSection:n].count;
- CGFloat height=MAX(1,rows*42+(sections>1?sections*55:0));
+ CGFloat height=MAX(1,rows*42+(sections>1?sections*55+15+self.expandedSections.count*18:0));
  for(NSLayoutConstraint *c in self.versionTableView.constraints)
   if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=height;break;}
 }
@@ -712,7 +712,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (CGFloat)tableView:(UITableView *)t heightForHeaderInSection:(NSInteger)s {
 
- return [self numberOfSectionsInTableView:t]>1?55:.01;
+ return [self numberOfSectionsInTableView:t]>1?(s?40:55):.01;
 
 }
 
@@ -722,9 +722,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  CGFloat w=t.bounds.size.width;BOOL open=n==0||[self.expandedSections containsObject:@(n)];
 
- UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
+ UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,n?40:55)];
 
- UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,15,w,40)];
+ UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:15,w,40)];
 
  c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];c.layer.cornerRadius=5;
 
@@ -754,6 +754,24 @@ static UIColor *PCLColor(NSUInteger rgb) {
  return v;
 
 }
+- (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{
+
+ return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?33:15):.01;
+
+}
+
+- (UIView*)tableView:(UITableView*)t viewForFooterInSection:(NSInteger)n{
+
+ UIView*v=[UIView new];if(n&&![self.expandedSections containsObject:@(n)])return v;
+
+ UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,18)];
+
+ f.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];f.layer.cornerRadius=5;
+
+ f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;
+
+}
+
 - (void)toggleVersionSection:(UIButton*)b{
 
  NSNumber*n=@(b.tag);BOOL open=![self.expandedSections containsObject:n];
@@ -965,45 +983,25 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 #pragma mark - Animation
 
-- (void)dismissTransientUI {
-}
+- (NSArray*)ceItems{NSMutableArray*a=[NSMutableArray array];[self.versionTableView layoutIfNeeded];
 
-- (NSArray *)ceItems {
+ for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
 
- [self layoutIfNeeded];
+  for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*c=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(c)[a addObject:c];}}return a;}
 
- NSMutableArray*a=[NSMutableArray array];
+- (NSArray*)ceItems{NSMutableArray*a=[NSMutableArray array];[self.versionTableView layoutIfNeeded];
 
- for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){
+ for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
 
-  UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
+  for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*c=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(c)[a addObject:c];}}return a;}
 
-  for(NSIndexPath*i in self.versionTableView.indexPathsForVisibleRows)
+- (void)dismissTransientUI{}
 
-   if(i.section==n)[a addObject:[self.versionTableView cellForRowAtIndexPath:i]];
+- (void)prepareCEEnterAnimation{for(UIView*v in[self ceItems]){v.alpha=1;v.transform=CGAffineTransformIdentity;}}
 
- }
+- (void)playCEEnterAnimation{[PCLCEPageAnimator showRightItems:[self ceItems] scrollView:self.scrollView];}
 
- return a.count?a:self.cardStackView.arrangedSubviews;
-
-}
-- (void)prepareCEEnterAnimation {
-
- for(UIView*v in self.cardStackView.arrangedSubviews){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;}
-
-}
-
-- (void)playCEEnterAnimation {
-
- [PCLCEPageAnimator showRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
-
-}
-
-- (void)playCEExitAnimation {
-
- [PCLCEPageAnimator hideRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
-
-}
+- (void)playCEExitAnimation{[PCLCEPageAnimator hideRightItems:[self ceItems] scrollView:self.scrollView];}
 
 - (void)reloadState {
     [self refreshData];

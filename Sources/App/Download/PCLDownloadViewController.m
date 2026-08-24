@@ -28,7 +28,7 @@
 
     self.leftView=[[PCLDownloadLeftView alloc] init];
     self.rightView=[[PCLDownloadRightView alloc] init];
-    self.leftView.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:.82];
+    self.leftView.backgroundColor=[UIColor colorWithWhite:.995 alpha:.824];
 
     [self.view addSubview:self.leftView];
     [self.view addSubview:self.rightView];

@@ -124,7 +124,7 @@ typedef struct {
             UILabel *header = [[UILabel alloc] init];
             header.translatesAutoresizingMaskIntoConstraints = NO;
             header.text = info.title;
-            header.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+            header.font = [UIFont systemFontOfSize:13 weight:UIFontWeightRegular];
             header.textColor=[PCLColor(0x343D4A) colorWithAlphaComponent:.6];
             header.textAlignment = NSTextAlignmentLeft;
 
@@ -167,8 +167,8 @@ typedef struct {
         [btn setImage:icon forState:UIControlStateNormal];
         btn.tintColor = PCLColor(0x1370F3);
         btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        [btn.imageView.widthAnchor constraintEqualToConstant:21].active = YES;
-        [btn.imageView.heightAnchor constraintEqualToConstant:21].active = YES;
+        [btn.imageView.widthAnchor constraintEqualToConstant:22].active = YES;
+        [btn.imageView.heightAnchor constraintEqualToConstant:22].active = YES;
         btn.contentEdgeInsets = UIEdgeInsetsMake(0, 12, 0, 12);
         btn.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 8);
     }
@@ -177,7 +177,7 @@ typedef struct {
     [btn setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
+    btn.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightMedium];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, iconName.length > 0 ? 8 : 16, 0, 0);
 

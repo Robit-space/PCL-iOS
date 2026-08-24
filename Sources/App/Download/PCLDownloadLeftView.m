@@ -177,7 +177,7 @@ typedef struct {
     [btn setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    btn.titleLabel.font = [UIFont systemFontOfSize:16.5 weight:UIFontWeightMedium];
+    btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
     btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, iconName.length > 0 ? 8 : 16, 0, 0);
 

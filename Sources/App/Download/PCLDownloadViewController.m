@@ -21,9 +21,9 @@
 
     self.backgroundGradient=[CAGradientLayer layer];
     self.backgroundGradient.colors=@[
-        (id)[UIColor colorWithRed:.82 green:.89 blue:1 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.98 green:.99 blue:1 alpha:1].CGColor,
-        (id)[UIColor colorWithRed:.88 green:.93 blue:1 alpha:1].CGColor
+        (id)[UIColor colorWithRed:.76 green:.86 blue:1 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.95 green:.98 blue:1 alpha:1].CGColor,
+        (id)[UIColor colorWithRed:.82 green:.89 blue:1 alpha:1].CGColor
     ];
     self.backgroundGradient.locations=@[@0,@.52,@1];
     self.backgroundGradient.startPoint=CGPointMake(.9,0);
@@ -97,7 +97,7 @@
     if(!self.animatingLeftBackground)self.shadowView.frame=CGRectMake(leftW,0,1,h);
 }
 
-- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.shadowView.frame;f.origin.x=a;self.shadowView.frame=f;[UIView animateWithDuration:.32 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.shadowView.frame;x.origin.x=b;self.shadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.shadowView.frame;f.origin.x=a;self.shadowView.frame=f;[UIView animateWithDuration:.24 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.shadowView.frame;x.origin.x=b;self.shadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];

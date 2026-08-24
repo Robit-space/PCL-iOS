@@ -247,7 +247,7 @@ typedef struct {
 
  [self.scrollView setContentOffset:CGPointMake(0,-self.scrollView.adjustedContentInset.top) animated:NO];
 
- for(UIView*v in self.stackView.arrangedSubviews){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;}
+ for(UIView*v in self.stackView.arrangedSubviews){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;v.layer.opacity=0;[v.layer setValue:@(-25) forKeyPath:@"transform.translation.x"];}
 }
 
 - (void)playCEEnterAnimation {

@@ -351,6 +351,26 @@
 
     }
 
+ [self animateLeftTo:page];
+}
+
+- (void)animateLeftTo:(PCLPageType)p{
+
+ CGFloat a=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
+
+ CGFloat b=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
+
+ if(p==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=a;[self.launchVC.view layoutIfNeeded];
+
+  [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+
+   self.launchVC.leftPanelWidth=b;[self.launchVC.view setNeedsLayout];[self.launchVC.view layoutIfNeeded];} completion:nil];}
+else if(p==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=a;[self.downloadVC.view layoutIfNeeded];
+
+  [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+
+   self.downloadVC.leftPanelWidth=b;[self.downloadVC.view setNeedsLayout];[self.downloadVC.view layoutIfNeeded];} completion:nil];}
+
 }
 
 - (void)viewDidLayoutSubviews {
@@ -360,7 +380,7 @@
     [sub viewWithTag:910].frame=CGRectMake(12,0,48,56);
     [sub viewWithTag:911].frame=CGRectMake(70,0,CGRectGetWidth(sub.bounds)-140,56);
     CGFloat launchLeftW=[self.topBar launchButtonCenterX];
-    CGFloat pageLeftW=MIN(300.0,CGRectGetWidth(self.contentView.bounds));
+    CGFloat pageLeftW=MIN(270.0,CGRectGetWidth(self.contentView.bounds));
     self.launchVC.leftPanelWidth=launchLeftW;
     self.downloadVC.leftPanelWidth=pageLeftW;
     self.settingsVC.leftPanelWidth=pageLeftW;

@@ -240,7 +240,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)buildRendererSection {
     UIView *card = [self createSectionCardWithTitle:@"渲染器"];
-    
+
     // 渲染器选择 segmented control
     NSArray *rendererNames = @[@"GL4ES", @"MetalANGLE", @"MobileGlues", @"Zink"];
     self.rendererSegment = [[UISegmentedControl alloc] initWithItems:rendererNames];
@@ -249,7 +249,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.rendererSegment.tintColor = PCLColor(0x1370F3);
     [self.rendererSegment addTarget:self action:@selector(rendererChanged:) forControlEvents:UIControlEventValueChanged];
     [card addSubview:self.rendererSegment];
-    
+
     // 渲染器描述
     self.rendererDescLabel = [[UILabel alloc] init];
     self.rendererDescLabel.translatesAutoresizingMaskIntoConstraints = NO;

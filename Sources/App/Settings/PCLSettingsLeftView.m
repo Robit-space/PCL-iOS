@@ -37,21 +37,21 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)setupView {
     self.backgroundColor = [UIColor clearColor];
-    
+
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.alwaysBounceVertical = YES;
     [self addSubview:self.scrollView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:8],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8]
     ]];
-    
+
     self.stackView = [[UIStackView alloc] init];
     self.stackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.stackView.axis = UILayoutConstraintAxisVertical;
@@ -59,7 +59,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.stackView.alignment = UIStackViewAlignmentFill;
     self.stackView.distribution = UIStackViewDistributionFill;
     [self.scrollView addSubview:self.stackView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.stackView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor],
         [self.stackView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
@@ -67,7 +67,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.stackView.bottomAnchor constraintEqualToAnchor:self.scrollView.bottomAnchor],
         [self.stackView.widthAnchor constraintEqualToAnchor:self.scrollView.widthAnchor]
     ]];
-    
+
     [self buildTabs];
 }
 
@@ -89,7 +89,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         {PCLSettingsTabFeedback, @"反馈", NO},
         {PCLSettingsTabLog, @"日志", NO},
     };
-    
+
     int count = sizeof(tabs) / sizeof(tabs[0]);
     for (int i = 0; i < count; i++) {
         if (tabs[i].isHeader) {
@@ -98,11 +98,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
             header.text = tabs[i].title;
             header.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
             header.textColor = PCLColor(0x8C8C8C);
-            
+
             UIView *container = [[UIView alloc] init];
             container.translatesAutoresizingMaskIntoConstraints = NO;
             [container addSubview:header];
-            
+
             [NSLayoutConstraint activateConstraints:@[
                 [header.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:16],
                 [header.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-16],
@@ -110,7 +110,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
                 [header.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-4],
                 [container.heightAnchor constraintEqualToConstant:32]
             ]];
-            
+
             [self.stackView addArrangedSubview:container];
         } else {
             PCLSettingsTabBtn *btn = [self createTabButton:tabs[i].tab title:tabs[i].title];
@@ -118,7 +118,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
             [self.stackView addArrangedSubview:btn];
         }
     }
-    
+
     [self updateTabAppearance];
 }
 
@@ -128,7 +128,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     btn.tab = tab;
     btn.layer.cornerRadius = 8;
     btn.clipsToBounds = YES;
-    
+
     [btn setTitle:title forState:UIControlStateNormal];
     [btn setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
@@ -137,9 +137,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
     btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
     [btn.heightAnchor constraintEqualToConstant:36].active = YES;
     btn.backgroundColor = [UIColor clearColor];
-    
+
     [btn addTarget:self action:@selector(tabPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     return btn;
 }
 

@@ -93,39 +93,39 @@
                   limit:(NSInteger)limit
                  offset:(NSInteger)offset
              completion:(void(^)(PCLModrinthSearchResult *result, NSError *error))completion {
-    
+
     NSMutableArray *facetsArray = [NSMutableArray array];
-    
+
     // Project type
     NSString *typeStr = [PCLModrinthAPI projectTypeString:projectType];
     [facetsArray addObject:[NSString stringWithFormat:@"[\"project_type:%@\"]", typeStr]];
-    
+
     // Game version
     if (gameVersion) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"versions:%@\"]", gameVersion]];
     }
-    
+
     // Loader
     NSString *loaderStr = [PCLModrinthAPI loaderString:loader];
     [facetsArray addObject:[NSString stringWithFormat:@"[\"categories:%@\"]", loaderStr]];
-    
+
     // Category
     if (category) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"categories:%@\"]", category]];
     }
-    
+
     NSString *facets = [NSString stringWithFormat:@"[%@]", [facetsArray componentsJoinedByString:@","]];
     NSString *sortStr = [PCLModrinthAPI sortTypeString:sortType];
-    
+
     NSString *encodedQuery = [query stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     NSString *urlString = [NSString stringWithFormat:
                           @"https://api.modrinth.com/v2/search?query=%@&facets=%@&sort=%@&limit=%ld&offset=%ld",
                           encodedQuery ?: @"", facets, sortStr, (long)limit, (long)offset];
-    
+
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -143,41 +143,41 @@
                  limit:(NSInteger)limit
                 offset:(NSInteger)offset
             completion:(void(^)(PCLModrinthSearchResult *result, NSError *error))completion {
-    
+
     NSMutableArray *facetsArray = [NSMutableArray array];
-    
+
     NSString *projectType = filters[@"projectType"];
     if (projectType) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"project_type:%@\"]", projectType]];
     }
-    
+
     NSString *gameVersion = filters[@"gameVersion"];
     if (gameVersion) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"versions:%@\"]", gameVersion]];
     }
-    
+
     NSString *loader = filters[@"loader"];
     if (loader) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"categories:%@\"]", loader]];
     }
-    
+
     NSString *category = filters[@"category"];
     if (category) {
         [facetsArray addObject:[NSString stringWithFormat:@"[\"categories:%@\"]", category]];
     }
-    
+
     NSString *facets = [NSString stringWithFormat:@"[%@]", [facetsArray componentsJoinedByString:@","]];
     NSString *sortStr = filters[@"sortType"] ?: @"relevance";
-    
+
     NSString *encodedQuery = [query stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     NSString *urlString = [NSString stringWithFormat:
                           @"https://api.modrinth.com/v2/search?query=%@&facets=%@&sort=%@&limit=%ld&offset=%ld",
                           encodedQuery ?: @"", facets, sortStr, (long)limit, (long)offset];
-    
+
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -198,7 +198,7 @@
     result.totalHits = [json[@"total_hits"] integerValue];
     result.offset = [json[@"offset"] integerValue];
     result.limit = [json[@"limit"] integerValue];
-    
+
     NSMutableArray *projects = [NSMutableArray array];
     for (NSDictionary *hit in hits) {
         [projects addObject:[self parseProject:hit]];
@@ -240,7 +240,7 @@
     ver.datePublished = dict[@"date_published"] ?: @"";
     ver.versionType = dict[@"version_type"] ?: @"release";
     ver.featured = [dict[@"featured"] boolValue];
-    
+
     // Parse files
     NSMutableArray *fileInfos = [NSMutableArray array];
     for (NSDictionary *fileDict in dict[@"files"]) {
@@ -256,7 +256,7 @@
         [fileInfos addObject:fi];
     }
     ver.fileInfos = fileInfos;
-    
+
     // Parse dependencies
     NSMutableArray *deps = [NSMutableArray array];
     for (NSDictionary *depDict in dict[@"dependencies"]) {
@@ -268,7 +268,7 @@
         [deps addObject:dep];
     }
     ver.dependencies = deps;
-    
+
     return ver;
 }
 
@@ -279,7 +279,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -297,15 +297,15 @@
         dispatch_async(self.callbackQueue, ^{ completion(@[], nil); });
         return;
     }
-    
+
     NSString *ids = [projectIDs componentsJoinedByString:@","];
     NSString *encodedIDs = [ids stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     NSString *urlString = [NSString stringWithFormat:@"https://api.modrinth.com/v2/projects?ids=[%@]", encodedIDs];
-    
+
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -325,26 +325,26 @@
 
 - (void)versionsForProject:(NSString *)projectID facets:(NSDictionary *)facets completion:(void(^)(NSArray<PCLModrinthVersion *> *versions, NSError *error))completion {
     NSString *urlString = [NSString stringWithFormat:@"https://api.modrinth.com/v2/project/%@/version", projectID];
-    
+
     NSMutableArray *params = [NSMutableArray array];
     NSString *gameVersion = facets[@"gameVersion"];
     if (gameVersion) {
         [params addObject:[NSString stringWithFormat:@"game_versions=[\"%@\"]", gameVersion]];
     }
-    
+
     NSString *loader = facets[@"loader"];
     if (loader) {
         [params addObject:[NSString stringWithFormat:@"loaders=[\"%@\"]", loader]];
     }
-    
+
     if (params.count > 0) {
         urlString = [urlString stringByAppendingFormat:@"?%@", [params componentsJoinedByString:@"&"]];
     }
-    
+
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -365,7 +365,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -383,15 +383,15 @@
         dispatch_async(self.callbackQueue, ^{ completion(@[], nil); });
         return;
     }
-    
+
     NSString *ids = [versionIDs componentsJoinedByString:@","];
     NSString *encodedIDs = [ids stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     NSString *urlString = [NSString stringWithFormat:@"https://api.modrinth.com/v2/versions?ids=[%@]", encodedIDs];
-    
+
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -416,7 +416,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -440,7 +440,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -467,7 +467,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -492,7 +492,7 @@
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [req setValue:@"PCL-iOS/1.0" forHTTPHeaderField:@"User-Agent"];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -515,12 +515,12 @@
               toPath:(NSString *)path
             progress:(void(^)(double progress))progress
           completion:(void(^)(BOOL success, NSError *error))completion {
-    
+
     if (!file.url) {
         completion(NO, [NSError errorWithDomain:@"PCLModrinthAPI" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No download URL"}]);
         return;
     }
-    
+
     NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:file.url]];
     NSURLSessionDownloadTask *task = [self.session downloadTaskWithRequest:req completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
         if (error) {

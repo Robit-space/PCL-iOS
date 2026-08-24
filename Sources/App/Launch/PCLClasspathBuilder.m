@@ -9,37 +9,37 @@
     if (!info) {
         return nil;
     }
-    
+
     NSMutableString *classpath = [NSMutableString string];
     NSString *librariesDir = [self librariesDirectory];
     NSString *versionJar = [self versionJarPath:version];
-    
+
     // Add version jar first
     [classpath appendString:versionJar];
     [classpath appendString:@":"];
-    
+
     // Process libraries array
     for (NSDictionary *lib in info.libraries) {
         NSString *name = lib[@"name"];
         if (!name.length) continue;
-        
+
         // Check rules
         if (![self shouldIncludeLibrary:lib]) {
             continue;
         }
-        
+
         NSString *libPath = [self libraryPathForName:name inLibrariesDir:librariesDir];
         if ([[NSFileManager defaultManager] fileExistsAtPath:libPath]) {
             [classpath appendString:libPath];
             [classpath appendString:@":"];
         }
     }
-    
+
     // Remove trailing colon
     if (classpath.length > 0 && [classpath hasSuffix:@":"]) {
         [classpath deleteCharactersInRange:NSMakeRange(classpath.length - 1, 1)];
     }
-    
+
     return [NSString stringWithString:classpath];
 }
 
@@ -56,13 +56,13 @@
 + (NSString *)versionJarPath:(NSString *)version {
     NSString *versionsDir = [[PCLVersionManager sharedManager] versionsDirectory];
     NSString *versionDir = [versionsDir stringByAppendingPathComponent:version];
-    
+
     // Try version-specific jar first
     NSString *versionJar = [versionDir stringByAppendingPathComponent:[version stringByAppendingString:@".jar"]];
     if ([[NSFileManager defaultManager] fileExistsAtPath:versionJar]) {
         return versionJar;
     }
-    
+
     // Fallback to inherited jar or default
     PCLVersionInfo *info = [[PCLVersionManager sharedManager] versionInfoForId:version];
     if (info.jar.length > 0) {
@@ -71,7 +71,7 @@
             return inheritedJar;
         }
     }
-    
+
     return versionJar;
 }
 
@@ -81,15 +81,15 @@
     // Maven coordinates format: group:artifact:version[:classifier]
     NSArray *parts = [name componentsSeparatedByString:@":"];
     if (parts.count < 3) return nil;
-    
+
     NSString *group = parts[0];
     NSString *artifact = parts[1];
     NSString *version = parts[2];
     NSString *classifier = parts.count >= 4 ? parts[3] : @"";
-    
+
     // Convert group to path
     NSString *groupPath = [group stringByReplacingOccurrencesOfString:@"." withString:@"/"];
-    
+
     // Build file name
     NSString *filename;
     if (classifier.length > 0) {
@@ -97,12 +97,12 @@
     } else {
         filename = [NSString stringWithFormat:@"%@-@%@.jar", artifact, version];
     }
-    
+
     NSString *libPath = [librariesDir stringByAppendingPathComponent:groupPath];
     libPath = [libPath stringByAppendingPathComponent:artifact];
     libPath = [libPath stringByAppendingPathComponent:version];
     libPath = [libPath stringByAppendingPathComponent:filename];
-    
+
     return libPath;
 }
 
@@ -132,18 +132,18 @@
     NSString *osName = [self currentOSName];
     NSString *osVersion = [self currentOSVersion];
     NSString *arch = [self currentArchitecture];
-    
+
     BOOL allowed = YES;
     for (NSDictionary *rule in rules) {
         NSString *action = rule[@"action"];
         NSDictionary *os = rule[@"os"];
         NSDictionary *features = rule[@"features"];
-        
+
         BOOL osMatch = YES;
         if (os) {
             NSString *ruleOs = os[@"name"];
             NSString *ruleVersion = os[@"version"];
-            
+
             if (ruleOs && ![ruleOs isEqualToString:osName]) {
                 osMatch = NO;
             }
@@ -153,13 +153,13 @@
                 }
             }
         }
-        
+
         BOOL featuresMatch = YES;
         if (features) {
             // Check for specific features
             featuresMatch = [self checkFeatures:features];
         }
-        
+
         if ([action isEqualToString:@"allow"]) {
             if (osMatch && featuresMatch) {
                 allowed = YES;
@@ -170,7 +170,7 @@
             }
         }
     }
-    
+
     return allowed;
 }
 
@@ -200,7 +200,7 @@
    	struct utsname systemInfo;
     uname(&systemInfo);
     NSString *arch = [NSString stringWithUTF8String:systemInfo.machine];
-    
+
     if ([arch isEqualToString:@"arm64"] || [arch isEqualToString:@"aarch64"]) {
         return @"arm64";
     } else if ([arch hasPrefix:@"x86"]) {

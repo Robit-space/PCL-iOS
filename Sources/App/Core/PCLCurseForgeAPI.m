@@ -60,20 +60,20 @@
                        page:(NSInteger)page
                    pageSize:(NSInteger)pageSize
                  completion:(void(^)(NSArray<PCLCurseForgeMod *> *mods, NSError *error))completion {
-    
+
     NSMutableDictionary *params = [@{
         @"gameId": @(self.gameId),
         @"classId": @(6), // Mods
         @"pageSize": @(pageSize),
         @"index": @(page * pageSize),
     } mutableCopy];
-    
+
     if (query.length > 0) params[@"searchFilter"] = query;
     if (gameVersion) params[@"gameVersion"] = gameVersion;
     if (category) params[@"classId"] = category;
-    
+
     NSMutableURLRequest *req = [self requestWithPath:@"/v1/mods/search" query:params];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -106,7 +106,7 @@
 - (void)getModWithId:(NSInteger)modId completion:(void(^)(PCLCurseForgeMod *mod, NSError *error))completion {
     NSString *path = [NSString stringWithFormat:@"/v1/mods/%ld", (long)modId];
     NSMutableURLRequest *req = [self requestWithPath:path query:nil];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -130,7 +130,7 @@
 - (void)getFilesForMod:(NSInteger)modId completion:(void(^)(NSArray<PCLCurseForgeFile *> *files, NSError *error))completion {
     NSString *path = [NSString stringWithFormat:@"/v1/mods/%ld/files", (long)modId];
     NSMutableURLRequest *req = [self requestWithPath:path query:nil];
-    
+
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             dispatch_async(self.callbackQueue, ^{ completion(nil, error); });
@@ -158,12 +158,12 @@
               toPath:(NSString *)path
             progress:(void(^)(double progress))progress
           completion:(void(^)(BOOL success, NSError *error))completion {
-    
+
     if (!file.downloadUrl) {
         completion(NO, [NSError errorWithDomain:@"PCLCurseForgeAPI" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No download URL"}]);
         return;
     }
-    
+
     NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:file.downloadUrl]];
     NSURLSessionDownloadTask *task = [self.session downloadTaskWithRequest:req completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
         if (error) {

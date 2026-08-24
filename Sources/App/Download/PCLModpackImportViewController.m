@@ -19,13 +19,13 @@
     [super viewDidLoad];
     self.title = @"导入整合包";
     self.view.backgroundColor = [UIColor colorWithRed:251.0/255.0 green:251.0/255.0 blue:251.0/255.0 alpha:1.0];
-    
+
     self.sources = @[
         @{@"title": @"从 Zip 文件导入", @"subtitle": @"选择本地 .zip 或 .mrpack 文件", @"action": @"zip"},
         @{@"title": @"从 CurseForge 导入", @"subtitle": @"输入 CurseForge 项目 ID 和文件 ID", @"action": @"curseforge"},
         @{@"title": @"从 Modrinth 导入", @"subtitle": @"输入 Modrinth 项目 ID 和版本 ID", @"action": @"modrinth"},
     ];
-    
+
     [self setupUI];
 }
 
@@ -36,12 +36,12 @@
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.tableView];
-    
+
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
     self.progressView.hidden = YES;
     [self.view addSubview:self.progressView];
-    
+
     self.statusLabel = [[UILabel alloc] init];
     self.statusLabel.font = [UIFont systemFontOfSize:14];
     self.statusLabel.textColor = [UIColor grayColor];
@@ -49,17 +49,17 @@
     self.statusLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.statusLabel.hidden = YES;
     [self.view addSubview:self.statusLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tableView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
         [self.tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.tableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
-        
+
         [self.progressView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:20],
         [self.progressView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-20],
         [self.progressView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-60],
-        
+
         [self.statusLabel.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:20],
         [self.statusLabel.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-20],
         [self.statusLabel.bottomAnchor constraintEqualToAnchor:self.progressView.topAnchor constant:-8],
@@ -123,7 +123,7 @@
     self.progressView.hidden = NO;
     self.statusLabel.hidden = NO;
     self.progressView.progress = 0;
-    
+
     [[PCLModpackImportService sharedService] importFromCurseForge:projectID
                                                            fileID:fileID
                                                          progress:^(double progress, NSString *status) {
@@ -148,7 +148,7 @@
     self.progressView.hidden = NO;
     self.statusLabel.hidden = NO;
     self.progressView.progress = 0;
-    
+
     [[PCLModpackImportService sharedService] importFromModrinth:projectID
                                                      versionID:versionID
                                                        progress:^(double progress, NSString *status) {
@@ -174,11 +174,11 @@
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
     NSURL *url = urls.firstObject;
     if (!url) return;
-    
+
     self.progressView.hidden = NO;
     self.statusLabel.hidden = NO;
     self.progressView.progress = 0;
-    
+
     [[PCLModpackImportService sharedService] importFromZipAtURL:url
                                                        progress:^(double progress, NSString *status) {
         dispatch_async(dispatch_get_main_queue(), ^{

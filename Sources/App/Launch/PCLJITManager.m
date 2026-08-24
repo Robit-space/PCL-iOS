@@ -24,7 +24,7 @@ static NSString *const kJITDomain = @"PCLJITManager";
     if (ret != 0) {
         return NO;
     }
-    
+
     // Also check via os_consent
     NSDictionary *options = @{};
     return YES;
@@ -36,25 +36,25 @@ static NSString *const kJITDomain = @"PCLJITManager";
         if (completion) completion(YES, nil);
         return;
     }
-    
+
     // Method 2: Try via dlopen/dlsym (dynamic library method)
     if ([self tryDynamicLibraryMethod]) {
         if (completion) completion(YES, nil);
         return;
     }
-    
+
     // Method 3: Try via syscall
     if ([self trySyscallMethod]) {
         if (completion) completion(YES, nil);
         return;
     }
-    
+
     // Method 4: Try sandbox-specific method
     if ([self trySandboxMethod]) {
         if (completion) completion(YES, nil);
         return;
     }
-    
+
     // All methods failed
     NSError *error = [self errorWithCode:PCLJITTErrorMethodFailed
                                  message:@"JIT could not be enabled via any available method"];
@@ -77,11 +77,11 @@ static NSString *const kJITDomain = @"PCLJITManager";
     size_t size = getpagesize();
     void *mem = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC,
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    
+
     if (mem == MAP_FAILED) {
         return NO;
     }
-    
+
     // Verify the mapping is usable
     munmap(mem, size);
     return YES;
@@ -114,11 +114,11 @@ static NSString *const kJITDomain = @"PCLJITManager";
     size_t size = getpagesize();
     void *mem = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC,
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    
+
     if (mem == MAP_FAILED) {
         return NO;
     }
-    
+
     munmap(mem, size);
     return YES;
 }

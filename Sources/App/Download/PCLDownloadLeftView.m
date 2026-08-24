@@ -196,6 +196,16 @@ typedef struct {
       [refresh.heightAnchor constraintEqualToConstant:14]]];
 
 
+    UIView*m=[UIView new];m.tag=702;m.hidden=YES;m.backgroundColor=PCLColor(0x1370F3);
+
+    m.layer.cornerRadius=2;m.translatesAutoresizingMaskIntoConstraints=NO;[btn addSubview:m];
+
+    [NSLayoutConstraint activateConstraints:@[[m.leadingAnchor constraintEqualToAnchor:btn.leadingAnchor constant:-1],
+
+      [m.topAnchor constraintEqualToAnchor:btn.topAnchor constant:6],[m.bottomAnchor constraintEqualToAnchor:btn.bottomAnchor constant:-6],
+
+      [m.widthAnchor constraintEqualToConstant:5]]];
+
     btn.backgroundColor = [UIColor clearColor];
 
     return btn;
@@ -210,14 +220,24 @@ typedef struct {
     }
 }
 
-- (void)updateTabAppearance {
-    for (PCLDownloadTabButton *btn in self.tabButtons) {
-        BOOL selected = (btn.tab == self.selectedTab);
-        btn.backgroundColor = selected ? [PCLColor(0xE0EAFD) colorWithAlphaComponent:.75] : UIColor.clearColor;
-        [btn setTitleColor:selected ? PCLColor(0x1370F3) : PCLColor(0x343D4A) forState:UIControlStateNormal];
-        btn.tintColor=selected?PCLColor(0x0B5BCB):PCLColor(0x505A66);
-        [btn viewWithTag:701].hidden=!selected;
-    }
+- (void)updateTabAppearance{
+
+ for(PCLDownloadTabButton*b in self.tabButtons){
+
+  BOOL on=b.tab==self.selectedTab;UIView*m=[b viewWithTag:702];
+
+  b.backgroundColor=UIColor.clearColor;[b setTitleColor:on?PCLColor(0x1370F3):PCLColor(0x343D4A) forState:0];
+
+  b.tintColor=on?PCLColor(0x1370F3):PCLColor(0x505A66);[b viewWithTag:701].hidden=!on;
+
+  if(on&&m.hidden){m.hidden=NO;m.transform=CGAffineTransformMakeScale(1,.05);
+
+   [UIView animateWithDuration:.2 animations:^{m.transform=CGAffineTransformIdentity;}];}
+
+  else if(!on)m.hidden=YES;
+
+ }
+
 }
 
 - (void)dismissTransientUI {

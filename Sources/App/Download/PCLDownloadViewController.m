@@ -1,11 +1,13 @@
 #import "PCLDownloadViewController.h"
 #import "PCLDownloadLeftView.h"
 #import "PCLDownloadRightView.h"
+#import "PCLResourceBrowseViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PCLDownloadViewController ()
 @property(nonatomic,strong) PCLDownloadLeftView *leftView;
 @property(nonatomic,strong) PCLDownloadRightView *rightView;
+@property(nonatomic,strong) PCLResourceBrowseViewController *resourceVC;
 @property(nonatomic,strong) CAGradientLayer *backgroundGradient;
 @property(nonatomic,strong) UIView *shadowView;
 @end
@@ -31,10 +33,31 @@
     [self.view addSubview:self.leftView];
     [self.view addSubview:self.rightView];
 
+    self.resourceVC=[PCLResourceBrowseViewController new];[self addChildViewController:self.resourceVC];
+
+    [self.view addSubview:self.resourceVC.view];[self.resourceVC didMoveToParentViewController:self];self.resourceVC.view.hidden=YES;
+
     __weak typeof(self) weakSelf=self;
 
-    self.leftView.onSelectTab=^(PCLDownloadTab tab) {
-        [weakSelf.rightView switchToTab:tab];
+    self.leftView.onSelectTab=^(PCLDownloadTab tab){
+
+     UIView*old=weakSelf.rightView.hidden?weakSelf.resourceVC.view:weakSelf.rightView;
+
+     [UIView animateWithDuration:.11 animations:^{old.alpha=0;old.transform=CGAffineTransformMakeTranslation(-40,0);}
+
+      completion:^(BOOL d){BOOL r=tab>=PCLDownloadTabMod&&tab<=PCLDownloadTabShader;
+
+       weakSelf.rightView.hidden=r;weakSelf.resourceVC.view.hidden=!r;
+       if(r){PCLResourceTab t=tab==PCLDownloadTabModpack?PCLResourceTabModpack:tab==PCLDownloadTabDataPack?PCLResourceTabDataPack:tab==PCLDownloadTabResourcePack?PCLResourceTabResourcePack:tab==PCLDownloadTabShader?PCLResourceTabShader:PCLResourceTabMod;[weakSelf.resourceVC showTab:t];}
+
+       else [weakSelf.rightView switchToTab:tab];
+
+       UIView*n=r?weakSelf.resourceVC.view:weakSelf.rightView;n.alpha=0;n.transform=CGAffineTransformMakeTranslation(40,0);
+
+       [UIView animateWithDuration:.16 delay:.03 options:UIViewAnimationOptionCurveEaseOut animations:^{n.alpha=1;n.transform=CGAffineTransformIdentity;} completion:nil];
+
+     }];
+
     };
 
     [self.rightView switchToTab:PCLDownloadTabMinecraft];
@@ -57,7 +80,6 @@
         ? MIN(self.leftPanelWidth,w)
         : 300.0*scale;
 
-    scale=MIN(scale,leftW/300.0);
 
     self.backgroundGradient.frame=self.view.bounds;
     self.leftView.designScale=scale;
@@ -65,6 +87,7 @@
 
     self.leftView.frame=CGRectMake(0,0,leftW,h);
     self.rightView.frame=CGRectMake(leftW,0,MAX(0,w-leftW),h);
+    self.resourceVC.view.frame=self.rightView.frame;
     self.shadowView.frame=CGRectMake(leftW,0,1,h);
 }
 

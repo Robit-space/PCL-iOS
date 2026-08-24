@@ -6,25 +6,25 @@
  parameters:(NSDictionary *)params
     headers:(NSDictionary *)headers
  completion:(void (^)(NSData *, NSURLResponse *, NSError *))completion {
-    
+
     if (params.count > 0) {
         NSString *query = [self urlEncodedStringFromParams:params];
         urlString = [urlString stringByAppendingFormat:[urlString containsString:@"?"] ? @"&%@" : @"?%@", query];
     }
-    
+
     NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"GET";
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
     request.timeoutInterval = 15;
-    
+
     [request setValue:@"PCL-iOS/0.1" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    
+
     for (NSString *key in headers) {
         [request setValue:headers[key] forHTTPHeaderField:key];
     }
-    
+
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -38,26 +38,26 @@
   parameters:(NSDictionary *)params
      headers:(NSDictionary *)headers
   completion:(void (^)(NSData *, NSURLResponse *, NSError *))completion {
-    
+
     NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"POST";
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
     request.timeoutInterval = 30;
-    
+
     [request setValue:@"PCL-iOS/0.1" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    
+
     for (NSString *key in headers) {
         [request setValue:headers[key] forHTTPHeaderField:key];
     }
-    
+
     if (params) {
         NSString *query = [self urlEncodedStringFromParams:params];
         request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
         [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     }
-    
+
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -71,21 +71,21 @@
       parameters:(NSDictionary *)params
          headers:(NSDictionary *)headers
       completion:(void (^)(NSData *, NSURLResponse *, NSError *))completion {
-    
+
     NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"POST";
     request.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
     request.timeoutInterval = 30;
-    
+
     [request setValue:@"PCL-iOS/0.1" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
+
     for (NSString *key in headers) {
         [request setValue:headers[key] forHTTPHeaderField:key];
     }
-    
+
     if (params) {
         NSError *error = nil;
         request.HTTPBody = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
@@ -96,7 +96,7 @@
             return;
         }
     }
-    
+
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{

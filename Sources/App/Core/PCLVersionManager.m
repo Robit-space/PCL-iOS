@@ -80,7 +80,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
     NSString *versionsDir = [self versionsDirectory];
     NSArray *contents = [fm contentsOfDirectoryAtPath:versionsDir error:nil];
     NSMutableArray *versions = [NSMutableArray array];
-    
+
     for (NSString *folderName in contents) {
         NSString *jsonPath = [[versionsDir stringByAppendingPathComponent:folderName] stringByAppendingPathComponent:[folderName stringByAppendingString:@".json"]];
         if ([fm fileExistsAtPath:jsonPath]) {
@@ -91,7 +91,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
             [versions addObject:info];
         }
     }
-    
+
     return versions;
 }
 
@@ -100,11 +100,11 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
         if (completion) completion(self.cachedManifest, nil);
         return;
     }
-    
+
     NSString *manifestURL = [[PCLDownloadManager sharedManager] replaceURLWithDownloadSource:kManifestURL];
     NSURL *url = [NSURL URLWithString:manifestURL];
     NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
-    
+
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
@@ -113,7 +113,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
             });
             return;
         }
-        
+
         NSError *jsonError = nil;
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
         if (jsonError) {
@@ -122,10 +122,10 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
             });
             return;
         }
-        
+
         self.cachedManifest = json[@"versions"];
         self.manifestCacheDate = [NSDate date];
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(self.cachedManifest, nil);
         });
@@ -141,7 +141,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
 
 - (void)loadVersionJson:(NSString *)versionId completion:(void (^)(PCLVersionInfo *, NSError *))completion {
     NSString *jsonPath = [[[self versionsDirectory] stringByAppendingPathComponent:versionId] stringByAppendingPathComponent:[versionId stringByAppendingString:@".json"]];
-    
+
     NSFileManager *fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:jsonPath]) {
         NSData *data = [NSData dataWithContentsOfFile:jsonPath];
@@ -166,13 +166,13 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
     info.inheritsFrom = dict[@"inheritsFrom"] ?: @"";
     info.jar = dict[@"jar"] ?: info.versionId;
     info.libraries = dict[@"libraries"] ?: @[];
-    
+
     NSDictionary *assetIndex = dict[@"assetIndex"];
     if (assetIndex) {
         info.assetIndex = assetIndex[@"id"] ?: @"";
         info.assets = assetIndex[@"id"] ?: @"";
     }
-    
+
     return info;
 }
 
@@ -193,11 +193,11 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
 - (BOOL)createInstanceWithName:(NSString *)name baseVersion:(NSString *)versionId {
     NSString *instanceDir = [self instanceDirectoryWithName:name];
     NSFileManager *fm = [NSFileManager defaultManager];
-    
+
     if ([fm fileExistsAtPath:instanceDir]) return NO;
-    
+
     [fm createDirectoryAtPath:instanceDir withIntermediateDirectories:YES attributes:nil error:nil];
-    
+
     NSMutableDictionary *config = [@{
         @"name": name,
         @"versionId": versionId,
@@ -207,11 +207,11 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
         @"resolutionHeight": @"720",
         @"created": [[NSDate date] description]
     } mutableCopy];
-    
+
     NSString *configPath = [instanceDir stringByAppendingPathComponent:@"instance.json"];
     NSData *data = [NSJSONSerialization dataWithJSONObject:config options:NSJSONWritingPrettyPrinted error:nil];
     [data writeToFile:configPath atomically:YES];
-    
+
     return YES;
 }
 
@@ -220,7 +220,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
     NSString *instancesDir = [self instancesDirectory];
     NSArray *contents = [fm contentsOfDirectoryAtPath:instancesDir error:nil];
     NSMutableArray *instances = [NSMutableArray array];
-    
+
     for (NSString *name in contents) {
         NSString *configPath = [instancesDir stringByAppendingPathComponent:[name stringByAppendingPathComponent:@"instance.json"]];
         if ([fm fileExistsAtPath:configPath]) {
@@ -231,7 +231,7 @@ static NSString *const kManifestURL = @"https://piston-meta.mojang.com/mc/game/v
             }
         }
     }
-    
+
     return instances;
 }
 

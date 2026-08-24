@@ -39,28 +39,28 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 - (void)launchWithVersion:(NSString *)versionId
                   profile:(NSDictionary *)profile
                completion:(PCLLaunchCompletion)completion {
-    
+
     if (!versionId.length) {
         NSError *error = [self errorWithCode:PCLLaunchErrorVersionNotFound message:@"Version ID is empty"];
         if (completion) completion(NO, error);
         return;
     }
-    
+
     if (!profile) {
         profile = [PCLProfileStore selectedProfile];
     }
-    
+
     [self log:@"Starting launch sequence..."];
     [self log:[NSString stringWithFormat:@"  Version: %@", versionId]];
     [self log:[NSString stringWithFormat:@"  Profile: %@", profile[@"name"] ?: profile[@"username"] ?: @"Default"]];
-    
+
     // Step 1: Validate version
     [self log:@"Step 1/5: Validating version..."];
     PCLVersionInfo *versionInfo = [[PCLVersionManager sharedManager] versionInfoForId:versionId];
     if (!versionInfo) {
         [self loadVersionJson:versionId completion:^(PCLVersionInfo *info, NSError *loadError) {
             if (loadError || !info) {
-                NSError *error = [self errorWithCode:PCLLaunchErrorVersionNotFound 
+                NSError *error = [self errorWithCode:PCLLaunchErrorVersionNotFound
                                              message:@"Version JSON not found"];
                 if (completion) completion(NO, error);
                 return;
@@ -82,19 +82,19 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 - (void)launchWithInstance:(PCLInstance *)instance
                    profile:(NSDictionary *)profile
                 completion:(PCLLaunchCompletion)completion {
-    
+
     if (!instance) {
         NSError *error = [self errorWithCode:PCLLaunchErrorProfileInvalid message:@"Instance is nil"];
         if (completion) completion(NO, error);
         return;
     }
-    
+
     // 保存当前实例
     [[PCLInstanceManager sharedManager] selectInstance:instance];
-    
-    [self log:[NSString stringWithFormat:@"Launching instance: %@ (isolation: %@)", 
+
+    [self log:[NSString stringWithFormat:@"Launching instance: %@ (isolation: %@)",
                instance.name, instance.versionIsolation ? @"ON" : @"OFF"]];
-    
+
     // 加载版本信息
     NSString *versionId = instance.versionId;
     if (!versionId.length) {
@@ -102,12 +102,12 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
         if (completion) completion(NO, error);
         return;
     }
-    
+
     PCLVersionInfo *versionInfo = [[PCLVersionManager sharedManager] versionInfoForId:versionId];
     if (!versionInfo) {
         [self loadVersionJson:versionId completion:^(PCLVersionInfo *info, NSError *loadError) {
             if (loadError || !info) {
-                NSError *error = [self errorWithCode:PCLLaunchErrorVersionNotFound 
+                NSError *error = [self errorWithCode:PCLLaunchErrorVersionNotFound
                                              message:@"Version JSON not found"];
                 if (completion) completion(NO, error);
                 return;
@@ -121,14 +121,14 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 
 - (void)launchWithCurrentInstance:(NSDictionary *)profile
                        completion:(PCLLaunchCompletion)completion {
-    
+
     PCLInstance *currentInstance = [[PCLInstanceManager sharedManager] currentInstance];
     if (!currentInstance) {
         NSError *error = [self errorWithCode:PCLLaunchErrorProfileInvalid message:@"No instance selected"];
         if (completion) completion(NO, error);
         return;
     }
-    
+
     [self launchWithInstance:currentInstance profile:profile completion:completion];
 }
 
@@ -136,12 +136,12 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
                   versionInfo:(PCLVersionInfo *)versionInfo
                       profile:(NSDictionary *)profile
                    completion:(PCLLaunchCompletion)completion {
-    
+
     if (self.isCancelled) {
         if (completion) completion(NO, [self errorWithCode:PCLLaunchErrorCancelled message:@"Cancelled"]);
         return;
     }
-    
+
         // Step 2: Find Java (pre-bundled in .app, like Amethyst)
         [self log:@"Step 2/5: Locating Java runtime..."];
         NSInteger requiredJava = [PCLPathUtils recommendedJavaVersionForMC:versionInfo.versionId];
@@ -164,12 +164,12 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
             return;
         }
         [self log:[NSString stringWithFormat:@"  Java found at: %@", javaPath]];
-    
+
     if (self.isCancelled) {
         if (completion) completion(NO, [self errorWithCode:PCLLaunchErrorCancelled message:@"Cancelled"]);
         return;
     }
-    
+
     // Step 3: Build arguments with instance (版本隔离)
     [self log:@"Step 3/5: 构建启动参数..."];
     NSDictionary *config = [self buildConfigFromInstance:instance profile:profile versionInfo:versionInfo];
@@ -177,18 +177,18 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
                                                             versionInfo:versionInfo
                                                                profile:profile
                                                                 config:config];
-    
+
     if (!args) {
-        NSError *error = [self errorWithCode:PCLLaunchErrorInternalFailure 
+        NSError *error = [self errorWithCode:PCLLaunchErrorInternalFailure
                                      message:@"Failed to build launch arguments"];
         if (completion) completion(NO, error);
         return;
     }
-    
+
     [self log:[NSString stringWithFormat:@"  Game directory: %@", args[@"gameDirectory"]]];
     [self log:[NSString stringWithFormat:@"  Version isolation: %@", args[@"versionIsolation"]]];
     [self log:[NSString stringWithFormat:@"  Main class: %@", args[@"mainClass"]]];
-    
+
     // Step 4: Enable JIT
     [self log:@"Step 4/5: Enabling JIT compilation..."];
     if ([PCLJITManager isJTTAvailable]) {
@@ -211,21 +211,21 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 - (NSDictionary *)buildConfigFromInstance:(PCLInstance *)instance
                                   profile:(NSDictionary *)profile
                                versionInfo:(PCLVersionInfo *)info {
-    
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
+
     // 优先使用instance设置，否则使用全局设置
     NSInteger memoryMin = instance.memoryMinMB > 0 ? instance.memoryMinMB : ([defaults integerForKey:@"memoryMin"] ?: 512);
     NSInteger memoryMax = instance.memoryMaxMB > 0 ? instance.memoryMaxMB : ([defaults integerForKey:@"memoryMax"] ?: 2048);
     BOOL enableHooks = [defaults boolForKey:@"enableVirtualMachineHooks"];
-    
+
     // 合并JVM参数: instance自定义 + profile自定义
     NSString *jvmArgs = instance.javaArgs ?: @"";
     NSString *profileJavaArgs = profile[@"javaArgs"];
     if ([profileJavaArgs isKindOfClass:[NSString class]] && profileJavaArgs.length > 0) {
         jvmArgs = [jvmArgs length] > 0 ? [jvmArgs stringByAppendingFormat:@" %@", profileJavaArgs] : profileJavaArgs;
     }
-    
+
     return @{
         @"minMemory": @(memoryMin),
         @"maxMemory": @(memoryMax),
@@ -244,12 +244,12 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 - (void)proceedWithVersion:(PCLVersionInfo *)versionInfo
                    profile:(NSDictionary *)profile
                 completion:(PCLLaunchCompletion)completion {
-    
+
     if (self.isCancelled) {
         if (completion) completion(NO, [self errorWithCode:PCLLaunchErrorCancelled message:@"Cancelled"]);
         return;
     }
-    
+
     // Step 2: Find Java (pre-bundled in .app)
     [self log:@"Step 2/5: Locating Java runtime..."];
     NSString *javaPath = [PCLPathUtils javaExecutableForVersion:[PCLPathUtils recommendedJavaVersionForMC:versionInfo.versionId]];
@@ -275,36 +275,36 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
                   profile:(NSDictionary *)profile
                  javaPath:(NSString *)javaPath
                completion:(PCLLaunchCompletion)completion {
-    
+
     if (self.isCancelled) {
         if (completion) completion(NO, [self errorWithCode:PCLLaunchErrorCancelled message:@"Cancelled"]);
         return;
     }
-    
+
     // Step 3: Validate Java version
     [self log:@"Step 3/5: Validating Java version..."];
     NSInteger requiredJava = [PCLPathUtils recommendedJavaVersionForMC:versionInfo.versionId];
     [self log:[NSString stringWithFormat:@"  Required Java: %ld", (long)requiredJava]];
-    
+
     // Step 4: Build classpath and arguments
     [self log:@"Step 4/5: Building launch arguments..."];
-    
+
     NSDictionary *config = [self buildConfigFromProfile:profile versionInfo:versionInfo];
     NSDictionary *args = [PCLLaunchArguments buildArgumentsForVersion:versionInfo
                                                              profile:profile
                                                               config:config];
-    
+
     if (!args) {
-        NSError *error = [self errorWithCode:PCLLaunchErrorInternalFailure 
+        NSError *error = [self errorWithCode:PCLLaunchErrorInternalFailure
                                      message:@"Failed to build launch arguments"];
         if (completion) completion(NO, error);
         return;
     }
-    
+
     [self log:[NSString stringWithFormat:@"  Main class: %@", args[@"mainClass"]]];
     [self log:[NSString stringWithFormat:@"  JVM args: %@", [args[@"jvmArguments"] componentsJoinedByString:@" "]]];
     [self log:[NSString stringWithFormat:@"  Game args: %@", [args[@"gameArguments"] componentsJoinedByString:@" "]]];
-    
+
     // Step 5: Enable JIT
     [self log:@"Step 5/5: Enabling JIT compilation..."];
     if ([PCLJITManager isJTTAvailable]) {
@@ -329,11 +329,11 @@ static NSString *const kErrorDomain = @"PCLGameLauncher";
 
 - (NSDictionary *)buildConfigFromProfile:(NSDictionary *)profile versionInfo:(PCLVersionInfo *)info {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
+
     NSInteger memoryMin = [defaults integerForKey:@"memoryMin"] ?: 512;
     NSInteger memoryMax = [defaults integerForKey:@"memoryMax"] ?: 2048;
     BOOL enableHooks = [defaults boolForKey:@"enableVirtualMachineHooks"];
-    
+
     return @{
         @"minMemory": @(memoryMin),
         @"maxMemory": @(memoryMax),

@@ -45,7 +45,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
 - (void)setupUI {
     self.backgroundColor = [UIColor whiteColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+
     self.iconImageView = [[UIImageView alloc] init];
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.iconImageView.layer.cornerRadius = 8;
@@ -53,32 +53,32 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.iconImageView.backgroundColor = PCLColor(0xF0F0F0);
     [self.contentView addSubview:self.iconImageView];
-    
+
     self.nameLabel = [[UILabel alloc] init];
     self.nameLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
     self.nameLabel.textColor = PCLColor(0x343D4A);
     self.nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.nameLabel];
-    
+
     self.authorLabel = [[UILabel alloc] init];
     self.authorLabel.font = [UIFont systemFontOfSize:12];
     self.authorLabel.textColor = PCLColor(0x1370F3);
     self.authorLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.authorLabel];
-    
+
     self.downloadsLabel = [[UILabel alloc] init];
     self.downloadsLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightMedium];
     self.downloadsLabel.textColor = PCLColor(0x8C8C8C);
     self.downloadsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.downloadsLabel];
-    
+
     self.descriptionLabel = [[UILabel alloc] init];
     self.descriptionLabel.font = [UIFont systemFontOfSize:12];
     self.descriptionLabel.textColor = PCLColor(0x8C8C8C);
     self.descriptionLabel.numberOfLines = 2;
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.descriptionLabel];
-    
+
     self.installButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.installButton setTitle:@"安装" forState:UIControlStateNormal];
     [self.installButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -89,40 +89,40 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.installButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.installButton addTarget:self action:@selector(installTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.installButton];
-    
+
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
     self.progressView.progressTintColor = PCLColor(0x1370F3);
     self.progressView.trackTintColor = PCLColor(0xE0EAFD);
     self.progressView.hidden = YES;
     [self.contentView addSubview:self.progressView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.iconImageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:12],
         [self.iconImageView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
         [self.iconImageView.widthAnchor constraintEqualToConstant:48],
         [self.iconImageView.heightAnchor constraintEqualToConstant:48],
-        
+
         [self.nameLabel.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
         [self.nameLabel.leadingAnchor constraintEqualToAnchor:self.iconImageView.trailingAnchor constant:10],
         [self.nameLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.installButton.leadingAnchor constant:-8],
-        
+
         [self.authorLabel.topAnchor constraintEqualToAnchor:self.nameLabel.bottomAnchor constant:2],
         [self.authorLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
-        
+
         [self.downloadsLabel.topAnchor constraintEqualToAnchor:self.authorLabel.bottomAnchor constant:2],
         [self.downloadsLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
-        
+
         [self.descriptionLabel.topAnchor constraintEqualToAnchor:self.downloadsLabel.bottomAnchor constant:4],
         [self.descriptionLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
         [self.descriptionLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-12],
         [self.descriptionLabel.bottomAnchor constraintLessThanOrEqualToAnchor:self.contentView.bottomAnchor constant:-12],
-        
+
         [self.installButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
         [self.installButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-12],
         [self.installButton.widthAnchor constraintEqualToConstant:60],
         [self.installButton.heightAnchor constraintEqualToConstant:32],
-        
+
         [self.progressView.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
         [self.progressView.trailingAnchor constraintEqualToAnchor:self.installButton.leadingAnchor constant:-8],
         [self.progressView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-8]
@@ -164,10 +164,10 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.title = @"浏览整合包";
     self.view.backgroundColor = PCLColor(0xF5F7FA);
-    
+
     self.modpacks = [NSMutableArray array];
     self.currentOffset = 0;
     self.hasMore = YES;
@@ -175,7 +175,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.currentSort = PCLModrinthSortTypeDownloads;
     self.currentGameVersion = @"1.20.4";
     self.gameVersions = @[@"1.21", @"1.20.4", @"1.20.2", @"1.20.1", @"1.20", @"1.19.4", @"1.18.2"];
-    
+
     [self setupUI];
     [self loadModpacks];
 }
@@ -188,26 +188,26 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.searchBar.backgroundColor = [UIColor whiteColor];
     self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.searchBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.searchBar.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
         [self.searchBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:8],
         [self.searchBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-8],
         [self.searchBar.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     self.filterBar = [[UIView alloc] init];
     self.filterBar.backgroundColor = [UIColor whiteColor];
     self.filterBar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.filterBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.filterBar.topAnchor constraintEqualToAnchor:self.searchBar.bottomAnchor],
         [self.filterBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.filterBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.filterBar.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     self.versionFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.versionFilterButton setTitle:self.currentGameVersion forState:UIControlStateNormal];
     [self.versionFilterButton setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
@@ -217,24 +217,24 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.versionFilterButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.versionFilterButton addTarget:self action:@selector(versionFilterTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.filterBar addSubview:self.versionFilterButton];
-    
+
     self.sortFilter = [[UISegmentedControl alloc] initWithItems:@[@"下载", @"相关", @"最新", @"更新"]];
     self.sortFilter.selectedSegmentIndex = 0;
     self.sortFilter.translatesAutoresizingMaskIntoConstraints = NO;
     [self.sortFilter addTarget:self action:@selector(sortChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterBar addSubview:self.sortFilter];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.versionFilterButton.leadingAnchor constraintEqualToAnchor:self.filterBar.leadingAnchor constant:8],
         [self.versionFilterButton.centerYAnchor constraintEqualToAnchor:self.filterBar.centerYAnchor],
         [self.versionFilterButton.widthAnchor constraintEqualToConstant:70],
         [self.versionFilterButton.heightAnchor constraintEqualToConstant:28],
-        
+
         [self.sortFilter.leadingAnchor constraintEqualToAnchor:self.versionFilterButton.trailingAnchor constant:8],
         [self.sortFilter.centerYAnchor constraintEqualToAnchor:self.filterBar.centerYAnchor],
         [self.sortFilter.widthAnchor constraintEqualToConstant:180]
     ]];
-    
+
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
@@ -244,24 +244,24 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.tableView.rowHeight = 110;
     [self.tableView registerClass:[PCLModpackCell class] forCellReuseIdentifier:@"ModpackCell"];
     [self.view addSubview:self.tableView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tableView.topAnchor constraintEqualToAnchor:self.filterBar.bottomAnchor],
         [self.tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.tableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
     ]];
-    
+
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingIndicator.hidesWhenStopped = YES;
     [self.view addSubview:self.loadingIndicator];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.loadingIndicator.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [self.loadingIndicator.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor]
     ]];
-    
+
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.text = @"暂无结果";
     self.emptyLabel.font = [UIFont systemFontOfSize:14];
@@ -270,7 +270,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.emptyLabel.hidden = YES;
     self.emptyLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.emptyLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.emptyLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [self.emptyLabel.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor]
@@ -283,16 +283,16 @@ static NSString *PCLFormatDownloads(long long downloads) {
     if (self.isLoading) return;
     self.isLoading = YES;
     self.emptyLabel.hidden = YES;
-    
+
     if (self.currentOffset == 0) {
         [self.loadingIndicator startAnimating];
     }
-    
+
     NSMutableDictionary *filters = [NSMutableDictionary dictionary];
     filters[@"projectType"] = @"modpack";
     filters[@"gameVersion"] = self.currentGameVersion;
     filters[@"sortType"] = [PCLModrinthAPI sortTypeString:self.currentSort];
-    
+
     [[PCLModrinthAPI sharedAPI] searchProjects:self.currentQuery
                                        filters:filters
                                          limit:20
@@ -300,7 +300,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
                                     completion:^(PCLModrinthSearchResult *result, NSError *error) {
         self.isLoading = NO;
         [self.loadingIndicator stopAnimating];
-        
+
         if (error) {
             NSLog(@"[ModpackBrowse] Search failed: %@", error);
             if (self.modpacks.count == 0) {
@@ -309,15 +309,15 @@ static NSString *PCLFormatDownloads(long long downloads) {
             }
             return;
         }
-        
+
         if (self.currentOffset == 0) {
             [self.modpacks removeAllObjects];
         }
-        
+
         [self.modpacks addObjectsFromArray:result.hits];
         self.hasMore = (self.currentOffset + result.hits.count) < result.totalHits;
         self.currentOffset += result.hits.count;
-        
+
         self.emptyLabel.hidden = (self.modpacks.count > 0);
         self.emptyLabel.text = self.currentQuery.length > 0 ? @"未找到匹配的整合包" : @"暂无整合包";
         [self.tableView reloadData];
@@ -344,7 +344,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)versionFilterTapped {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选择游戏版本" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
+
     for (NSString *version in self.gameVersions) {
         UIAlertAction *action = [UIAlertAction actionWithTitle:version style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
             self.currentGameVersion = version;
@@ -353,15 +353,15 @@ static NSString *PCLFormatDownloads(long long downloads) {
         }];
         [alert addAction:action];
     }
-    
+
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    
+
     UIPopoverPresentationController *popover = alert.popoverPresentationController;
     if (popover) {
         popover.sourceView = self.versionFilterButton;
         popover.sourceRect = self.versionFilterButton.bounds;
     }
-    
+
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -369,22 +369,22 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)installModpack:(PCLModrinthProject *)modpack {
     self.installingModpack = modpack;
-    
+
     UIAlertController *confirm = [UIAlertController alertControllerWithTitle:@"安装整合包"
                                                                     message:[NSString stringWithFormat:@"确定要安装 %@ 吗？将下载所有依赖文件。", modpack.title]
                                                              preferredStyle:UIAlertControllerStyleAlert];
-    
+
     [confirm addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [confirm addAction:[UIAlertAction actionWithTitle:@"安装" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self startModpackInstall:modpack];
     }]];
-    
+
     [self presentViewController:confirm animated:YES completion:nil];
 }
 
 - (void)startModpackInstall:(PCLModrinthProject *)modpack {
     [self showInstallProgress:modpack.title];
-    
+
     [[PCLModrinthAPI sharedAPI] versionsForProject:modpack.projectID
                                            facets:@{@"gameVersion": self.currentGameVersion ?: @""}
                                        completion:^(NSArray<PCLModrinthVersion *> *versions, NSError *error) {
@@ -395,7 +395,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
             });
             return;
         }
-        
+
         PCLModrinthVersion *latestVersion = versions[0];
         [self downloadModpackFiles:latestVersion];
     }];
@@ -404,17 +404,17 @@ static NSString *PCLFormatDownloads(long long downloads) {
 - (void)downloadModpackFiles:(PCLModrinthVersion *)version {
     self.installTotalFiles = version.files.count;
     self.installCompletedFiles = 0;
-    
+
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *modpacksDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"modpacks"];
     NSString *modpackDir = [modpacksDir stringByAppendingPathComponent:self.installingModpack.projectID];
     [fm createDirectoryAtPath:modpackDir withIntermediateDirectories:YES attributes:nil error:nil];
-    
+
     __weak typeof(self) weakSelf = self;
-    
+
     for (PCLModrinthFileInfo *file in version.files) {
         NSString *targetPath = [modpackDir stringByAppendingPathComponent:file.fileName];
-        
+
         [[PCLModrinthAPI sharedAPI] downloadFile:file
                                            toPath:targetPath
                                          progress:^(double progress) {
@@ -424,13 +424,13 @@ static NSString *PCLFormatDownloads(long long downloads) {
         } completion:^(BOOL success, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 weakSelf.installCompletedFiles++;
-                
+
                 if (success) {
                     NSLog(@"[Modpack] Downloaded: %@", file.fileName);
                 } else {
                     NSLog(@"[Modpack] Failed: %@ - %@", file.fileName, error);
                 }
-                
+
                 if (weakSelf.installCompletedFiles >= weakSelf.installTotalFiles) {
                     [weakSelf hideInstallProgress];
                     [weakSelf showInstallSuccess];
@@ -442,16 +442,16 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)showInstallProgress:(NSString *)title {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"正在安装 %@", title] message:@"正在下载文件..." preferredStyle:UIAlertControllerStyleAlert];
-    
+
     UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     progressView.progress = 0;
     progressView.translatesAutoresizingMaskIntoConstraints = NO;
     alert.title = [NSString stringWithFormat:@"正在安装 %@\n\n", title];
-    
+
     [self presentViewController:alert animated:YES completion:nil];
-    
+
     objc_setAssociatedObject(alert, "progressView", progressView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
+
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         UIView *alertView = alert.view;
         if (alertView) {
@@ -463,7 +463,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
             ]];
         }
     });
-    
+
     objc_setAssociatedObject(self, "installAlert", alert, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -522,14 +522,14 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLModpackCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ModpackCell" forIndexPath:indexPath];
-    
+
     PCLModrinthProject *modpack = self.modpacks[indexPath.row];
-    
+
     cell.nameLabel.text = modpack.title;
     cell.authorLabel.text = [NSString stringWithFormat:@"by %@", modpack.author];
     cell.downloadsLabel.text = [NSString stringWithFormat:@"⬇ %@", PCLFormatDownloads(modpack.downloads)];
     cell.descriptionLabel.text = modpack.descriptionText;
-    
+
     if (cell.iconImageView && modpack.iconUrl.length > 0) {
         NSURL *url = [NSURL URLWithString:modpack.iconUrl];
         if (url) {
@@ -544,14 +544,14 @@ static NSString *PCLFormatDownloads(long long downloads) {
             [task resume];
         }
     }
-    
+
     cell.progressView.hidden = (self.installingModpack != modpack);
-    
+
     __weak typeof(self) weakSelf = self;
     cell.onInstall = ^{
         [weakSelf installModpack:modpack];
     };
-    
+
     return cell;
 }
 

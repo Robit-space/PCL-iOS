@@ -59,7 +59,7 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
 + (NSString *)rendererLibPath {
     PCLRenderRenderer renderer = [self selectedRenderer];
     NSString *dylibName = [self dylibNameForRenderer:renderer];
-    
+
     // First check Support directory
     NSArray *searchPaths = @[
         [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:@"Frameworks"],
@@ -68,23 +68,23 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
         [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"frameworks"],
         NSHomeDirectory()
     ];
-    
+
     for (NSString *baseDir in searchPaths) {
         NSString *libPath = [baseDir stringByAppendingPathComponent:dylibName];
         if ([[NSFileManager defaultManager] fileExistsAtPath:libPath]) {
             return libPath;
         }
     }
-    
+
     // Return expected path even if not found (will be checked at runtime)
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject 
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject
             stringByAppendingPathComponent:[NSString stringWithFormat:@"frameworks/%@", dylibName]];
 }
 
 + (NSDictionary *)rendererEnvVars {
     PCLRenderRenderer renderer = [self selectedRenderer];
     NSMutableDictionary *env = [NSMutableDictionary dictionary];
-    
+
     switch (renderer) {
         case PCLRenderRendererGL4ES:
             env[@"LIBGL_ES"] = @"2";
@@ -97,7 +97,7 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
             env[@"force_glcodes"] = @"false";
             env[@"force_glsl"] = @"true";
             break;
-            
+
         case PCLRenderRendererMetalANGLE:
             env[@"LIBGL_ES"] = @"3";
             env[@"LIBGL_GL"] = @"33";
@@ -106,7 +106,7 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
             env[@"ANGLE_DEFAULT_PLATFORM"] = @"metal";
             env[@"dxil_dxc_path"] = @"false";
             break;
-            
+
         case PCLRenderRendererMobileGlues:
             env[@"LIBGL_ES"] = @"2";
             env[@"LIBGL_GL"] = @"21";
@@ -114,7 +114,7 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
             env[@"MOBILEGLUES_FORCEGLSL"] = @"true";
             env[@"MOBILEGLUES_NOBOGUS"] = @"true";
             break;
-            
+
         case PCLRenderRendererZinkVK:
             env[@"LIBGL_ES"] = @"3";
             env[@"LIBGL_GL"] = @"46";
@@ -125,7 +125,7 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
             env[@"ZINK_TEX_CACHE"] = @"true";
             break;
     }
-    
+
     return [env copy];
 }
 
@@ -139,14 +139,14 @@ static NSString *const kSelectedRendererKey = @"PCLSelectedRenderer";
         [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:@"frameworks"],
         [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"frameworks"]
     ];
-    
+
     for (NSString *dir in searchDirs) {
         NSString *path = [dir stringByAppendingPathComponent:dylibName];
         if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
             return YES;
         }
     }
-    
+
     return NO;
 }
 

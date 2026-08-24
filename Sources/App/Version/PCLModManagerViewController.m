@@ -119,15 +119,15 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)loadMods {
     [self.mods removeAllObjects];
-    
+
     // 根据版本隔离设置获取mods目录
     NSString *modsDir = [[PCLInstanceManager sharedManager] modsDirectoryForInstance:self.instance];
-    
+
     NSFileManager *fm = [NSFileManager defaultManager];
     NSArray *files = [fm contentsOfDirectoryAtPath:modsDir error:nil];
-    
+
     NSString *extension = [self fileExtensionForModType:self.modType];
-    
+
     for (NSString *file in files) {
         if ([file.pathExtension isEqualToString:extension]) {
             PCLModItem *item = [[PCLModItem alloc] init];
@@ -140,7 +140,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
             [self.mods addObject:item];
         }
     }
-    
+
     // 也检查全局mods目录(如果未启用版本隔离)
     if (!self.instance.versionIsolation) {
         NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
@@ -161,7 +161,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
             }
         }
     }
-    
+
     self.emptyLabel.hidden = self.mods.count > 0;
     [self.tableView reloadData];
 }
@@ -244,14 +244,14 @@ static UIColor *PCLColor(NSUInteger rgb) {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ModCell" forIndexPath:indexPath];
     cell.backgroundColor = [UIColor clearColor];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+
     // 清除旧视图
     for (UIView *subview in cell.contentView.subviews) {
         [subview removeFromSuperview];
     }
-    
+
     PCLModItem *item = self.mods[indexPath.row];
-    
+
     // 卡片背景
     UIView *card = [[UIView alloc] initWithFrame:CGRectMake(16, 4, cell.contentView.bounds.size.width - 32, 64)];
     card.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -262,7 +262,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     card.layer.shadowRadius = 4;
     card.layer.shadowOffset = CGSizeMake(0, 1);
     [cell.contentView addSubview:card];
-    
+
     // 启用/禁用开关
     UISwitch *toggleSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(card.bounds.size.width - 60, 16, 51, 31)];
     toggleSwitch.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
@@ -271,7 +271,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     toggleSwitch.tag = indexPath.row;
     [toggleSwitch addTarget:self action:@selector(modSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     [card addSubview:toggleSwitch];
-    
+
     // Mod名称
     UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(16, 12, card.bounds.size.width - 100, 20)];
     nameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -279,7 +279,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     nameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
     nameLabel.textColor = item.enabled ? PCLColor(0x343D4A) : PCLColor(0x8C8C8C);
     [card addSubview:nameLabel];
-    
+
     // Mod加载器标签
     UILabel *loaderLabel = [[UILabel alloc] initWithFrame:CGRectMake(16, 36, 80, 16)];
     loaderLabel.text = item.modLoader;
@@ -290,7 +290,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     loaderLabel.layer.cornerRadius = 4;
     loaderLabel.clipsToBounds = YES;
     [card addSubview:loaderLabel];
-    
+
     // 文件名标签
     UILabel *fileLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 36, card.bounds.size.width - 180, 16)];
     fileLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -298,7 +298,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     fileLabel.font = [UIFont systemFontOfSize:11];
     fileLabel.textColor = PCLColor(0x8C8C8C);
     [card addSubview:fileLabel];
-    
+
     // 删除按钮
     UIButton *deleteBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     deleteBtn.frame = CGRectMake(card.bounds.size.width - 90, 16, 24, 24);
@@ -307,7 +307,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     deleteBtn.tag = indexPath.row;
     [deleteBtn addTarget:self action:@selector(deleteBtnPressed:) forControlEvents:UIControlEventTouchUpInside];
     [card addSubview:deleteBtn];
-    
+
     return cell;
 }
 

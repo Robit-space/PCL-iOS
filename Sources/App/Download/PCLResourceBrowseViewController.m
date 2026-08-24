@@ -59,7 +59,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
 - (void)setupUI {
     self.backgroundColor=UIColor.clearColor;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+
     self.iconImageView = [[UIImageView alloc] init];
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.iconImageView.layer.cornerRadius = 8;
@@ -67,38 +67,38 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.iconImageView.backgroundColor = PCLColor(0xF0F0F0);
     [self.contentView addSubview:self.iconImageView];
-    
+
     self.nameLabel = [[UILabel alloc] init];
     self.nameLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
     self.nameLabel.textColor = PCLColor(0x343D4A);
     self.nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.nameLabel];
-    
+
     self.authorLabel = [[UILabel alloc] init];
     self.authorLabel.font = [UIFont systemFontOfSize:12];
     self.authorLabel.textColor = PCLColor(0x1370F3);
     self.authorLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.authorLabel];
-    
+
     self.downloadsLabel = [[UILabel alloc] init];
     self.downloadsLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightMedium];
     self.downloadsLabel.textColor = PCLColor(0x8C8C8C);
     self.downloadsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.downloadsLabel];
-    
+
     self.versionLabel = [[UILabel alloc] init];
     self.versionLabel.font = [UIFont systemFontOfSize:11];
     self.versionLabel.textColor = PCLColor(0x27AE60);
     self.versionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.versionLabel];
-    
+
     self.descriptionLabel = [[UILabel alloc] init];
     self.descriptionLabel.font = [UIFont systemFontOfSize:12];
     self.descriptionLabel.textColor = PCLColor(0x8C8C8C);
     self.descriptionLabel.numberOfLines = 1;
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.descriptionLabel];
-    
+
     self.installButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.installButton setTitle:@"安装" forState:UIControlStateNormal];
     [self.installButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -109,15 +109,15 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.installButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.installButton addTarget:self action:@selector(installTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.installButton];self.installButton.hidden=YES;
-    
+
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
     self.progressView.progressTintColor = PCLColor(0x1370F3);
     self.progressView.trackTintColor = PCLColor(0xE0EAFD);
     self.progressView.hidden = YES;
     [self.contentView addSubview:self.progressView];
-    
-    
+
+
 }
 
 - (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
@@ -127,7 +127,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
  self.descriptionLabel.frame=CGRectMake(65,21,w-73,18);self.versionLabel.frame=CGRectMake(65,39,90,17);
  self.downloadsLabel.frame=CGRectMake(165,39,82,17);self.authorLabel.frame=CGRectMake(255,39,w-263,17);}
 
- 
+
 
 - (void)installTapped {
     if (self.onInstall) self.onInstall();
@@ -174,13 +174,13 @@ static NSString *PCLFormatSize(NSInteger bytes) {
 
 - (void)setupUI {
     self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
-    
+
     self.cardView = [[UIView alloc] init];
     self.cardView.backgroundColor = [UIColor whiteColor];
     self.cardView.layer.cornerRadius = 16;
     self.cardView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.cardView];
-    
+
     self.closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.closeButton setTitle:@"✕" forState:UIControlStateNormal];
     [self.closeButton setTitleColor:PCLColor(0x8C8C8C) forState:UIControlStateNormal];
@@ -188,12 +188,12 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.closeButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.closeButton addTarget:self action:@selector(closeTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.cardView addSubview:self.closeButton];
-    
+
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [self.cardView addSubview:self.scrollView];
-    
+
     self.iconImageView = [[UIImageView alloc] init];
     self.iconImageView.layer.cornerRadius = 12;
     self.iconImageView.clipsToBounds = YES;
@@ -201,32 +201,32 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.iconImageView.backgroundColor = PCLColor(0xF0F0F0);
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.iconImageView];
-    
+
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
     self.titleLabel.textColor = PCLColor(0x343D4A);
     self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.titleLabel];
-    
+
     self.authorLabel = [[UILabel alloc] init];
     self.authorLabel.font = [UIFont systemFontOfSize:13];
     self.authorLabel.textColor = PCLColor(0x1370F3);
     self.authorLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.authorLabel];
-    
+
     self.downloadsLabel = [[UILabel alloc] init];
     self.downloadsLabel.font = [UIFont systemFontOfSize:12];
     self.downloadsLabel.textColor = PCLColor(0x8C8C8C);
     self.downloadsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.downloadsLabel];
-    
+
     self.descriptionLabel = [[UILabel alloc] init];
     self.descriptionLabel.font = [UIFont systemFontOfSize:13];
     self.descriptionLabel.textColor = PCLColor(0x343D4A);
     self.descriptionLabel.numberOfLines = 0;
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.descriptionLabel];
-    
+
     // Dependencies section (前置依赖)
     self.dependenciesTitleLabel = [[UILabel alloc] init];
     self.dependenciesTitleLabel.text = @"前置依赖";
@@ -235,13 +235,13 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.dependenciesTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.dependenciesTitleLabel.hidden = YES;
     [self.scrollView addSubview:self.dependenciesTitleLabel];
-    
+
     self.dependenciesStack = [[UIStackView alloc] init];
     self.dependenciesStack.axis = UILayoutConstraintAxisVertical;
     self.dependenciesStack.spacing = 8;
     self.dependenciesStack.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.dependenciesStack];
-    
+
     // Versions section
     self.versionsTitleLabel = [[UILabel alloc] init];
     self.versionsTitleLabel.text = @"可用版本";
@@ -249,61 +249,61 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.versionsTitleLabel.textColor = PCLColor(0x343D4A);
     self.versionsTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.versionsTitleLabel];
-    
+
     self.versionsStack = [[UIStackView alloc] init];
     self.versionsStack.axis = UILayoutConstraintAxisVertical;
     self.versionsStack.spacing = 8;
     self.versionsStack.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.versionsStack];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.cardView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
         [self.cardView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
         [self.cardView.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:0.9],
         [self.cardView.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:0.8],
-        
+
         [self.closeButton.topAnchor constraintEqualToAnchor:self.cardView.topAnchor constant:12],
         [self.closeButton.trailingAnchor constraintEqualToAnchor:self.cardView.trailingAnchor constant:-12],
         [self.closeButton.widthAnchor constraintEqualToConstant:32],
         [self.closeButton.heightAnchor constraintEqualToConstant:32],
-        
+
         [self.scrollView.topAnchor constraintEqualToAnchor:self.closeButton.bottomAnchor constant:4],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.cardView.leadingAnchor constant:16],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.cardView.trailingAnchor constant:-16],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:self.cardView.bottomAnchor constant:-16],
-        
+
         [self.iconImageView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor],
         [self.iconImageView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.iconImageView.widthAnchor constraintEqualToConstant:64],
         [self.iconImageView.heightAnchor constraintEqualToConstant:64],
-        
+
         [self.titleLabel.topAnchor constraintEqualToAnchor:self.iconImageView.topAnchor],
         [self.titleLabel.leadingAnchor constraintEqualToAnchor:self.iconImageView.trailingAnchor constant:12],
         [self.titleLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.authorLabel.topAnchor constraintEqualToAnchor:self.titleLabel.bottomAnchor constant:4],
         [self.authorLabel.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
         [self.authorLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.downloadsLabel.topAnchor constraintEqualToAnchor:self.authorLabel.bottomAnchor constant:4],
         [self.downloadsLabel.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
-        
+
         [self.descriptionLabel.topAnchor constraintEqualToAnchor:self.iconImageView.bottomAnchor constant:16],
         [self.descriptionLabel.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.descriptionLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.dependenciesTitleLabel.topAnchor constraintEqualToAnchor:self.descriptionLabel.bottomAnchor constant:20],
         [self.dependenciesTitleLabel.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.dependenciesTitleLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.dependenciesStack.topAnchor constraintEqualToAnchor:self.dependenciesTitleLabel.bottomAnchor constant:12],
         [self.dependenciesStack.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.dependenciesStack.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.versionsTitleLabel.topAnchor constraintEqualToAnchor:self.dependenciesStack.bottomAnchor constant:20],
         [self.versionsTitleLabel.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.versionsTitleLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor],
-        
+
         [self.versionsStack.topAnchor constraintEqualToAnchor:self.versionsTitleLabel.bottomAnchor constant:12],
         [self.versionsStack.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.versionsStack.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor],
@@ -316,7 +316,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.authorLabel.text = [NSString stringWithFormat:@"by %@", project.author];
     self.downloadsLabel.text = [NSString stringWithFormat:@"%@ 次下载", PCLFormatDownloads(project.downloads)];
     self.descriptionLabel.text = project.descriptionText;
-    
+
     // 异步加载图标
     if (project.iconUrl.length > 0) {
         NSURL *url = [NSURL URLWithString:project.iconUrl];
@@ -332,17 +332,17 @@ static NSString *PCLFormatSize(NSInteger bytes) {
             [task resume];
         }
     }
-    
+
     // 清空旧版本
     [self.versionsStack.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self.dependenciesStack.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
+
     // 填充版本列表（显示加载器类型、版本号、大小）
     for (PCLModrinthVersion *version in versions) {
         UIView *versionRow = [self createVersionRow:version];
         [self.versionsStack addArrangedSubview:versionRow];
     }
-    
+
     if (versions.count == 0) {
         UILabel *noVersions = [[UILabel alloc] init];
         noVersions.text = @"暂无可用版本";
@@ -350,7 +350,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
         noVersions.textColor = PCLColor(0x8C8C8C);
         [self.versionsStack addArrangedSubview:noVersions];
     }
-    
+
     // 显示前置依赖
     if (versions.count > 0) {
         NSArray *deps = versions.firstObject.dependencies;
@@ -366,7 +366,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     row.translatesAutoresizingMaskIntoConstraints = NO;
     row.backgroundColor = PCLColor(0xF8F9FA);
     row.layer.cornerRadius = 8;
-    
+
     // 版本名称和类型
     UILabel *nameLabel = [[UILabel alloc] init];
     nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -378,13 +378,13 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     else if ([version.versionType isEqualToString:@"alpha"]) typeBadge = @" [預覽版]";
     nameLabel.text = [NSString stringWithFormat:@"%@%@", version.name, typeBadge];
     [row addSubview:nameLabel];
-    
+
     // 游戏版本、加载器、文件大小
     UILabel *infoLabel = [[UILabel alloc] init];
     infoLabel.translatesAutoresizingMaskIntoConstraints = NO;
     infoLabel.font = [UIFont systemFontOfSize:12];
     infoLabel.textColor = PCLColor(0x8C8C8C);
-    
+
     NSMutableArray *infoParts = [NSMutableArray array];
     if (version.gameVersions.count > 0) {
         [infoParts addObject:[NSString stringWithFormat:@"MC %@", [version.gameVersions componentsJoinedByString:@", "]]];
@@ -397,7 +397,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     }
     infoLabel.text = [infoParts componentsJoinedByString:@" · "];
     [row addSubview:infoLabel];
-    
+
     // 安装按钮
     UIButton *installBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     installBtn.translatesAutoresizingMaskIntoConstraints = NO;
@@ -409,7 +409,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     [installBtn addTarget:self action:@selector(versionInstallTapped:) forControlEvents:UIControlEventTouchUpInside];
     objc_setAssociatedObject(installBtn, "version", version, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [row addSubview:installBtn];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [row.heightAnchor constraintGreaterThanOrEqualToConstant:70],
         [nameLabel.topAnchor constraintEqualToAnchor:row.topAnchor constant:10],
@@ -424,7 +424,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
         [installBtn.widthAnchor constraintEqualToConstant:36],
         [installBtn.heightAnchor constraintEqualToConstant:36]
     ]];
-    
+
     return row;
 }
 
@@ -435,22 +435,22 @@ static NSString *PCLFormatSize(NSInteger bytes) {
 
 - (void)loadDependencyDetails:(NSArray<PCLModrinthDependency *> *)deps {
     [self.dependenciesStack.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
+
     for (PCLModrinthDependency *dep in deps) {
         if (![dep.dependencyType isEqualToString:@"required"]) continue;
-        
+
         UIView *depRow = [[UIView alloc] init];
         depRow.translatesAutoresizingMaskIntoConstraints = NO;
         depRow.backgroundColor = PCLColor(0xFEF3C7);
         depRow.layer.cornerRadius = 6;
-        
+
         UILabel *depLabel = [[UILabel alloc] init];
         depLabel.translatesAutoresizingMaskIntoConstraints = NO;
         depLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
         depLabel.textColor = PCLColor(0x92400E);
         depLabel.text = [NSString stringWithFormat:@"📦 %@", dep.projectID];
         [depRow addSubview:depLabel];
-        
+
         // 尝试获取依赖项目信息
         [[PCLModrinthAPI sharedAPI] getProject:dep.projectID completion:^(PCLModrinthProject *project, NSError *error) {
             if (project) {
@@ -459,12 +459,12 @@ static NSString *PCLFormatSize(NSInteger bytes) {
                 });
             }
         }];
-        
+
         [depLabel.topAnchor constraintEqualToAnchor:depRow.topAnchor constant:8].active = YES;
         [depLabel.leadingAnchor constraintEqualToAnchor:depRow.leadingAnchor constant:10].active = YES;
         [depLabel.trailingAnchor constraintEqualToAnchor:depRow.trailingAnchor constant:-10].active = YES;
         [depLabel.bottomAnchor constraintEqualToAnchor:depRow.bottomAnchor constant:-8].active = YES;
-        
+
         [self.dependenciesStack addArrangedSubview:depRow];
     }
 }
@@ -519,10 +519,10 @@ static NSString *PCLFormatSize(NSInteger bytes) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.title = [self titleForType:self.currentTab];
-    self.view.backgroundColor = PCLColor(0xF5F7FA);
-    
+    self.currentTab=self.initialTab;self.view.backgroundColor=UIColor.clearColor;
+
     self.resources = [NSMutableArray array];
     self.downloadTasks = [NSMutableArray array];
     self.currentOffset = 0;
@@ -532,7 +532,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.currentSort = PCLModrinthSortTypeRelevance;
     self.currentGameVersion = @"1.20.4";
     self.gameVersions = @[@"1.21.1", @"1.21", @"1.20.4", @"1.20.2", @"1.20.1", @"1.20", @"1.19.4", @"1.18.2", @"1.16.5"];
-    
+
     [self setupUI];
 }
 
@@ -570,7 +570,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
 - (void)setupUI {
     NSArray *tabTitles = @[@"模组", @"整合包", @"资源包", @"光影", @"数据包"];
     self.tabButtons = [NSMutableArray array];
-    
+
     // 标签栏
     self.tabScrollView = [[UIScrollView alloc] init];
     self.tabScrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -581,21 +581,21 @@ static NSString *PCLFormatSize(NSInteger bytes) {
     self.tabScrollView.layer.shadowRadius = 4;
     self.tabScrollView.layer.shadowOffset=CGSizeMake(0,2);self.tabScrollView.hidden=YES;
     [self.view addSubview:self.tabScrollView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tabScrollView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
         [self.tabScrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.tabScrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.tabScrollView.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     self.tabStackView = [[UIStackView alloc] init];
     self.tabStackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tabStackView.axis = UILayoutConstraintAxisHorizontal;
     self.tabStackView.spacing = 0;
     self.tabStackView.alignment = UIStackViewAlignmentCenter;
     [self.tabScrollView addSubview:self.tabStackView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tabStackView.topAnchor constraintEqualToAnchor:self.tabScrollView.topAnchor],
         [self.tabStackView.leadingAnchor constraintEqualToAnchor:self.tabScrollView.leadingAnchor constant:8],
@@ -603,7 +603,7 @@ static NSString *PCLFormatSize(NSInteger bytes) {
         [self.tabStackView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:20],
         [self.tabStackView.heightAnchor constraintEqualToAnchor:self.tabScrollView.heightAnchor]
     ]];
-    
+
     for (NSInteger i = 0; i < tabTitles.count; i++) {
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         btn.translatesAutoresizingMaskIntoConstraints = NO;
@@ -619,42 +619,42 @@ static NSString *PCLFormatSize(NSInteger bytes) {
         [btn.heightAnchor constraintEqualToConstant:44].active = YES;
         if (i == self.currentTab) btn.selected = YES;
     }
-    
+
     // 指示器
     self.indicatorView = [[UIView alloc] init];
     self.indicatorView.backgroundColor = PCLColor(0x1370F3);
     self.indicatorView.layer.cornerRadius = 1.5;
     [self.tabScrollView addSubview:self.indicatorView];
-    
+
     // 搜索栏
     self.searchBar = [[UISearchBar alloc] init];
     self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
     self.searchBar.placeholder = [NSString stringWithFormat:@"搜索%@...", tabTitles[self.currentTab]];
     self.searchBar.delegate = self;
     self.searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    self.searchBar.backgroundColor=UIColor.clearColor;
+    self.searchBar.backgroundColor=UIColor.clearColor;self.searchBar.searchTextField.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];self.searchBar.searchTextField.layer.cornerRadius=5;self.searchBar.searchTextField.clipsToBounds=YES;
     [self.view addSubview:self.searchBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
-        [self.searchBar.topAnchor constraintEqualToAnchor:self.tabScrollView.bottomAnchor],
-        [self.searchBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-        [self.searchBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [self.searchBar.heightAnchor constraintEqualToConstant:44]
+        [self.searchBar.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:10],
+        [self.searchBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:25],
+        [self.searchBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-25],
+        [self.searchBar.heightAnchor constraintEqualToConstant:36]
     ]];
-    
+
     // 筛选栏
     self.filterBar = [[UIView alloc] init];
     self.filterBar.translatesAutoresizingMaskIntoConstraints = NO;
-    self.filterBar.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];self.filterBar.layer.cornerRadius=5;
+    self.filterBar.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];self.filterBar.layer.cornerRadius=5;self.filterBar.layer.shadowColor=UIColor.blackColor.CGColor;self.filterBar.layer.shadowOpacity=.06;self.filterBar.layer.shadowRadius=4;
     [self.view addSubview:self.filterBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
-        [self.filterBar.topAnchor constraintEqualToAnchor:self.searchBar.bottomAnchor constant:10],
-        [self.filterBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-        [self.filterBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [self.filterBar.topAnchor constraintEqualToAnchor:self.searchBar.bottomAnchor constant:15],
+        [self.filterBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:25],
+        [self.filterBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-25],
         [self.filterBar.heightAnchor constraintEqualToConstant:76]
     ]];
-    
+
     NSArray*n=@[@"来源",@"排序",@"版本",@"加载器"];
 
 for(int i=0;i<4;i++){UILabel*l=[UILabel new];l.tag=801+i;l.text=n[i];l.font=[UIFont systemFontOfSize:12];l.textColor=PCLColor(0x505A66);[self.filterBar addSubview:l];}
@@ -671,7 +671,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     self.loaderFilter.translatesAutoresizingMaskIntoConstraints = NO;
     [self.loaderFilter addTarget:self action:@selector(loaderChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterBar addSubview:self.loaderFilter];
-    
+
     // 游戏版本筛选
     self.versionFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.versionFilterButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -682,37 +682,37 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     self.versionFilterButton.layer.cornerRadius = 4;
     [self.versionFilterButton addTarget:self action:@selector(versionFilterTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.filterBar addSubview:self.versionFilterButton];
-    
+
     // 排序筛选
     self.sortFilter = [[UISegmentedControl alloc] initWithItems:@[@"相关", @"下载", @"最新"]];
     self.sortFilter.selectedSegmentIndex = 0;
     self.sortFilter.translatesAutoresizingMaskIntoConstraints = NO;
     [self.sortFilter addTarget:self action:@selector(sortChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterBar addSubview:self.sortFilter];
-    
+
     self.loaderFilter.translatesAutoresizingMaskIntoConstraints=YES;
     self.versionFilterButton.translatesAutoresizingMaskIntoConstraints=YES;
     self.sortFilter.translatesAutoresizingMaskIntoConstraints=YES;
-    
-    
+
+
     // 表格
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];self.tableView.layer.cornerRadius=5;self.tableView.clipsToBounds=YES;
+    self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;self.tableView.showsVerticalScrollIndicator=YES;self.tableView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
     self.tableView.rowHeight = 64;
     [self.tableView registerClass:[PCLResourceCell class] forCellReuseIdentifier:@"ResourceCell"];
     [self.view addSubview:self.tableView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tableView.topAnchor constraintEqualToAnchor:self.filterBar.bottomAnchor constant:15],
         [self.tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:25],
         [self.tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-25],
         [self.tableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-25]
     ]];
-    
+
     // 加载指示器
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
@@ -720,7 +720,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     [self.view addSubview:self.loadingIndicator];
     [self.loadingIndicator.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
     [self.loadingIndicator.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
-    
+
     // 空状态
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -731,7 +731,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     [self.view addSubview:self.emptyLabel];
     [self.emptyLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
     [self.emptyLabel.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
-    
+
     [self updateIndicatorPosition];
 }
 
@@ -752,8 +752,8 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 #pragma mark - Tab Switching
 
 - (void)resourceTabTapped:(UIButton*)sender{[self showTab:(PCLResourceTab)sender.tag];}
-- (void)showTab:(PCLResourceTab)tab{self.initialTab=tab;if(!self.isViewLoaded)return;self.currentTab=tab;
-    
+- (void)showTab:(PCLResourceTab)tab{self.initialTab=tab;if(!self.isViewLoaded)return;self.currentTab=tab;[self.tableView setContentOffset:CGPointZero animated:NO];
+
     // 更新按钮状态
     for (UIButton *btn in self.tabButtons) {
         btn.selected = (btn.tag == self.currentTab);
@@ -761,19 +761,19 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
             [UIFont systemFontOfSize:14 weight:UIFontWeightBold] :
             [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
     }
-    
+
     // 更新搜索占位符和标题
     self.searchBar.placeholder = [NSString stringWithFormat:@"搜索%@...", [self titleForType:self.currentTab]];
     self.title=[self titleForType:self.currentTab];
-    
+
     // 重置筛选器
     if (self.currentTab == PCLResourceTabModpack || self.currentTab == PCLResourceTabResourcePack ||
         self.currentTab == PCLResourceTabShader || self.currentTab == PCLResourceTabDataPack) {
-        self.loaderFilter.hidden = YES;
+        self.loaderFilter.hidden = YES;self.sourceFilter.hidden=YES;
     } else {
-        self.loaderFilter.hidden = NO;
+        self.loaderFilter.hidden = NO;self.sourceFilter.hidden=NO;
     }
-    
+
     // 重新加载
     [self reloadResources];
     [self updateIndicatorPosition];
@@ -782,7 +782,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 - (void)updateIndicatorPosition {
     UIButton *selectedBtn = self.tabButtons[self.currentTab];
     CGRect btnFrame = [self.tabScrollView convertRect:selectedBtn.frame fromView:self.tabStackView];
-    
+
     [UIView animateWithDuration:0.25 animations:^{
         self.indicatorView.frame = CGRectMake(btnFrame.origin.x + btnFrame.size.width / 2 - 15,
                                              self.tabScrollView.bounds.size.height - 3,
@@ -800,11 +800,21 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     if (self.isLoading) return;
     self.isLoading = YES;
     self.emptyLabel.hidden = YES;
-    
+
     if (self.currentOffset == 0) {
         [self.loadingIndicator startAnimating];
     }
-    
+
+    if(self.sourceFilter.selectedSegmentIndex==1&&self.currentTab==PCLResourceTabMod){
+
+        if(self.currentOffset==0)[self.resources removeAllObjects];
+
+        [self loadCurseForgeMods];return;
+
+    }
+
+
+
     [[PCLModrinthAPI sharedAPI] searchProjects:self.currentQuery
                                     projectType:[self projectTypeForTab:self.currentTab]
                                          loader:self.currentLoader
@@ -816,7 +826,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
                                      completion:^(PCLModrinthSearchResult *result, NSError *error) {
         self.isLoading = NO;
         [self.loadingIndicator stopAnimating];
-        
+
         if (error) {
             NSLog(@"[ResourceBrowse] Search failed: %@", error);
             if (self.resources.count == 0) {
@@ -825,15 +835,15 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
             }
             return;
         }
-        
+
         if (self.currentOffset == 0) {
             [self.resources removeAllObjects];
         }
-        
+
         [self.resources addObjectsFromArray:result.hits];
         self.hasMore = (self.currentOffset + result.hits.count) < result.totalHits;
         self.currentOffset += result.hits.count;
-        
+
         self.emptyLabel.hidden = (self.resources.count > 0);
         self.emptyLabel.text = self.currentQuery.length > 0 ? [NSString stringWithFormat:@"未找到匹配的%@", self.tabTitles[self.currentTab]] : [NSString stringWithFormat:@"暂无%@", self.tabTitles[self.currentTab]];
         [self.tableView reloadData];
@@ -845,13 +855,17 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 
  [[PCLCurseForgeAPI sharedAPI] searchModsWithQuery:self.currentQuery gameVersion:self.currentGameVersion category:nil page:0 pageSize:20 completion:^(NSArray<PCLCurseForgeMod*>*a,NSError*e){
 
-  if(e)return;for(PCLCurseForgeMod*m in a){PCLModrinthProject*r=[PCLModrinthProject new];
+  self.isLoading=NO;[self.loadingIndicator stopAnimating];
+
+  if(e){self.emptyLabel.hidden=NO;self.emptyLabel.text=@"CurseForge 加载失败";return;}
+
+  for(PCLCurseForgeMod*m in a){PCLModrinthProject*r=[PCLModrinthProject new];
 
    r.projectID=[NSString stringWithFormat:@"cf:%ld",(long)m.modId];r.title=m.name;r.descriptionText=m.summary;
 
    r.iconUrl=m.iconUrl;r.author=@"CurseForge";r.downloads=m.downloadCount;[self.resources addObject:r];}
 
-  self.emptyLabel.hidden=self.resources.count>0;[self.tableView reloadData];
+  self.emptyLabel.hidden=self.resources.count>0;if(self.sourceFilter.selectedSegmentIndex==1)self.hasMore=NO;[self.tableView reloadData];
 
  }];
 
@@ -879,7 +893,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 
 - (void)versionFilterTapped {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选择游戏版本" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
+
     for (NSString *version in self.gameVersions) {
         UIAlertAction *action = [UIAlertAction actionWithTitle:version style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
             self.currentGameVersion = version;
@@ -888,15 +902,15 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
         }];
         [alert addAction:action];
     }
-    
+
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    
+
     UIPopoverPresentationController *popover = alert.popoverPresentationController;
     if (popover) {
         popover.sourceView = self.versionFilterButton;
         popover.sourceRect = self.versionFilterButton.bounds;
     }
-    
+
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -904,24 +918,24 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 
 - (void)showResourceDetail:(PCLModrinthProject *)resource {
     self.selectedResource = resource;
-    
+
     self.detailView = [[PCLResourceDetailView alloc] initWithFrame:self.view.bounds];
     self.detailView.alpha = 0;
     [self.view addSubview:self.detailView];
-    
+
     __weak typeof(self) weakSelf = self;
     self.detailView.onClose = ^{
         [weakSelf hideDetailView];
     };
-    
+
     self.detailView.onInstallVersion = ^(PCLModrinthVersion *version) {
         [weakSelf installVersion:version forResource:resource];
     };
-    
+
     [UIView animateWithDuration:0.2 animations:^{
         self.detailView.alpha = 1;
     }];
-    
+
     // 加载版本信息
     [self loadVersionsForResource:resource];
 }
@@ -974,19 +988,19 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     if (!primaryFile && version.fileInfos.count > 0) {
         primaryFile = version.fileInfos[0];
     }
-    
+
     if (!primaryFile) {
         [self showAlertWithTitle:@"安装失败" message:@"无法获取文件信息"];
         return;
     }
-    
+
     // 检查前置依赖
     NSArray *requiredDeps = [version.dependencies filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"dependencyType == %@", "required"]];
     if (requiredDeps.count > 0) {
         [self showDependencyAlert:requiredDeps resource:resource version:version file:primaryFile];
         return;
     }
-    
+
     [self startInstallVersion:version resource:resource file:primaryFile];
 }
 
@@ -995,16 +1009,16 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     for (PCLModrinthDependency *dep in deps) {
         [depNames appendFormat:@"• %@\n", dep.projectID];
     }
-    
+
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"前置依赖"
                                                                   message:[NSString stringWithFormat:@"此%@需要以下前置依赖：\n\n%@\n是否继续安装？", self.tabTitles[self.currentTab], depNames]
                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
+
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [alert addAction:[UIAlertAction actionWithTitle:@"安装" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self startInstallVersion:version resource:resource file:file];
     }]];
-    
+
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -1028,11 +1042,11 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
             targetDir = [self datapacksDirectory];
             break;
     }
-    
+
     NSFileManager *fm = [NSFileManager defaultManager];
     [fm createDirectoryAtPath:targetDir withIntermediateDirectories:YES attributes:nil error:nil];
     NSString *targetPath = [targetDir stringByAppendingPathComponent:file.fileName];
-    
+
     // 创建下载任务
     PCLDownloadTask *task = [[PCLDownloadTask alloc] init];
     task.displayName = resource.title;
@@ -1041,14 +1055,14 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     task.sha1 = file.sha1;
     task.resourceType = (PCLResourceType)self.currentTab;
     task.state = PCLDownloadStatePending;
-    
+
     [self.downloadTasks addObject:task];
     [[PCLDownloadManager sharedManager] addTask:task];
     [[PCLDownloadManager sharedManager] startDownload:task];
-    
+
     // 更新UI
     [self updateCellForTask:task];
-    
+
     // 显示安装进度
     [self showAlertWithTitle:@"开始安装" message:[NSString stringWithFormat:@"%@ 正在下载...", resource.title]];
     [self.tableView reloadData];
@@ -1096,14 +1110,14 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLResourceCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ResourceCell" forIndexPath:indexPath];
-    
+
     PCLModrinthProject *resource = self.resources[indexPath.row];
-    
+
     cell.nameLabel.text = resource.title;
     cell.authorLabel.text = [NSString stringWithFormat:@"by %@", resource.author];
     cell.downloadsLabel.text = [NSString stringWithFormat:@"⬇ %@", PCLFormatDownloads(resource.downloads)];
     cell.descriptionLabel.text = resource.descriptionText;
-    
+
     // 显示支持的游戏版本和加载器
     NSMutableArray *infoParts = [NSMutableArray array];
     if (resource.gameVersions.count > 0) {
@@ -1114,7 +1128,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
     }
     cell.versionLabel.text = [infoParts componentsJoinedByString:@" · "];
     cell.versionLabel.hidden = (infoParts.count == 0);
-    
+
     // 加载图标
     if (resource.iconUrl.length > 0) {
         NSURL *url = [NSURL URLWithString:resource.iconUrl];
@@ -1130,7 +1144,7 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
             [task resume];
         }
     }
-    
+
     // 查找此资源的下载任务
     PCLDownloadTask *task = [self taskForResource:resource];
     if (task && (task.state == PCLDownloadStateDownloading || task.state == PCLDownloadStatePending)) {
@@ -1148,12 +1162,12 @@ self.sourceFilter.selectedSegmentIndex=0;[self.sourceFilter addTarget:self actio
         cell.installButton.backgroundColor = PCLColor(0x1370F3);
         cell.progressView.hidden = YES;
     }
-    
+
     __weak typeof(self) weakSelf = self;
     cell.onInstall = ^{
         [weakSelf showResourceDetail:resource];
     };
-    
+
     return cell;
 }
 

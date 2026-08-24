@@ -43,7 +43,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
 - (void)setupUI {
     self.backgroundColor = [UIColor whiteColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+
     self.iconImageView = [[UIImageView alloc] init];
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.iconImageView.layer.cornerRadius = 8;
@@ -51,32 +51,32 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.iconImageView.backgroundColor = PCLColor(0xF0F0F0);
     [self.contentView addSubview:self.iconImageView];
-    
+
     self.nameLabel = [[UILabel alloc] init];
     self.nameLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
     self.nameLabel.textColor = PCLColor(0x343D4A);
     self.nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.nameLabel];
-    
+
     self.authorLabel = [[UILabel alloc] init];
     self.authorLabel.font = [UIFont systemFontOfSize:12];
     self.authorLabel.textColor = PCLColor(0x1370F3);
     self.authorLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.authorLabel];
-    
+
     self.downloadsLabel = [[UILabel alloc] init];
     self.downloadsLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightMedium];
     self.downloadsLabel.textColor = PCLColor(0x8C8C8C);
     self.downloadsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.downloadsLabel];
-    
+
     self.descriptionLabel = [[UILabel alloc] init];
     self.descriptionLabel.font = [UIFont systemFontOfSize:12];
     self.descriptionLabel.textColor = PCLColor(0x8C8C8C);
     self.descriptionLabel.numberOfLines = 2;
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.descriptionLabel];
-    
+
     self.installButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.installButton setTitle:@"安装" forState:UIControlStateNormal];
     [self.installButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -87,28 +87,28 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.installButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.installButton addTarget:self action:@selector(installTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.installButton];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.iconImageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:12],
         [self.iconImageView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
         [self.iconImageView.widthAnchor constraintEqualToConstant:48],
         [self.iconImageView.heightAnchor constraintEqualToConstant:48],
-        
+
         [self.nameLabel.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
         [self.nameLabel.leadingAnchor constraintEqualToAnchor:self.iconImageView.trailingAnchor constant:10],
         [self.nameLabel.trailingAnchor constraintLessThanOrEqualToAnchor:self.installButton.leadingAnchor constant:-8],
-        
+
         [self.authorLabel.topAnchor constraintEqualToAnchor:self.nameLabel.bottomAnchor constant:2],
         [self.authorLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
-        
+
         [self.downloadsLabel.topAnchor constraintEqualToAnchor:self.authorLabel.bottomAnchor constant:2],
         [self.downloadsLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
-        
+
         [self.descriptionLabel.topAnchor constraintEqualToAnchor:self.downloadsLabel.bottomAnchor constant:4],
         [self.descriptionLabel.leadingAnchor constraintEqualToAnchor:self.nameLabel.leadingAnchor],
         [self.descriptionLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-12],
         [self.descriptionLabel.bottomAnchor constraintLessThanOrEqualToAnchor:self.contentView.bottomAnchor constant:-12],
-        
+
         [self.installButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
         [self.installButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-12],
         [self.installButton.widthAnchor constraintEqualToConstant:60],
@@ -148,20 +148,20 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)setupUI {
     self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
-    
+
     UIView *card = [[UIView alloc] init];
     card.backgroundColor = [UIColor whiteColor];
     card.layer.cornerRadius = 16;
     card.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:card];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [card.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
         [card.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
         [card.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:0.85],
         [card.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:0.75]
     ]];
-    
+
     self.closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.closeButton setTitle:@"✕" forState:UIControlStateNormal];
     [self.closeButton setTitleColor:PCLColor(0x8C8C8C) forState:UIControlStateNormal];
@@ -169,26 +169,26 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.closeButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.closeButton addTarget:self action:@selector(closeTapped) forControlEvents:UIControlEventTouchUpInside];
     [card addSubview:self.closeButton];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.closeButton.topAnchor constraintEqualToAnchor:card.topAnchor constant:12],
         [self.closeButton.trailingAnchor constraintEqualToAnchor:card.trailingAnchor constant:-12],
         [self.closeButton.widthAnchor constraintEqualToConstant:32],
         [self.closeButton.heightAnchor constraintEqualToConstant:32]
     ]];
-    
+
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.showsVerticalScrollIndicator = NO;
     [card addSubview:self.scrollView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.scrollView.topAnchor constraintEqualToAnchor:self.closeButton.bottomAnchor constant:4],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:card.leadingAnchor constant:16],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:card.trailingAnchor constant:-16],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:card.bottomAnchor constant:-16]
     ]];
-    
+
     self.iconImageView = [[UIImageView alloc] init];
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.iconImageView.layer.cornerRadius = 12;
@@ -196,81 +196,81 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.iconImageView.backgroundColor = PCLColor(0xF0F0F0);
     [self.scrollView addSubview:self.iconImageView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.iconImageView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor],
         [self.iconImageView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.iconImageView.widthAnchor constraintEqualToConstant:64],
         [self.iconImageView.heightAnchor constraintEqualToConstant:64]
     ]];
-    
+
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
     self.titleLabel.textColor = PCLColor(0x343D4A);
     self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.titleLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.titleLabel.topAnchor constraintEqualToAnchor:self.iconImageView.topAnchor],
         [self.titleLabel.leadingAnchor constraintEqualToAnchor:self.iconImageView.trailingAnchor constant:12],
         [self.titleLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor]
     ]];
-    
+
     self.authorLabel = [[UILabel alloc] init];
     self.authorLabel.font = [UIFont systemFontOfSize:13];
     self.authorLabel.textColor = PCLColor(0x1370F3);
     self.authorLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.authorLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.authorLabel.topAnchor constraintEqualToAnchor:self.titleLabel.bottomAnchor constant:4],
         [self.authorLabel.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
         [self.authorLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor]
     ]];
-    
+
     self.downloadsLabel = [[UILabel alloc] init];
     self.downloadsLabel.font = [UIFont systemFontOfSize:12];
     self.downloadsLabel.textColor = PCLColor(0x8C8C8C);
     self.downloadsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.downloadsLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.downloadsLabel.topAnchor constraintEqualToAnchor:self.authorLabel.bottomAnchor constant:4],
         [self.downloadsLabel.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor]
     ]];
-    
+
     self.descriptionLabel = [[UILabel alloc] init];
     self.descriptionLabel.font = [UIFont systemFontOfSize:13];
     self.descriptionLabel.textColor = PCLColor(0x343D4A);
     self.descriptionLabel.numberOfLines = 0;
     self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.descriptionLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.descriptionLabel.topAnchor constraintEqualToAnchor:self.iconImageView.bottomAnchor constant:16],
         [self.descriptionLabel.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.descriptionLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor]
     ]];
-    
+
     self.versionsTitleLabel = [[UILabel alloc] init];
     self.versionsTitleLabel.text = @"可用版本";
     self.versionsTitleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
     self.versionsTitleLabel.textColor = PCLColor(0x343D4A);
     self.versionsTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.versionsTitleLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.versionsTitleLabel.topAnchor constraintEqualToAnchor:self.descriptionLabel.bottomAnchor constant:20],
         [self.versionsTitleLabel.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
         [self.versionsTitleLabel.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor]
     ]];
-    
+
     self.versionsStack = [[UIStackView alloc] init];
     self.versionsStack.axis = UILayoutConstraintAxisVertical;
     self.versionsStack.spacing = 8;
     self.versionsStack.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.versionsStack];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.versionsStack.topAnchor constraintEqualToAnchor:self.versionsTitleLabel.bottomAnchor constant:12],
         [self.versionsStack.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor],
@@ -316,10 +316,10 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.title = @"浏览 Mods";
     self.view.backgroundColor = PCLColor(0xF5F7FA);
-    
+
     self.mods = [NSMutableArray array];
     self.currentOffset = 0;
     self.hasMore = YES;
@@ -328,14 +328,14 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.currentSort = PCLModrinthSortTypeRelevance;
     self.currentGameVersion = @"1.20.4";
     self.gameVersions = @[@"1.21", @"1.20.4", @"1.20.2", @"1.20.1", @"1.20", @"1.19.4", @"1.18.2"];
-    
+
     [self setupUI];
     [self loadMods];
 }
 
 - (void)setupUI {
     self.view.backgroundColor = PCLColor(0xF5F7FA);
-    
+
     self.searchBar = [[UISearchBar alloc] init];
     self.searchBar.placeholder = @"搜索 Mods...";
     self.searchBar.delegate = self;
@@ -343,32 +343,32 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.searchBar.backgroundColor = [UIColor whiteColor];
     self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.searchBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.searchBar.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
         [self.searchBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:8],
         [self.searchBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-8],
         [self.searchBar.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     self.filterBar = [[UIView alloc] init];
     self.filterBar.backgroundColor = [UIColor whiteColor];
     self.filterBar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.filterBar];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.filterBar.topAnchor constraintEqualToAnchor:self.searchBar.bottomAnchor],
         [self.filterBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.filterBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.filterBar.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     self.loaderFilter = [[UISegmentedControl alloc] initWithItems:@[@"Forge", @"Fabric", @"NeoForge", @"Quilt"]];
     self.loaderFilter.selectedSegmentIndex = 0;
     self.loaderFilter.translatesAutoresizingMaskIntoConstraints = NO;
     [self.loaderFilter addTarget:self action:@selector(loaderChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterBar addSubview:self.loaderFilter];
-    
+
     self.versionFilterButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.versionFilterButton setTitle:self.currentGameVersion forState:UIControlStateNormal];
     [self.versionFilterButton setTitleColor:PCLColor(0x343D4A) forState:UIControlStateNormal];
@@ -378,28 +378,28 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.versionFilterButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.versionFilterButton addTarget:self action:@selector(versionFilterTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.filterBar addSubview:self.versionFilterButton];
-    
+
     self.sortFilter = [[UISegmentedControl alloc] initWithItems:@[@"相关", @"下载", @"最新"]];
     self.sortFilter.selectedSegmentIndex = 0;
     self.sortFilter.translatesAutoresizingMaskIntoConstraints = NO;
     [self.sortFilter addTarget:self action:@selector(sortChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterBar addSubview:self.sortFilter];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.loaderFilter.leadingAnchor constraintEqualToAnchor:self.filterBar.leadingAnchor constant:8],
         [self.loaderFilter.centerYAnchor constraintEqualToAnchor:self.filterBar.centerYAnchor],
         [self.loaderFilter.widthAnchor constraintEqualToConstant:160],
-        
+
         [self.versionFilterButton.leadingAnchor constraintEqualToAnchor:self.loaderFilter.trailingAnchor constant:8],
         [self.versionFilterButton.centerYAnchor constraintEqualToAnchor:self.filterBar.centerYAnchor],
         [self.versionFilterButton.widthAnchor constraintEqualToConstant:70],
         [self.versionFilterButton.heightAnchor constraintEqualToConstant:28],
-        
+
         [self.sortFilter.leadingAnchor constraintEqualToAnchor:self.versionFilterButton.trailingAnchor constant:8],
         [self.sortFilter.centerYAnchor constraintEqualToAnchor:self.filterBar.centerYAnchor],
         [self.sortFilter.widthAnchor constraintEqualToConstant:120]
     ]];
-    
+
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
@@ -409,21 +409,21 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.tableView.rowHeight = 110;
     [self.tableView registerClass:[PCLModCell class] forCellReuseIdentifier:@"ModCell"];
     [self.view addSubview:self.tableView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.tableView.topAnchor constraintEqualToAnchor:self.filterBar.bottomAnchor],
         [self.tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.tableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
     ]];
-    
+
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingIndicator.hidesWhenStopped = YES;
     [self.loadingIndicator.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
     [self.loadingIndicator.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
     [self.view addSubview:self.loadingIndicator];
-    
+
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.text = @"暂无结果";
     self.emptyLabel.font = [UIFont systemFontOfSize:14];
@@ -432,7 +432,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
     self.emptyLabel.hidden = YES;
     self.emptyLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.emptyLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.emptyLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [self.emptyLabel.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor]
@@ -445,11 +445,11 @@ static NSString *PCLFormatDownloads(long long downloads) {
     if (self.isLoading) return;
     self.isLoading = YES;
     self.emptyLabel.hidden = YES;
-    
+
     if (self.currentOffset == 0) {
         [self.loadingIndicator startAnimating];
     }
-    
+
     [[PCLModrinthAPI sharedAPI] searchProjects:self.currentQuery
                                     projectType:PCLModrinthProjectTypeMod
                                          loader:self.currentLoader
@@ -461,7 +461,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
                                      completion:^(PCLModrinthSearchResult *result, NSError *error) {
         self.isLoading = NO;
         [self.loadingIndicator stopAnimating];
-        
+
         if (error) {
             NSLog(@"[ModBrowse] Search failed: %@", error);
             if (self.mods.count == 0) {
@@ -470,15 +470,15 @@ static NSString *PCLFormatDownloads(long long downloads) {
             }
             return;
         }
-        
+
         if (self.currentOffset == 0) {
             [self.mods removeAllObjects];
         }
-        
+
         [self.mods addObjectsFromArray:result.hits];
         self.hasMore = (self.currentOffset + result.hits.count) < result.totalHits;
         self.currentOffset += result.hits.count;
-        
+
         self.emptyLabel.hidden = (self.mods.count > 0);
         self.emptyLabel.text = self.currentQuery.length > 0 ? @"未找到匹配的 Mods" : @"暂无 Mods";
         [self.tableView reloadData];
@@ -510,7 +510,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)versionFilterTapped {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选择游戏版本" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
+
     for (NSString *version in self.gameVersions) {
         UIAlertAction *action = [UIAlertAction actionWithTitle:version style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
             self.currentGameVersion = version;
@@ -519,40 +519,40 @@ static NSString *PCLFormatDownloads(long long downloads) {
         }];
         [alert addAction:action];
     }
-    
+
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    
+
     UIPopoverPresentationController *popover = alert.popoverPresentationController;
     if (popover) {
         popover.sourceView = self.versionFilterButton;
         popover.sourceRect = self.versionFilterButton.bounds;
     }
-    
+
     [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)showModDetail:(PCLModrinthProject *)mod {
     self.selectedMod = mod;
-    
+
     self.detailView = [[PCLModDetailView alloc] initWithFrame:self.view.bounds];
     self.detailView.alpha = 0;
     [self.view addSubview:self.detailView];
-    
+
     self.detailView.titleLabel.text = mod.title;
     self.detailView.authorLabel.text = [NSString stringWithFormat:@"by %@", mod.author];
     self.detailView.downloadsLabel.text = [NSString stringWithFormat:@"%@ 次下载", PCLFormatDownloads(mod.downloads)];
     self.detailView.descriptionLabel.text = mod.descriptionText;
-    
+
     __weak typeof(self) weakSelf = self;
-    
+
     self.detailView.onClose = ^{
         [weakSelf hideDetailView];
     };
-    
+
     [UIView animateWithDuration:0.2 animations:^{
         self.detailView.alpha = 1;
     }];
-    
+
     [self loadVersionsForMod:mod];
 }
 
@@ -573,11 +573,11 @@ static NSString *PCLFormatDownloads(long long downloads) {
             NSLog(@"[ModBrowse] Failed to load versions: %@", error);
             return;
         }
-        
+
         self.selectedModVersions = versions;
-        
+
         [self.detailView.versionsStack.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        
+
         for (PCLModrinthVersion *version in versions) {
             UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
             NSString *title = [NSString stringWithFormat:@"%@ (%@) - %@",
@@ -594,7 +594,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
             [self.detailView.versionsStack addArrangedSubview:btn];
             [btn.heightAnchor constraintEqualToConstant:36].active = YES;
         }
-        
+
         if (versions.count == 0) {
             UILabel *noVersions = [[UILabel alloc] init];
             noVersions.text = @"暂无可用版本";
@@ -607,7 +607,7 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (void)versionInstallTapped:(UIButton *)sender {
     if (sender.tag >= self.selectedModVersions.count) return;
-    
+
     PCLModrinthVersion *version = self.selectedModVersions[sender.tag];
     [self installVersion:version];
 }
@@ -623,21 +623,21 @@ static NSString *PCLFormatDownloads(long long downloads) {
     if (!primaryFile && version.files.count > 0) {
         primaryFile = version.files[0];
     }
-    
+
     if (!primaryFile) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"下载失败" message:@"无法获取文件信息" preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
-    
+
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *modsDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"mods"];
     [fm createDirectoryAtPath:modsDir withIntermediateDirectories:YES attributes:nil error:nil];
     NSString *targetPath = [modsDir stringByAppendingPathComponent:primaryFile.fileName];
-    
+
     __weak typeof(self) weakSelf = self;
-    
+
     [[PCLModrinthAPI sharedAPI] downloadFile:primaryFile
                                        toPath:targetPath
                                      progress:^(double progress) {
@@ -681,14 +681,14 @@ static NSString *PCLFormatDownloads(long long downloads) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLModCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ModCell" forIndexPath:indexPath];
-    
+
     PCLModrinthProject *mod = self.mods[indexPath.row];
-    
+
     cell.nameLabel.text = mod.title;
     cell.authorLabel.text = [NSString stringWithFormat:@"by %@", mod.author];
     cell.downloadsLabel.text = [NSString stringWithFormat:@"⬇ %@", PCLFormatDownloads(mod.downloads)];
     cell.descriptionLabel.text = mod.descriptionText;
-    
+
     if (cell.iconImageView && mod.iconUrl.length > 0) {
         NSURL *url = [NSURL URLWithString:mod.iconUrl];
         if (url) {
@@ -703,12 +703,12 @@ static NSString *PCLFormatDownloads(long long downloads) {
             [task resume];
         }
     }
-    
+
     __weak typeof(self) weakSelf = self;
     cell.onInstall = ^{
         [weakSelf showModDetail:mod];
     };
-    
+
     return cell;
 }
 

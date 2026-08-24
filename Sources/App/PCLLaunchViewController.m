@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UIView *leftShadowView;
 @property (nonatomic, strong) CAGradientLayer *leftShadowGradient;
 
+@property(nonatomic) BOOL animatingLeftBackground;
 @end
 
 @implementation PCLLaunchViewController
@@ -119,11 +120,11 @@
     CGFloat leftW=self.leftPanelWidth>0 ? MIN(self.leftPanelWidth,w) : 300.0*scale;
     CGFloat y=0.0;
     self.backgroundGradient.frame=self.view.bounds;
-    self.leftView.frame=CGRectMake(0,y,leftW,pageH);[self.view viewWithTag:777].frame=CGRectMake(0,y,leftW,pageH);
+    self.leftView.frame=CGRectMake(0,y,leftW,pageH);if(!self.animatingLeftBackground)[self.view viewWithTag:777].frame=CGRectMake(0,y,leftW,pageH);
     self.leftView.designScale=scale;
     self.rightView.designScale=scale;
     self.rightView.frame=CGRectMake(leftW,y,MAX(0,w-leftW),pageH);
-    self.leftShadowView.frame=CGRectMake(leftW,y,4*scale,pageH);
+    if(!self.animatingLeftBackground)self.leftShadowView.frame=CGRectMake(leftW,y,4*scale,pageH);
     self.leftShadowGradient.frame=self.leftShadowView.bounds;
     self.instanceSelectVC.leftPanelWidth=leftW;
     self.instanceSelectVC.view.frame=self.view.bounds;
@@ -211,6 +212,8 @@
             @"当前档案：%@",
             name]];
 }
+
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b{UIView*v=[self.view viewWithTag:777];self.animatingLeftBackground=YES;CGRect f=v.frame;f.size.width=a;v.frame=f;f=self.leftShadowView.frame;f.origin.x=a;self.leftShadowView.frame=f;[UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{CGRect x=v.frame;x.size.width=b;v.frame=x;x=self.leftShadowView.frame;x.origin.x=b;self.leftShadowView.frame=x;} completion:^(BOOL d){self.animatingLeftBackground=NO;}];}
 
 - (void)dismissTransientUI {
     [self.leftView dismissTransientUI];

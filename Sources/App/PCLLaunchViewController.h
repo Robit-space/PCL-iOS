@@ -6,6 +6,7 @@
 @property (nonatomic, copy) void (^onOpenDownload)(void);
 
 
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b;
 - (void)dismissTransientUI;
 - (void)prepareCEEnterAnimation;
 - (void)playCEEnterAnimation;

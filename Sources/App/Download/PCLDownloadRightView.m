@@ -37,19 +37,19 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)setupUI {
     self.backgroundColor = [UIColor clearColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.contentView.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];
+    self.contentView.backgroundColor=UIColor.clearColor;
     self.contentView.clipsToBounds=YES;
     self.versionIcon=[[UIImageView alloc] init];
     self.versionIcon.contentMode=UIViewContentModeScaleAspectFit;
     self.versionIcon.translatesAutoresizingMaskIntoConstraints=NO;
     [self.contentView addSubview:self.versionIcon];
-    
+
     self.versionLabel = [[UILabel alloc] init];
     self.versionLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
     self.versionLabel.textColor = PCLColor(0x343D4A);
     self.versionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.versionLabel];
-    
+
     self.typeLabel = [[UILabel alloc] init];
     self.typeLabel.font = [UIFont systemFontOfSize:11 weight:UIFontWeightMedium];
     self.typeLabel.textColor = [UIColor whiteColor];
@@ -59,13 +59,13 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.typeLabel.textAlignment = NSTextAlignmentCenter;
     self.typeLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.typeLabel]; self.typeLabel.hidden=YES;
-    
+
     self.dateLabel = [[UILabel alloc] init];
     self.dateLabel.font = [UIFont systemFontOfSize:12];
     self.dateLabel.textColor = PCLColor(0x8C8C8C);
     self.dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.dateLabel];
-    
+
     self.downloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.downloadButton setTitle:@"下载" forState:UIControlStateNormal];
     [self.downloadButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -76,15 +76,15 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.downloadButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.downloadButton addTarget:self action:@selector(downloadTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.downloadButton]; self.downloadButton.hidden=YES;
-    
+
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
     self.progressView.progressTintColor = PCLColor(0x1370F3);
     self.progressView.trackTintColor = PCLColor(0xE0EAFD);
     self.progressView.hidden = YES;
     [self.contentView addSubview:self.progressView];
-    
-    
+
+
 }
 
 - (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
@@ -92,7 +92,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
  self.versionIcon.frame=CGRectMake(10,(h-36)/2,36,36);self.versionLabel.frame=CGRectMake(54,5,w-64,20);
  self.dateLabel.frame=CGRectMake(54,26,w-64,18);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
 
- 
+
 
 - (void)downloadTapped {
     if (self.onDownload) self.onDownload();
@@ -142,9 +142,28 @@ static UIColor *PCLColor(NSUInteger rgb) {
     return self;
 }
 
+- (CGFloat)ce:(CGFloat)v{CGFloat w=self.bounds.size.width,h=self.bounds.size.height,k=MAX(1,MIN(1.22,MIN(w/650,h/650)));return(NSInteger)(v*k+.5);}
+
+- (void)layoutCECards{
+
+ for(UIView*v in[self.versionTableView.subviews copy])if(v.tag>=810&&v.tag<820)[v removeFromSuperview];
+
+ NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat g=[self ce:15];
+
+ for(NSInteger i=0;i<n;i++){CGRect r=[self.versionTableView rectForSection:i];if(i)r.size.height-=g;else{r.origin.y+=g;r.size.height-=g*2;}if(r.size.height<1)continue;
+
+  UIView*c=[[UIView alloc]initWithFrame:r];c.tag=810+i;c.userInteractionEnabled=NO;c.backgroundColor=[PCLColor(0xFBFBFB)colorWithAlphaComponent:.96];c.layer.cornerRadius=[self ce:5];c.layer.shadowColor=UIColor.blackColor.CGColor;c.layer.shadowOpacity=.07;c.layer.shadowRadius=[self ce:3];c.layer.shadowOffset=CGSizeMake(0,1);[self.versionTableView insertSubview:c atIndex:0];}
+}
+
+- (void)layoutSubviews{[super layoutSubviews];CGFloat z=[self ce:42],m=MAX(14,MIN(25,self.bounds.size.width*.035));self.versionTableView.rowHeight=z;
+
+ for(NSLayoutConstraint*c in self.scrollView.constraints)if(c.firstItem==self.cardStackView){if(c.firstAttribute==NSLayoutAttributeLeading)c.constant=m;else if(c.firstAttribute==NSLayoutAttributeTrailing)c.constant=-m;else if(c.firstAttribute==NSLayoutAttributeWidth)c.constant=-m*2;}
+
+ [self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];}
+
 - (void)setupView {
     self.backgroundColor = [UIColor clearColor];
-    
+
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.showsVerticalScrollIndicator=YES;self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
@@ -152,14 +171,14 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.scrollView.refreshControl = [[UIRefreshControl alloc] init];
     [self.scrollView.refreshControl addTarget:self action:@selector(refreshData) forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.scrollView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor],
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
         [self.scrollView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor]
     ]];
-    
+
     self.cardStackView = [[UIStackView alloc] init];
     self.cardStackView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cardStackView.axis = UILayoutConstraintAxisVertical;
@@ -167,7 +186,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.cardStackView.alignment = UIStackViewAlignmentFill;
     self.cardStackView.distribution = UIStackViewDistributionFill;
     [self.scrollView addSubview:self.cardStackView];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:10],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
@@ -175,7 +194,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor constant:-25],
         [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.frameLayoutGuide.widthAnchor constant:-50]
     ]];
-    
+
     [self buildVersionPickerCard];
     [self buildFilterCard];
     [self buildVersionListCard];
@@ -191,32 +210,32 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionPickerContainer.layer.shadowRadius = 8;
     self.versionPickerContainer.layer.shadowOffset = CGSizeMake(0, 2);
     self.versionPickerContainer.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     UILabel *pickerTitle = [[UILabel alloc] init];
     pickerTitle.text = @"游戏版本";
     pickerTitle.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
     pickerTitle.textColor = PCLColor(0x343D4A);
     pickerTitle.translatesAutoresizingMaskIntoConstraints = NO;
     [self.versionPickerContainer addSubview:pickerTitle];
-    
+
     self.versionPicker = [[UIPickerView alloc] init];
     self.versionPicker.translatesAutoresizingMaskIntoConstraints = NO;
     self.versionPicker.delegate = self;
     self.versionPicker.dataSource = self;
     [self.versionPickerContainer addSubview:self.versionPicker];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [pickerTitle.topAnchor constraintEqualToAnchor:self.versionPickerContainer.topAnchor constant:12],
         [pickerTitle.leadingAnchor constraintEqualToAnchor:self.versionPickerContainer.leadingAnchor constant:16],
         [pickerTitle.trailingAnchor constraintEqualToAnchor:self.versionPickerContainer.trailingAnchor constant:-16],
-        
+
         [self.versionPicker.topAnchor constraintEqualToAnchor:pickerTitle.bottomAnchor constant:4],
         [self.versionPicker.leadingAnchor constraintEqualToAnchor:self.versionPickerContainer.leadingAnchor],
         [self.versionPicker.trailingAnchor constraintEqualToAnchor:self.versionPickerContainer.trailingAnchor],
         [self.versionPicker.bottomAnchor constraintEqualToAnchor:self.versionPickerContainer.bottomAnchor constant:-8],
         [self.versionPicker.heightAnchor constraintEqualToConstant:120]
     ]];
-    
+
     [self.cardStackView addArrangedSubview:self.versionPickerContainer];
 }
 
@@ -248,33 +267,33 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.filterCard.layer.shadowRadius = 8;
     self.filterCard.layer.shadowOffset = CGSizeMake(0, 2);
     self.filterCard.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     UILabel *filterTitle = [[UILabel alloc] init];
     filterTitle.text = @"筛选";
     filterTitle.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
     filterTitle.textColor = PCLColor(0x343D4A);
     filterTitle.translatesAutoresizingMaskIntoConstraints = NO;
     [self.filterCard addSubview:filterTitle];
-    
+
     self.typeFilter = [[UISegmentedControl alloc] initWithItems:@[@"全部", @"正式版", @"预览版", @"旧版本"]];
     self.typeFilter.selectedSegmentIndex = 0;
     self.typeFilter.translatesAutoresizingMaskIntoConstraints = NO;
     self.typeFilter.backgroundColor = PCLColor(0xF5F5F5);
     [self.typeFilter addTarget:self action:@selector(filterChanged:) forControlEvents:UIControlEventValueChanged];
     [self.filterCard addSubview:self.typeFilter];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [filterTitle.topAnchor constraintEqualToAnchor:self.filterCard.topAnchor constant:16],
         [filterTitle.leadingAnchor constraintEqualToAnchor:self.filterCard.leadingAnchor constant:16],
         [filterTitle.trailingAnchor constraintEqualToAnchor:self.filterCard.trailingAnchor constant:-16],
-        
+
         [self.typeFilter.topAnchor constraintEqualToAnchor:filterTitle.bottomAnchor constant:12],
         [self.typeFilter.leadingAnchor constraintEqualToAnchor:self.filterCard.leadingAnchor constant:16],
         [self.typeFilter.trailingAnchor constraintEqualToAnchor:self.filterCard.trailingAnchor constant:-16],
         [self.typeFilter.bottomAnchor constraintEqualToAnchor:self.filterCard.bottomAnchor constant:-16],
         [self.typeFilter.heightAnchor constraintEqualToConstant:36]
     ]];
-    
+
     [self.cardStackView addArrangedSubview:self.filterCard];
 }
 
@@ -287,7 +306,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     listCard.layer.shadowRadius = 8;
     listCard.layer.shadowOffset = CGSizeMake(0, 2);
     listCard.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     UILabel *listTitle = [[UILabel alloc] init];
     listTitle.text = @"Minecraft 版本";
     listTitle.font = [UIFont systemFontOfSize:16 weight:UIFontWeightBold];
@@ -295,22 +314,23 @@ static UIColor *PCLColor(NSUInteger rgb) {
     listTitle.translatesAutoresizingMaskIntoConstraints = NO;
     listTitle.hidden=YES;
     [listCard addSubview:listTitle];
-    
+
     self.versionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.versionTableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.versionTableView.delegate = self;
     self.versionTableView.dataSource = self;
     self.versionTableView.backgroundColor = [UIColor clearColor];
     self.versionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.versionTableView.rowHeight = 52;
-    self.versionTableView.sectionHeaderHeight=66;
+    self.versionTableView.rowHeight = 42;
+    self.versionTableView.sectionHeaderHeight=55;
     self.versionTableView.estimatedSectionHeaderHeight=0;
     self.versionTableView.sectionFooterHeight=.01;
     self.versionTableView.scrollEnabled = NO;
+    self.versionTableView.clipsToBounds=NO;
     self.versionTableView.allowsSelection = YES;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
     [listCard addSubview:self.versionTableView];
-    
+
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.text = @"暂无可用版本";
     self.emptyLabel.font = [UIFont systemFontOfSize:14];
@@ -319,23 +339,23 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.emptyLabel.hidden = YES;
     self.emptyLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [listCard addSubview:self.emptyLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [listTitle.topAnchor constraintEqualToAnchor:listCard.topAnchor constant:16],
         [listTitle.leadingAnchor constraintEqualToAnchor:listCard.leadingAnchor constant:16],
         [listTitle.trailingAnchor constraintEqualToAnchor:listCard.trailingAnchor constant:-16],
-        
+
         [self.versionTableView.topAnchor constraintEqualToAnchor:listCard.topAnchor],
         [self.versionTableView.leadingAnchor constraintEqualToAnchor:listCard.leadingAnchor],
         [self.versionTableView.trailingAnchor constraintEqualToAnchor:listCard.trailingAnchor],
         [self.versionTableView.bottomAnchor constraintEqualToAnchor:listCard.bottomAnchor constant:-8],
         [self.versionTableView.heightAnchor constraintEqualToConstant:400],
-        
+
         [self.emptyLabel.centerXAnchor constraintEqualToAnchor:listCard.centerXAnchor],
         [self.emptyLabel.centerYAnchor constraintEqualToAnchor:listCard.centerYAnchor],
         [self.emptyLabel.heightAnchor constraintEqualToConstant:44]
     ]];
-    
+
     [self.cardStackView addArrangedSubview:listCard];
 }
 
@@ -346,27 +366,27 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingView.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingView.hidden = YES;
     [self addSubview:self.loadingView];
-    
+
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     [self.loadingView addSubview:self.loadingIndicator];
-    
+
     UILabel *loadingLabel = [[UILabel alloc] init];
     loadingLabel.text = @"正在加载版本列表...";
     loadingLabel.font = [UIFont systemFontOfSize:14];
     loadingLabel.textColor = PCLColor(0x8C8C8C);
     loadingLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.loadingView addSubview:loadingLabel];
-    
+
     [NSLayoutConstraint activateConstraints:@[
         [self.loadingView.topAnchor constraintEqualToAnchor:self.topAnchor constant:16],
         [self.loadingView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16],
         [self.loadingView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16],
         [self.loadingView.heightAnchor constraintEqualToConstant:120],
-        
+
         [self.loadingIndicator.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor constant:-60],
         [self.loadingIndicator.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
-        
+
         [loadingLabel.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
         [loadingLabel.leadingAnchor constraintEqualToAnchor:self.loadingIndicator.trailingAnchor constant:8]
     ]];
@@ -378,17 +398,17 @@ static UIColor *PCLColor(NSUInteger rgb) {
         tab==PCLDownloadTabClientInstall;
     self.versionPickerContainer.hidden=minecraft;
     self.filterCard.hidden=YES;
-    
+
     NSString *titles[] = {
         @"Minecraft", @"Mod", @"整合包", @"数据包", @"资源包", @"光影", @"世界", @"收藏",
         @"客户端安装", @"OptiFine", @"Forge", @"NeoForge", @"Fabric", @"LiteLoader"
     };
-    
+
     NSInteger index = (NSInteger)tab;
     if (index >= 0 && index < 14) {
         [self setTitle:titles[index]];
     }
-    
+
     [self refreshData];
 }
 
@@ -419,17 +439,17 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
     self.emptyLabel.hidden = YES;
-    
+
     [[PCLVersionManager sharedManager] fetchRemoteManifest:^(NSArray<NSDictionary *> *versions, NSError *error) {
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         if (error) {
             NSLog(@"[Download] Failed to fetch manifest: %@", error);
             return;
         }
-        
+
         [self.allVersions removeAllObjects];
         [self.allVersions addObjectsFromArray:versions];
         [self applyFilter];
@@ -438,7 +458,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)loadModLoaderVersions {
     [self.allVersions removeAllObjects];
-    
+
     if (self.currentTab == PCLDownloadTabForge) {
         [self loadForgeVersions];
     } else if (self.currentTab == PCLDownloadTabFabric) {
@@ -460,12 +480,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadForgeVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     [[PCLModLoaderAPI sharedAPI] fetchForgeVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         if (error) {
             NSLog(@"[Download] Forge error: %@", error);
         }
@@ -494,18 +514,18 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadFabricVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     [[PCLModLoaderAPI sharedAPI] fetchFabricVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         [self.allVersions removeAllObjects];
-        
+
         if (error) {
             NSLog(@"[Download] Fabric error: %@", error);
         }
-        
+
         if (versions.count > 0) {
             for (id v in versions) {
                 NSString *ver = [v valueForKey:@"version"];
@@ -515,7 +535,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
                 }
             }
         }
-        
+
         [self applyFilter];
     }];
 }
@@ -523,18 +543,18 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadNeoForgeVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     [[PCLModLoaderAPI sharedAPI] fetchNeoForgeVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         [self.allVersions removeAllObjects];
-        
+
         if (error) {
             NSLog(@"[Download] NeoForge error: %@", error);
         }
-        
+
         if (versions.count > 0) {
             for (id v in versions) {
                 NSString *ver = [v valueForKey:@"version"];
@@ -543,7 +563,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
                 }
             }
         }
-        
+
         [self applyFilter];
     }];
 }
@@ -551,22 +571,22 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadOptiFineVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     [[PCLModLoaderAPI sharedAPI] fetchOptiFineVersions:^(NSArray<NSDictionary *> *versions, NSError *error) {
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         [self.allVersions removeAllObjects];
-        
+
         if (error) {
             NSLog(@"[Download] OptiFine error: %@", error);
         }
-        
+
         if (versions.count > 0) {
             [self.allVersions addObjectsFromArray:versions];
         }
-        
+
         [self applyFilter];
     }];
 }
@@ -574,14 +594,14 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadLiteLoaderVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
         [self.scrollView.refreshControl endRefreshing];
-        
+
         [self.allVersions removeAllObjects];
-        
+
         // LiteLoader仅支持1.12.2及以下版本
         if ([self.selectedGameVersion hasPrefix:@"1.12"] || [self.selectedGameVersion hasPrefix:@"1.11"] || [self.selectedGameVersion hasPrefix:@"1.10"] || [self.selectedGameVersion hasPrefix:@"1.9"] || [self.selectedGameVersion hasPrefix:@"1.8"] || [self.selectedGameVersion hasPrefix:@"1.7"] || [self.selectedGameVersion hasPrefix:@"1.6"]) {
             [self.allVersions addObjectsFromArray:@[
@@ -600,7 +620,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
             self.emptyLabel.hidden = NO;
             self.emptyLabel.text = @"LiteLoader仅支持1.12.2及以下版本";
         }
-        
+
         [self applyFilter];
     });
 }
@@ -608,18 +628,18 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)loadFabricAPIVersions {
     self.loadingView.hidden = NO;
     [self.loadingIndicator startAnimating];
-    
+
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.loadingView.hidden = YES;
         [self.loadingIndicator stopAnimating];
-        
+
         [self.allVersions removeAllObjects];
         [self.allVersions addObjectsFromArray:@[
             @{@"version": @"0.92.2+b7a3c0ef4f", @"type": @"fabric-api", @"mcVersion": self.selectedGameVersion},
             @{@"version": @"0.92.1+b7a3c0ef4f", @"type": @"fabric-api", @"mcVersion": self.selectedGameVersion},
             @{@"version": @"0.92.0+b7a3c0ef4f", @"type": @"fabric-api", @"mcVersion": self.selectedGameVersion},
         ]];
-        
+
         [self applyFilter];
     });
 }
@@ -630,12 +650,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)applyFilter {
     NSInteger filterIndex = self.typeFilter.selectedSegmentIndex;
-    
+
     [self.filteredVersions removeAllObjects];
-    
+
     for (NSDictionary *version in self.allVersions) {
         NSString *type = version[@"type"] ?: @"";
-        
+
         BOOL shouldInclude = NO;
         switch (filterIndex) {
             case 0: shouldInclude = YES; break;
@@ -643,58 +663,27 @@ static UIColor *PCLColor(NSUInteger rgb) {
             case 2: shouldInclude = [type isEqualToString:@"snapshot"]; break;
             case 3: shouldInclude = [type isEqualToString:@"old_alpha"] || [type isEqualToString:@"old_beta"]; break;
         }
-        
+
         if (shouldInclude) {
             [self.filteredVersions addObject:version];
         }
     }
-    
+
     self.emptyLabel.hidden = (self.filteredVersions.count > 0);
     if (self.filteredVersions.count == 0) {
         self.emptyLabel.text = @"没有符合条件的版本";
     }
-    
+
     [self.versionTableView reloadData];
-    
+
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight {
- NSInteger sections=[self numberOfSectionsInTableView:self.versionTableView],rows=0;
- if(sections==1)rows=self.filteredVersions.count;
- else for(NSInteger n=0;n<sections;n++)
-  if([self.expandedSections containsObject:@(n)])
-   rows+=[self versionsForSection:n].count;
- CGFloat height=MAX(1,rows*52+(sections>1?sections*66+18+self.expandedSections.count*22:0));
- for(NSLayoutConstraint *c in self.versionTableView.constraints)
-  if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=height;break;}
-}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*42];else for(NSInteger i=0;i<n;i++){BOOL o=i==0||[self.expandedSections containsObject:@(i)];h+=[self ce:(i?40:55)+(o?[self versionsForSection:i].count*42+33:15)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 #pragma mark - UITableViewDataSource
 
-- (NSArray*)versionsForSection:(NSInteger)n{
+- (NSArray*)versionsForSection:(NSInteger)n{if(self.currentTab!=PCLDownloadTabMinecraft&&self.currentTab!=PCLDownloadTabClientInstall)return self.filteredVersions;NSMutableArray*r=[NSMutableArray array],*q=[NSMutableArray array],*o=[NSMutableArray array],*f=[NSMutableArray array];for(NSDictionary*v in self.filteredVersions){NSString*t=[v[@"type"]?:@"" lowercaseString],*i=[v[@"id"]?:@"" lowercaseString];BOOL fool=[t isEqualToString:@"special"]||[@[@"2.0",@"20w14infinite",@"20w14∞",@"3d shareware v1.34",@"1.rv-pre1",@"15w14a",@"22w13oneblockatatime",@"23w13a_or_b",@"24w14potato",@"25w14craftmine",@"26w14a"]containsObject:i];if([t isEqualToString:@"release"])[r addObject:v];else if(fool)[f addObject:v];else if([t isEqualToString:@"snapshot"]||[t isEqualToString:@"pending"])[q addObject:v];else[o addObject:v];}if(!n){NSMutableArray*a=[NSMutableArray array];if(r.count)[a addObject:r[0]];if(q.count&&(!r.count||[q[0][@"releaseTime"]compare:r[0][@"releaseTime"]]>=0))[a addObject:q[0]];return a;}return(@[r,q,o,f])[n-1];}
 
- if(self.currentTab!=PCLDownloadTabMinecraft&&self.currentTab!=PCLDownloadTabClientInstall)return self.filteredVersions;
-
- NSMutableArray*r=[NSMutableArray array],*q=[NSMutableArray array],*o=[NSMutableArray array],*f=[NSMutableArray array];
-
- for(NSDictionary*v in self.filteredVersions){
-
-  NSString*t=v[@"type"]?:@"",*i=v[@"id"]?:@"";
-
-  BOOL fool=[i containsString:@"w14"]||[i containsString:@"oneBlock"]||[i containsString:@"_or_b"]||[i containsString:@"3D Shareware"]||[i isEqualToString:@"1.RV-Pre1"];
-
-  if([t isEqualToString:@"release"])[r addObject:v];else if(fool)[f addObject:v];
-
-  else if([t isEqualToString:@"snapshot"])[q addObject:v];else [o addObject:v];
-
- }
- if(!n){NSMutableArray*a=[NSMutableArray array];if(r.count)[a addObject:r[0]];
-
-  if(q.count&&(!r.count||[q[0][@"releaseTime"] compare:r[0][@"releaseTime"]]>=0))[a addObject:q[0]];return a;}
-
- NSArray*g=@[r,q,o,f];return g[n-1];
-
-}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)t{
 
@@ -712,7 +701,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (CGFloat)tableView:(UITableView *)t heightForHeaderInSection:(NSInteger)s {
 
- return [self numberOfSectionsInTableView:t]>1?(s?48:66):.01;
+ return [self numberOfSectionsInTableView:t]>1?(s?[self ce:40]:[self ce:55]):.01;
 
 }
 
@@ -722,20 +711,20 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  CGFloat w=t.bounds.size.width;BOOL open=n==0||[self.expandedSections containsObject:@(n)];
 
- UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,n?48:66)];
+ UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:(n?40:55)])];
 
- UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:18,w,48)];
+ UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:[self ce:15],w,[self ce:40])];
 
- c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];c.layer.cornerRadius=5;
+ c.backgroundColor=UIColor.clearColor;c.layer.cornerRadius=0;
 
- c.layer.shadowColor=UIColor.blackColor.CGColor;c.layer.shadowOpacity=.07;c.layer.shadowRadius=3;c.layer.shadowOffset=CGSizeMake(0,1);
+
 
  c.layer.maskedCorners=open?(kCALayerMinXMinYCorner|kCALayerMaxXMinYCorner):15;
  c.autoresizingMask=UIViewAutoresizingFlexibleWidth;[v addSubview:c];
 
  NSArray*names=@[@"最新版本",@"正式版",@"预览版",@"远古版",@"愚人节版"];
 
- UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake(17,0,w-64,48)];
+ UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake([self ce:15],0,w-[self ce:60],[self ce:40])];
 
  l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)[self versionsForSection:n].count]:names[n];
 
@@ -756,7 +745,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 - (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{
 
- return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?40:18):.01;
+ return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?[self ce:33]:[self ce:15]):.01;
 
 }
 
@@ -764,9 +753,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  UIView*v=[UIView new];if(n&&![self.expandedSections containsObject:@(n)])return v;
 
- UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,22)];
+ UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:18])];
 
- f.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];f.layer.cornerRadius=5;
+ f.backgroundColor=UIColor.clearColor;f.layer.cornerRadius=0;
 
  f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;
 
@@ -800,12 +789,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLDownloadVersionCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VersionCell" forIndexPath:indexPath];
-    
+
     NSDictionary *version = [self versionsForSection:indexPath.section][indexPath.row];
     NSString *versionId = version[@"id"] ?: version[@"version"] ?: @"";
     NSString *type = version[@"type"] ?: @"";
     NSString *releaseTime = version[@"releaseTime"] ?: @"";
-    
+
     cell.textLabel.hidden=YES;cell.detailTextLabel.hidden=YES;cell.imageView.hidden=YES;
 
     cell.versionIcon.hidden=NO;cell.versionLabel.hidden=NO;cell.dateLabel.hidden=NO;
@@ -816,11 +805,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     BOOL last=indexPath.row+1==[tableView numberOfRowsInSection:indexPath.section];
 
-    cell.contentView.layer.cornerRadius=last?5:0;
+    cell.contentView.layer.cornerRadius=0;
 
     cell.contentView.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;
 
-    
+
     if ([type isEqualToString:@"release"]) {
         cell.typeLabel.text = @"正式版";
         cell.typeLabel.backgroundColor = PCLColor(0x1370F3);
@@ -855,19 +844,19 @@ static UIColor *PCLColor(NSUInteger rgb) {
         cell.typeLabel.text = type;
         cell.typeLabel.backgroundColor = PCLColor(0x8C8C8C);
     }
-    
+
     if (releaseTime.length > 10) {
         cell.dateLabel.text = [releaseTime substringToIndex:10];
     } else {
         cell.dateLabel.text = releaseTime;
     }
-    
+
     NSString *urlString = version[@"url"] ?: version[@"downloadURL"] ?: version[@"jar"] ?: @"";
 
     // 检查是否正在下载
     BOOL isDownloading = (self.downloadProgress[versionId] != nil);
     double progress = [self.downloadProgress[versionId] doubleValue];
-    
+
     if (isDownloading) {
         cell.progressView.hidden = NO;
         cell.progressView.progress = progress;
@@ -886,7 +875,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
             [self downloadVersion:versionId url:urlString type:type];
         }
     };
-    
+
     return cell;
 }
 - (void)tableView:(UITableView*)t didSelectRowAtIndexPath:(NSIndexPath*)p{PCLDownloadVersionCell*c=[t cellForRowAtIndexPath:p];if(c.onDownload)c.onDownload();}
@@ -900,18 +889,18 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [rootVC presentViewController:alert animated:YES completion:nil];
         return;
     }
-    
+
     NSString *displayName = [NSString stringWithFormat:@"%@ %@", type, versionId];
     self.downloadProgress[versionId] = @(0.0);
     [self.versionTableView reloadData];
-    
+
     // 使用PCLDownloadManager下载
     PCLDownloadTask *task = [[PCLDownloadTask alloc] init];
     task.url = urlString;
     task.targetPath = [self targetPathForLoader:versionId type:type];
     task.displayName = displayName;
     task.resourceType = [self resourceTypeForType:type];
-    
+
     __weak typeof(self) weakSelf = self;
     [[PCLDownloadManager sharedManager] addTask:task];
     [[PCLDownloadManager sharedManager] startDownload:task progress:^(double progress, NSString *status) {
@@ -924,7 +913,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         if (!self) return;
         [self.downloadProgress removeObjectForKey:versionId];
         [self.versionTableView reloadData];
-        
+
         NSString *title = success ? @"下载完成" : @"下载失败";
         NSString *msg = success ? [NSString stringWithFormat:@"%@ 安装成功", displayName] : error.localizedDescription;
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
@@ -937,7 +926,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (NSString *)targetPathForLoader:(NSString *)versionId type:(NSString *)type {
     NSString *versionsDir = [[PCLVersionManager sharedManager] versionsDirectory];
     NSString *versionDir = [versionsDir stringByAppendingPathComponent:versionId];
-    
+
     if ([type isEqualToString:@"forge"]) {
         return [versionDir stringByAppendingPathComponent:[NSString stringWithFormat:@"forge-%@.jar", versionId]];
     } else if ([type isEqualToString:@"fabric"]) {

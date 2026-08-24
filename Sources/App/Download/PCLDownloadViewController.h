@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, PCLDownloadTab) {
 @property (nonatomic, assign) CGFloat leftPanelWidth;
 @property (nonatomic, copy) void (^onSelectInstallTab)(PCLDownloadTab tab);
 
+- (void)animateLeftBackgroundFrom:(CGFloat)a to:(CGFloat)b;
 - (void)dismissTransientUI;
 - (void)prepareCEEnterAnimation;
 - (void)playCEEnterAnimation;

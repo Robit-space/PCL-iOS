@@ -221,7 +221,6 @@
 
     if (page==PCLPageTypeLaunch) {
         if(self.currentPage==PCLPageTypeDownload)[self.downloadVC playCEExitAnimation];
-        if(self.currentPage==PCLPageTypeDownload)[self.downloadVC playCEExitAnimation];
 
         [UIView animateWithDuration:.110
 
@@ -307,8 +306,6 @@
 
 - (void)showPage:(PCLPageType)page{
 
- CGFloat old=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
-
  UIViewController*v=nil;
 
  if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=[self.topBar launchButtonCenterX];v=self.launchVC;}
@@ -316,8 +313,6 @@
  else if(page==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=270;v=self.downloadVC;}
 
  [v.view setNeedsLayout];[v.view layoutIfNeeded];
-
- UIView*bg=[v.view viewWithTag:777];CGRect f=bg.frame;f.size.width=old;bg.frame=f;
 
     [self.launchVC dismissTransientUI];
 
@@ -368,17 +363,8 @@
  [self animateLeftTo:page];
 }
 
-- (void)animateLeftTo:(PCLPageType)p{
+- (void)animateLeftTo:(PCLPageType)p{CGFloat a=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270,b=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;if(p==PCLPageTypeLaunch)[self.launchVC animateLeftBackgroundFrom:a to:b];else if(p==PCLPageTypeDownload)[self.downloadVC animateLeftBackgroundFrom:a to:b];}
 
- UIViewController*v=p==PCLPageTypeLaunch?self.launchVC:self.downloadVC;
-
- UIView*bg=[v.view viewWithTag:777];CGFloat w=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
-
- [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-
-  CGRect f=bg.frame;f.size.width=w;bg.frame=f;} completion:nil];
-
-}
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];

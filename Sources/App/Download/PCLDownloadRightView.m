@@ -27,7 +27,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @implementation PCLDownloadVersionCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self=[super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     if (self) {
         [self setupUI];
     }
@@ -759,7 +759,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)a.count]:names[n];
 
- l.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];[c addSubview:l];
+ l.font=[UIFont systemFontOfSize:14 weight:UIFontWeightMedium];l.textColor=PCLColor(0x343D4A);[c addSubview:l];
 
  if(n==0)return v;
  UIButton *b=[[UIButton alloc]initWithFrame:c.bounds];b.tag=n;
@@ -768,7 +768,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
     forState:UIControlStateNormal];
 
- b.contentHorizontalAlignment=UIControlContentHorizontalAlignmentRight;
+ b.tintColor=PCLColor(0x697482);b.contentHorizontalAlignment=UIControlContentHorizontalAlignmentRight;
 
  b.contentEdgeInsets=UIEdgeInsetsMake(0,0,0,16);
  [b addTarget:self action:@selector(toggleVersionSection:)
@@ -809,7 +809,19 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
     NSString *type = version[@"type"] ?: @"";
     NSString *releaseTime = version[@"releaseTime"] ?: @"";
     
-    cell.versionLabel.text=versionId;
+    cell.versionIcon.hidden=YES;cell.versionLabel.hidden=YES;cell.dateLabel.hidden=YES;
+
+    cell.textLabel.text=versionId;cell.textLabel.font=[UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+
+    cell.textLabel.textColor=PCLColor(0x343D4A);
+
+    cell.detailTextLabel.text=releaseTime.length>10?[releaseTime substringToIndex:10]:releaseTime;
+
+    cell.detailTextLabel.textColor=PCLColor(0x8C8C8C);
+
+    cell.imageView.image=[UIImage imageNamed:[type isEqualToString:@"release"]?@"CEGrass":([type isEqualToString:@"snapshot"]?@"CECommandBlock":@"CEGoldBlock")];
+
+    cell.imageView.contentMode=UIViewContentModeScaleAspectFit;
     cell.versionIcon.image=[UIImage imageNamed:[type isEqualToString:@"release"]?@"CEGrass":([type isEqualToString:@"snapshot"]?@"CECommandBlock":@"CEGoldBlock")];
     
     if ([type isEqualToString:@"release"]) {

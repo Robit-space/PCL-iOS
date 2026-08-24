@@ -145,7 +145,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (CGFloat)ce:(CGFloat)v{CGFloat k=MAX(.82,MIN(1.18,MIN(self.bounds.size.width/650,self.bounds.size.height/650)));return(NSInteger)(v*k+.5);}
 - (void)layoutSubviews{[super layoutSubviews];self.versionTableView.rowHeight=[self ce:44];[self updateVersionTableHeight];}
-- (void)layoutCECards{if([self numberOfSectionsInTableView:self.versionTableView]<2)return;for(NSInteger i=0;i<5;i++){UIView*c=[self.versionTableView viewWithTag:810+i];if(!c){c=[UIView new];c.tag=810+i;c.userInteractionEnabled=NO;c.backgroundColor=[UIColor colorWithWhite:.995 alpha:.84];c.layer.cornerRadius=[self ce:10];[self.versionTableView insertSubview:c atIndex:0];}CGRect r=[self.versionTableView rectForHeaderInSection:i];NSInteger n=[self.versionTableView numberOfRowsInSection:i];if(n)r=CGRectUnion(r,[self.versionTableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:n-1 inSection:i]]);r=CGRectUnion(r,[self.versionTableView rectForFooterInSection:i]);r.origin.y+=[self ce:(i?0:15)];r.size.height-=[self ce:15];c.frame=r;}}
+- (void)layoutCECards{if([self numberOfSectionsInTableView:self.versionTableView]<2)return;for(NSInteger i=1;i<5;i++){UIView*c=[self.versionTableView viewWithTag:810+i];if(!c){c=[UIView new];c.tag=810+i;c.userInteractionEnabled=NO;c.backgroundColor=[UIColor colorWithWhite:.995 alpha:.84];c.layer.cornerRadius=[self ce:11];[self.versionTableView insertSubview:c atIndex:0];}CGRect r=[self.versionTableView rectForHeaderInSection:i];NSInteger n=[self.versionTableView numberOfRowsInSection:i];if(n)r=CGRectUnion(r,[self.versionTableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:n-1 inSection:i]]);r=CGRectUnion(r,[self.versionTableView rectForFooterInSection:i]);r.size.height-=[self ce:15];c.frame=r;}}
 
 - (void)setupView {
     self.backgroundColor = [UIColor clearColor];
@@ -664,7 +664,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else for(NSInteger i=0;i<n;i++){BOOL o=i==0||[self.expandedSections containsObject:@(i)];h+=[self ce:i?(44+(o?[self versionsForSection:i].count*44+30:14)):(72+[self versionsForSection:0].count*64+39)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:64+MIN(2,[self versionsForSection:0].count)*58+14];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+30:14)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 #pragma mark - UITableViewDataSource
 
@@ -684,10 +684,20 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 }
 
-- (CGFloat)tableView:(UITableView*)t heightForHeaderInSection:(NSInteger)n{return [self numberOfSectionsInTableView:t]>1?[self ce:(n?44:72)]:.01;}
-- (UIView*)tableView:(UITableView*)t viewForHeaderInSection:(NSInteger)n{if([self numberOfSectionsInTableView:t]==1)return nil;CGFloat w=t.bounds.size.width;BOOL open=n==0||[self.expandedSections containsObject:@(n)];UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:(n?44:72)])],*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:[self ce:15],w,[self ce:(n?44:57)])];c.backgroundColor=[UIColor colorWithWhite:.995 alpha:.9];c.layer.cornerRadius=[self ce:10];c.layer.maskedCorners=open?(kCALayerMinXMinYCorner|kCALayerMaxXMinYCorner):15;[v addSubview:c];NSArray*a=@[@"最新版本",@"正式版",@"预览版",@"远古版",@"愚人节版"];UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake([self ce:17],0,w-[self ce:64],c.bounds.size.height)];l.text=n?[NSString stringWithFormat:@"%@ (%ld)",a[n],(long)[self versionsForSection:n].count]:a[n];l.font=[UIFont systemFontOfSize:(n?14:15) weight:UIFontWeightBold];l.textColor=PCLColor(n?0x343D4A:0x1759B6);[c addSubview:l];if(n){UIButton*b=[[UIButton alloc]initWithFrame:c.bounds];b.tag=n;[b setImage:[UIImage systemImageNamed:open?@"chevron.down":@"chevron.right"] forState:0];b.tintColor=PCLColor(0x505A66);b.contentHorizontalAlignment=UIControlContentHorizontalAlignmentRight;b.contentEdgeInsets=UIEdgeInsetsMake(0,0,0,16);[b addTarget:self action:@selector(toggleVersionSection:) forControlEvents:UIControlEventTouchUpInside];[c addSubview:b];}return v;}
-- (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?[self ce:(n?30:39)]:[self ce:14]):.01;}
-- (UIView*)tableView:(UITableView*)t viewForFooterInSection:(NSInteger)n{UIView*v=[UIView new];if(n&&![self.expandedSections containsObject:@(n)])return v;UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:(n?15:24)])];f.backgroundColor=[UIColor colorWithWhite:.995 alpha:.9];f.layer.cornerRadius=[self ce:10];f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;}
+- (UIView*)latestHeader:(CGFloat)w{
+ NSArray*a=[self versionsForSection:0];UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:64+MIN(2,a.count)*58])];c.backgroundColor=[UIColor colorWithWhite:.995 alpha:.94];c.layer.cornerRadius=[self ce:12];
+ UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake(18,10,w-36,[self ce:36])];l.text=@"最新版本";l.font=[UIFont systemFontOfSize:15 weight:UIFontWeightBold];l.textColor=PCLColor(0x1759B6);[c addSubview:l];
+ for(NSInteger i=0;i<MIN(2,a.count);i++){NSDictionary*d=a[i];NSString*y=d[@"type"]?:@"",*z=d[@"releaseTime"]?:@"";PCLDownloadVersionCell*r=[[PCLDownloadVersionCell alloc]initWithStyle:0 reuseIdentifier:nil];r.frame=CGRectMake(10,[self ce:48+i*58],w-20,[self ce:56]);r.tag=i;r.contentView.backgroundColor=UIColor.clearColor;r.versionIcon.image=[UIImage imageNamed:[y isEqualToString:@"release"]?@"CEGrass":@"CECommandBlock"];r.versionLabel.text=d[@"id"]?:@"";NSString*day=z.length>10?[z substringToIndex:10]:z;r.dateLabel.text=[NSString stringWithFormat:@"%@，发布于 %@",[y isEqualToString:@"release"]?@"最新正式版":@"最新预览版",day];[r addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(latestTapped:)]];[c addSubview:r];}return c;
+}
+
+- (UIView*)categoryHeader:(NSInteger)n width:(CGFloat)w{
+ UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:44])];NSArray*a=@[@"最新版本",@"正式版",@"预览版",@"远古版",@"愚人节版"];UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake(17,0,w-64,v.bounds.size.height)];l.text=[NSString stringWithFormat:@"%@ (%ld)",a[n],(long)[self versionsForSection:n].count];l.font=[UIFont systemFontOfSize:14 weight:UIFontWeightBold];l.textColor=PCLColor(0x343D4A);[v addSubview:l];
+ UIButton*q=[[UIButton alloc]initWithFrame:v.bounds];q.tag=n;BOOL o=[self.expandedSections containsObject:@(n)];[q setImage:[UIImage systemImageNamed:o?@"chevron.down":@"chevron.right"] forState:0];q.tintColor=PCLColor(0x505A66);q.contentHorizontalAlignment=UIControlContentHorizontalAlignmentRight;q.contentEdgeInsets=UIEdgeInsetsMake(0,0,0,16);[q addTarget:self action:@selector(toggleVersionSection:) forControlEvents:UIControlEventTouchUpInside];[v addSubview:q];return v;
+}
+- (CGFloat)tableView:(UITableView*)t heightForHeaderInSection:(NSInteger)n{return [self numberOfSectionsInTableView:t]>1?[self ce:n?44:64+MIN(2,[self versionsForSection:0].count)*58]:.01;}
+- (UIView*)tableView:(UITableView*)t viewForHeaderInSection:(NSInteger)n{if([self numberOfSectionsInTableView:t]==1)return nil;return n?[self categoryHeader:n width:t.bounds.size.width]:[self latestHeader:t.bounds.size.width];}
+- (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{return [self numberOfSectionsInTableView:t]>1?(n?[self.expandedSections containsObject:@(n)]?[self ce:30]:[self ce:14]:[self ce:14]):.01;}
+- (UIView*)tableView:(UITableView*)t viewForFooterInSection:(NSInteger)n{UIView*v=[UIView new];if(!n||![self.expandedSections containsObject:@(n)])return v;UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:15])];f.backgroundColor=[UIColor colorWithWhite:.995 alpha:.9];f.layer.cornerRadius=[self ce:11];f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;}
 
 - (void)toggleVersionSection:(UIButton*)b{
 
@@ -707,9 +717,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 }
 
+- (void)latestTapped:(UITapGestureRecognizer*)g{NSArray*a=[self versionsForSection:0];if(g.view.tag>=a.count)return;NSDictionary*v=a[g.view.tag];[self downloadVersion:v[@"id"]?:@"" url:v[@"url"]?:v[@"downloadURL"]?:v[@"jar"]?:@"" type:v[@"type"]?:@""];}
+
 - (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{return [self ce:(p.section?44:64)];}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if([self numberOfSectionsInTableView:tableView]>1&&section==0)return 0;
     if([self numberOfSectionsInTableView:tableView]>1&&
 
        ![self.expandedSections containsObject:@(section)])return 0;

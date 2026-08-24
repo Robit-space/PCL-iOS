@@ -663,11 +663,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*42];else for(NSInteger i=0;i<n;i++){BOOL o=i==0||[self.expandedSections containsObject:@(i)];h+=[self ce:(i?40:55)+(o?[self versionsForSection:i].count*42+33:15)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*42];else for(NSInteger i=0;i<n;i++){BOOL o=i==0||[self.expandedSections containsObject:@(i)];h+=[self ce:i?(40+(o?[self versionsForSection:i].count*42+33:15)):(63+[self versionsForSection:0].count*56+37)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 #pragma mark - UITableViewDataSource
 
-- (NSArray*)versionsForSection:(NSInteger)n{if(self.currentTab!=PCLDownloadTabMinecraft&&self.currentTab!=PCLDownloadTabClientInstall)return self.filteredVersions;NSMutableArray*r=[NSMutableArray array],*q=[NSMutableArray array],*o=[NSMutableArray array],*f=[NSMutableArray array];for(NSDictionary*v in self.filteredVersions){NSString*t=[v[@"type"]?:@"" lowercaseString],*i=[v[@"id"]?:@"" lowercaseString];BOOL fool=[t isEqualToString:@"special"]||[@[@"2.0",@"20w14infinite",@"20w14∞",@"3d shareware v1.34",@"1.rv-pre1",@"15w14a",@"22w13oneblockatatime",@"23w13a_or_b",@"24w14potato",@"25w14craftmine",@"26w14a"]containsObject:i];if([t isEqualToString:@"release"])[r addObject:v];else if(fool)[f addObject:v];else if([t isEqualToString:@"snapshot"]||[t isEqualToString:@"pending"])[q addObject:v];else[o addObject:v];}if(!n){NSMutableArray*a=[NSMutableArray array];if(r.count)[a addObject:r[0]];if(q.count&&(!r.count||[q[0][@"releaseTime"]compare:r[0][@"releaseTime"]]>=0))[a addObject:q[0]];return a;}return(@[r,q,o,f])[n-1];}
+- (NSArray*)versionsForSection:(NSInteger)n{if(self.currentTab!=PCLDownloadTabMinecraft&&self.currentTab!=PCLDownloadTabClientInstall)return self.filteredVersions;NSMutableArray*r=[NSMutableArray array],*q=[NSMutableArray array],*o=[NSMutableArray array],*f=[NSMutableArray array];for(NSDictionary*v in self.filteredVersions){NSString*t=[v[@"type"]?:@"" lowercaseString],*i=[v[@"id"]?:@"" lowercaseString],*d=v[@"releaseTime"]?:@"";BOOL fool=[t isEqualToString:@"special"]||[@[@"2point0_blue",@"2point0_red",@"2point0_purple",@"2.0",@"20w14infinite",@"20w14∞",@"3d shareware v1.34",@"1.rv-pre1",@"15w14a",@"22w13oneblockatatime",@"23w13a_or_b",@"24w14potato",@"25w14craftmine",@"26w14a"]containsObject:i]||([d containsString:@"-04-01"]&&![t isEqualToString:@"release"]);if([t isEqualToString:@"release"])[r addObject:v];else if(fool)[f addObject:v];else if([t isEqualToString:@"snapshot"]||[t isEqualToString:@"pending"])[q addObject:v];else[o addObject:v];}if(!n){NSMutableArray*a=[NSMutableArray array];if(r.count)[a addObject:r[0]];if(q.count&&(!r.count||[q[0][@"releaseTime"]compare:r[0][@"releaseTime"]]>=0))[a addObject:q[0]];return a;}return(@[r,q,o,f])[n-1];}
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)t{
@@ -686,7 +686,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (CGFloat)tableView:(UITableView *)t heightForHeaderInSection:(NSInteger)s {
 
- return [self numberOfSectionsInTableView:t]>1?(s?[self ce:40]:[self ce:55]):.01;
+ return [self numberOfSectionsInTableView:t]>1?(s?[self ce:40]:[self ce:63]):.01;
 
 }
 
@@ -696,11 +696,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  CGFloat w=t.bounds.size.width;BOOL open=n==0||[self.expandedSections containsObject:@(n)];
 
- UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:(n?40:55)])];
+ UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,[self ce:(n?40:63)])];
 
- UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:[self ce:15],w,[self ce:40])];
+ UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:[self ce:15],w,[self ce:(n?40:48)])];
 
- c.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];c.layer.cornerRadius=[self ce:5];c.layer.shadowColor=PCLColor(0x343D4A).CGColor;c.layer.shadowOpacity=.07;c.layer.shadowRadius=[self ce:3];
+ c.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];c.layer.cornerRadius=[self ce:8];c.layer.shadowColor=PCLColor(0x343D4A).CGColor;c.layer.shadowOpacity=0;c.layer.shadowRadius=[self ce:3];
 
 
 
@@ -709,7 +709,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  NSArray*names=@[@"最新版本",@"正式版",@"预览版",@"远古版",@"愚人节版"];
 
- UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake([self ce:15],0,w-[self ce:60],[self ce:40])];
+ UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake([self ce:17],0,w-[self ce:64],[self ce:(n?40:48)])];
 
  l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)[self versionsForSection:n].count]:names[n];
 
@@ -730,7 +730,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 - (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{
 
- return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?[self ce:33]:[self ce:15]):.01;
+ return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?[self ce:(n?33:37)]:[self ce:15]):.01;
 
 }
 
@@ -738,9 +738,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  UIView*v=[UIView new];if(n&&![self.expandedSections containsObject:@(n)])return v;
 
- UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:18])];
+ UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:(n?18:22)])];
 
- f.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];f.layer.cornerRadius=[self ce:5];f.layer.shadowColor=PCLColor(0x343D4A).CGColor;f.layer.shadowOpacity=.05;f.layer.shadowRadius=[self ce:3];
+ f.backgroundColor=[UIColor colorWithRed:251/255.0 green:251/255.0 blue:251/255.0 alpha:210/255.0];f.layer.cornerRadius=[self ce:8];f.layer.shadowColor=PCLColor(0x343D4A).CGColor;f.layer.shadowOpacity=0;f.layer.shadowRadius=[self ce:3];
 
  f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;
 
@@ -764,7 +764,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 }
 
-- (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{return [self ce:42];}
+- (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{return [self ce:(p.section?42:56)];}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if([self numberOfSectionsInTableView:tableView]>1&&
@@ -959,19 +959,14 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 #pragma mark - Animation
 
-- (NSArray*)ceItems{NSMutableArray*a=[NSMutableArray array];[self.versionTableView layoutIfNeeded];
-
- for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
-
-  for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*c=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(c)[a addObject:c];}}return a;}
+- (NSArray*)ceSection:(NSInteger)n{NSMutableArray*a=[NSMutableArray array];UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*v=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(v)[a addObject:v];}UIView*f=[self.versionTableView footerViewForSection:n];if(f)[a addObject:f];return a;}
 
 - (void)dismissTransientUI{}
 
-- (void)prepareCEEnterAnimation{for(UIView*v in[self ceItems]){v.alpha=1;v.transform=CGAffineTransformIdentity;}}
+- (void)prepareCEEnterAnimation{[self.versionTableView layoutIfNeeded];for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++)for(UIView*v in[self ceSection:n]){[v.layer removeAllAnimations];v.alpha=0;v.transform=CGAffineTransformMakeTranslation(0,-12);}}
+- (void)playCEEnterAnimation{for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){NSArray*a=[self ceSection:n];[UIView animateWithDuration:.16 delay:.03*n options:UIViewAnimationOptionCurveEaseOut animations:^{for(UIView*v in a){v.alpha=1;v.transform=CGAffineTransformIdentity;}} completion:nil];}}
 
-- (void)playCEEnterAnimation{[PCLCEPageAnimator showRightItems:[self ceItems] scrollView:self.scrollView];}
-
-- (void)playCEExitAnimation{[PCLCEPageAnimator hideRightItems:[self ceItems] scrollView:self.scrollView];}
+- (void)playCEExitAnimation{for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){NSArray*a=[self ceSection:n];[UIView animateWithDuration:.07 delay:.01*n options:UIViewAnimationOptionCurveEaseIn animations:^{for(UIView*v in a){v.alpha=0;v.transform=CGAffineTransformMakeTranslation(0,-8);}} completion:nil];}}
 
 - (void)reloadState {
     [self refreshData];

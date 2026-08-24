@@ -195,8 +195,8 @@
         [self.launchVC
             playCEExitWithCompletion:^{
 
-            [weakSelf showPage:page];
             weakSelf.currentPage=page;
+            [weakSelf showPage:page];
 
             weakSelf.pageLabel.alpha=0;
 
@@ -220,9 +220,9 @@
     }
 
     if (page==PCLPageTypeLaunch) {
-        if(self.currentPage==PCLPageTypeDownload)[self.downloadVC playCEExitAnimation];
+        if(self.currentPage==PCLPageTypeDownload){[self.downloadVC animateLeftBackgroundFrom:270 to:[self.topBar launchButtonCenterX]];[self.downloadVC playCEExitAnimation];}
 
-        [UIView animateWithDuration:.110
+        [UIView animateWithDuration:.180
 
             animations:^{
 
@@ -340,7 +340,7 @@
             [self.downloadVC.view layoutIfNeeded];
             [self.downloadVC prepareCEEnterAnimation];
             self.downloadVC.view.hidden=NO;
-            [self.downloadVC playCEEnterAnimation];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.030*NSEC_PER_SEC)),dispatch_get_main_queue(),^{[self.downloadVC playCEEnterAnimation];});
             break;
         }
 

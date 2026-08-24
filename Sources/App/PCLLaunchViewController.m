@@ -250,7 +250,7 @@
 
     dispatch_after(
         dispatch_time(DISPATCH_TIME_NOW,
-            (int64_t)(.110*NSEC_PER_SEC)),
+            (int64_t)(.180*NSEC_PER_SEC)),
         dispatch_get_main_queue(), ^{
             if (completion)
                 completion();

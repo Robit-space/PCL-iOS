@@ -14,6 +14,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor=[UIColor colorWithRed:.918 green:.949 blue:.996 alpha:1];
 
     self.backgroundGradient=[CAGradientLayer layer];
     self.backgroundGradient.colors=@[

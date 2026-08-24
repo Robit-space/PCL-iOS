@@ -79,6 +79,7 @@
 - (void)setupContentView {
     self.contentView = [[UIView alloc] init];
     self.contentView.clipsToBounds=YES;
+    self.contentView.backgroundColor=[UIColor colorWithRed:.918 green:.949 blue:.996 alpha:1];
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self.view addSubview:self.contentView];
@@ -327,11 +328,10 @@
             break;
 
         case PCLPageTypeDownload: {
+            [self.downloadVC.view layoutIfNeeded];
             [self.downloadVC prepareCEEnterAnimation];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,(int64_t)(.030*NSEC_PER_SEC)),dispatch_get_main_queue(),^{
-                [self.downloadVC playCEEnterAnimation];
-                self.downloadVC.view.hidden=NO;
-            });
+            self.downloadVC.view.hidden=NO;
+            [self.downloadVC playCEEnterAnimation];
             break;
         }
 

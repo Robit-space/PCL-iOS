@@ -37,7 +37,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (void)setupUI {
     self.backgroundColor = [UIColor clearColor];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.contentView.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.82];
+    self.contentView.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];
     self.contentView.clipsToBounds=YES;
     self.versionIcon=[[UIImageView alloc] init];
     self.versionIcon.contentMode=UIViewContentModeScaleAspectFit;
@@ -745,7 +745,11 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  UIView *c=[[UIView alloc]initWithFrame:CGRectMake(0,15,w,40)];
 
- c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.82];c.layer.cornerRadius=5;
+ c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.9];c.layer.cornerRadius=5;
+
+ c.layer.maskedCorners=open?(kCALayerMinXMinYCorner|kCALayerMaxXMinYCorner):
+
+ (kCALayerMinXMinYCorner|kCALayerMaxXMinYCorner|kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner);
 
  c.autoresizingMask=UIViewAutoresizingFlexibleWidth;[v addSubview:c];
 
@@ -757,6 +761,7 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 
  l.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];[c addSubview:l];
 
+ if(n==0)return v;
  UIButton *b=[[UIButton alloc]initWithFrame:c.bounds];b.tag=n;
 
  [b setImage:[UIImage systemImageNamed:open?@"chevron.down":@"chevron.right"]
@@ -972,14 +977,41 @@ UIView *v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,55)];
 - (void)dismissTransientUI {
 }
 
+- (NSArray *)ceItems {
+
+ [self layoutIfNeeded];
+
+ NSMutableArray*a=[NSMutableArray array];
+
+ for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){
+
+  UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
+
+  for(NSIndexPath*i in self.versionTableView.indexPathsForVisibleRows)
+
+   if(i.section==n)[a addObject:[self.versionTableView cellForRowAtIndexPath:i]];
+
+ }
+
+ return a.count?a:self.cardStackView.arrangedSubviews;
+
+}
 - (void)prepareCEEnterAnimation {
+
  for(UIView*v in self.cardStackView.arrangedSubviews){[v.layer removeAllAnimations];v.alpha=1;v.transform=CGAffineTransformIdentity;}
+
 }
+
 - (void)playCEEnterAnimation {
+
  [PCLCEPageAnimator showRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
+
 }
+
 - (void)playCEExitAnimation {
+
  [PCLCEPageAnimator hideRightItems:self.cardStackView.arrangedSubviews scrollView:self.scrollView];
+
 }
 
 - (void)reloadState {

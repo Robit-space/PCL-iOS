@@ -30,6 +30,8 @@
     self.rightView=[[PCLDownloadRightView alloc] init];
     self.leftView.backgroundColor=[UIColor colorWithWhite:.995 alpha:.824];
 
+    UIView*bg=[UIView new];bg.tag=777;bg.backgroundColor=[UIColor colorWithWhite:.995 alpha:.824];
+    [self.view addSubview:bg];self.leftView.backgroundColor=UIColor.clearColor;
     [self.view addSubview:self.leftView];
     [self.view addSubview:self.rightView];
 
@@ -85,7 +87,7 @@
     self.leftView.designScale=scale;
     self.rightView.designScale=scale;
 
-    self.leftView.frame=CGRectMake(0,0,leftW,h);
+    self.leftView.frame=CGRectMake(0,0,leftW,h);[self.view viewWithTag:777].frame=CGRectMake(0,0,leftW,h);
     self.rightView.frame=CGRectMake(leftW,0,MAX(0,w-leftW),h);
     self.resourceVC.view.frame=self.rightView.frame;
     self.shadowView.frame=CGRectMake(leftW,0,1,h);

@@ -305,16 +305,19 @@
     }];
 }
 
-- (void)showPage:(PCLPageType)page {
+- (void)showPage:(PCLPageType)page{
 
- CGFloat oldLeft=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
+ CGFloat old=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
 
- if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=oldLeft;[self.launchVC.view layoutIfNeeded];}
+ UIViewController*v=nil;
 
- else if(page==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=oldLeft;[self.downloadVC.view layoutIfNeeded];}
- CGFloat w=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
- if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=w;[self.launchVC.view layoutIfNeeded];}
- if(page==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=w;[self.downloadVC.view layoutIfNeeded];}
+ if(page==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=[self.topBar launchButtonCenterX];v=self.launchVC;}
+
+ else if(page==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=270;v=self.downloadVC;}
+
+ [v.view setNeedsLayout];[v.view layoutIfNeeded];
+
+ UIView*bg=[v.view viewWithTag:777];CGRect f=bg.frame;f.size.width=old;bg.frame=f;
 
     [self.launchVC dismissTransientUI];
 
@@ -367,20 +370,13 @@
 
 - (void)animateLeftTo:(PCLPageType)p{
 
- CGFloat a=self.currentPage==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
+ UIViewController*v=p==PCLPageTypeLaunch?self.launchVC:self.downloadVC;
 
- CGFloat b=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
+ UIView*bg=[v.view viewWithTag:777];CGFloat w=p==PCLPageTypeLaunch?[self.topBar launchButtonCenterX]:270;
 
- if(p==PCLPageTypeLaunch){self.launchVC.leftPanelWidth=a;[self.launchVC.view layoutIfNeeded];
+ [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
 
-  [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-
-   self.launchVC.leftPanelWidth=b;[self.launchVC.view setNeedsLayout];[self.launchVC.view layoutIfNeeded];} completion:nil];}
-else if(p==PCLPageTypeDownload){self.downloadVC.leftPanelWidth=a;[self.downloadVC.view layoutIfNeeded];
-
-  [UIView animateWithDuration:.18 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-
-   self.downloadVC.leftPanelWidth=b;[self.downloadVC.view setNeedsLayout];[self.downloadVC.view layoutIfNeeded];} completion:nil];}
+  CGRect f=bg.frame;f.size.width=w;bg.frame=f;} completion:nil];
 
 }
 

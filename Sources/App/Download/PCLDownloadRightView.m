@@ -89,8 +89,8 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
 
- self.versionIcon.frame=CGRectMake(8,(h-32)/2,32,32);self.versionLabel.frame=CGRectMake(46,3,w-54,19);
- self.dateLabel.frame=CGRectMake(46,21,w-54,16);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
+ self.versionIcon.frame=CGRectMake(10,(h-36)/2,36,36);self.versionLabel.frame=CGRectMake(54,5,w-64,20);
+ self.dateLabel.frame=CGRectMake(54,26,w-64,18);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
 
  
 
@@ -302,8 +302,8 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.dataSource = self;
     self.versionTableView.backgroundColor = [UIColor clearColor];
     self.versionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.versionTableView.rowHeight = 42;
-    self.versionTableView.sectionHeaderHeight=55;
+    self.versionTableView.rowHeight = 52;
+    self.versionTableView.sectionHeaderHeight=66;
     self.versionTableView.estimatedSectionHeaderHeight=0;
     self.versionTableView.sectionFooterHeight=.01;
     self.versionTableView.scrollEnabled = NO;
@@ -664,7 +664,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
  else for(NSInteger n=0;n<sections;n++)
   if([self.expandedSections containsObject:@(n)])
    rows+=[self versionsForSection:n].count;
- CGFloat height=MAX(1,rows*42+(sections>1?sections*55+15+self.expandedSections.count*18:0));
+ CGFloat height=MAX(1,rows*52+(sections>1?sections*66+18+self.expandedSections.count*22:0));
  for(NSLayoutConstraint *c in self.versionTableView.constraints)
   if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=height;break;}
 }
@@ -712,7 +712,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (CGFloat)tableView:(UITableView *)t heightForHeaderInSection:(NSInteger)s {
 
- return [self numberOfSectionsInTableView:t]>1?(s?40:55):.01;
+ return [self numberOfSectionsInTableView:t]>1?(s?48:66):.01;
 
 }
 
@@ -722,9 +722,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  CGFloat w=t.bounds.size.width;BOOL open=n==0||[self.expandedSections containsObject:@(n)];
 
- UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,n?40:55)];
+ UIView*v=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,n?48:66)];
 
- UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:15,w,40)];
+ UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,n?0:18,w,48)];
 
  c.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];c.layer.cornerRadius=5;
 
@@ -735,7 +735,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  NSArray*names=@[@"最新版本",@"正式版",@"预览版",@"远古版",@"愚人节版"];
 
- UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake(15,0,w-60,40)];
+ UILabel*l=[[UILabel alloc]initWithFrame:CGRectMake(17,0,w-64,48)];
 
  l.text=n?[NSString stringWithFormat:@"%@ (%ld)",names[n],(long)[self versionsForSection:n].count]:names[n];
 
@@ -756,7 +756,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 - (CGFloat)tableView:(UITableView*)t heightForFooterInSection:(NSInteger)n{
 
- return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?33:15):.01;
+ return [self numberOfSectionsInTableView:t]>1?((n==0||[self.expandedSections containsObject:@(n)])?40:18):.01;
 
 }
 
@@ -764,7 +764,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
  UIView*v=[UIView new];if(n&&![self.expandedSections containsObject:@(n)])return v;
 
- UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,18)];
+ UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,22)];
 
  f.backgroundColor=[PCLColor(0xFBFBFB) colorWithAlphaComponent:.92];f.layer.cornerRadius=5;
 

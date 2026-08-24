@@ -989,12 +989,6 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
   for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*c=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(c)[a addObject:c];}}return a;}
 
-- (NSArray*)ceItems{NSMutableArray*a=[NSMutableArray array];[self.versionTableView layoutIfNeeded];
-
- for(NSInteger n=0;n<[self numberOfSectionsInTableView:self.versionTableView];n++){UIView*h=[self.versionTableView headerViewForSection:n];if(h)[a addObject:h];
-
-  for(NSInteger r=0;r<[self.versionTableView numberOfRowsInSection:n];r++){UIView*c=[self.versionTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:r inSection:n]];if(c)[a addObject:c];}}return a;}
-
 - (void)dismissTransientUI{}
 
 - (void)prepareCEEnterAnimation{for(UIView*v in[self ceItems]){v.alpha=1;v.transform=CGAffineTransformIdentity;}}

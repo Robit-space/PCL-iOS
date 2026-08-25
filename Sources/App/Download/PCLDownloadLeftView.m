@@ -38,6 +38,7 @@ typedef struct {
 @property (nonatomic, strong) NSMutableArray<PCLDownloadTabButton *> *tabButtons;
 @property (nonatomic, strong) NSMutableArray<UILabel *> *headerLabels;
 @property (nonatomic) PCLDownloadTab selectedTab;
+@property(nonatomic,strong) UIView*ceScrollThumb;
 @end
 
 @implementation PCLDownloadLeftView
@@ -58,13 +59,19 @@ typedef struct {
 
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.scrollView.showsVerticalScrollIndicator = YES;
+    self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.delegate = self;
     self.scrollView.alwaysBounceVertical=YES;
     self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
     self.scrollView.verticalScrollIndicatorInsets=UIEdgeInsetsMake(4,0,4,2);
     [self addSubview:self.scrollView];
+    self.ceScrollThumb=[UIView new];
+    self.ceScrollThumb.backgroundColor=
+     [PCLColor(0x4890F5) colorWithAlphaComponent:.5];
+    self.ceScrollThumb.layer.cornerRadius=2;
+    self.ceScrollThumb.userInteractionEnabled=NO;
+    [self addSubview:self.ceScrollThumb];
 
     [NSLayoutConstraint activateConstraints:@[
         [self.scrollView.topAnchor constraintEqualToAnchor:self.topAnchor],
@@ -91,6 +98,32 @@ typedef struct {
 
     [self buildTabs];
 }
+
+- (void)layoutSubviews{
+ [super layoutSubviews];
+ [self updateCEScrollThumb];
+}
+
+- (void)updateCEScrollThumb{
+ UIScrollView*v=self.scrollView;
+ CGFloat h=v.contentSize.height,w=v.bounds.size.height;
+ BOOL show=h>w+1;self.ceScrollThumb.hidden=!show;
+ if(!show)return;
+ CGFloat top=v.adjustedContentInset.top;
+ CGFloat bottom=v.adjustedContentInset.bottom;
+ CGFloat min=-top,max=MAX(min,h-w+bottom);
+ CGFloat pos=MIN(MAX((v.contentOffset.y-min)/MAX(1,max-min),0),1);
+ CGFloat track=MAX(1,v.frame.size.height-8);
+ CGFloat th=MAX(32,track*w/(h+top+bottom));
+ CGFloat y=v.frame.origin.y+4+(track-th)*pos;
+ self.ceScrollThumb.frame=
+  CGRectMake(CGRectGetMaxX(v.frame)-6,y,4,th);
+}
+
+- (void)scrollViewDidScroll:(UIScrollView*)v{
+ [self updateCEScrollThumb];
+}
+
 
 - (void)buildTabs {
     PCLDownloadTabInfo tabs[] = {

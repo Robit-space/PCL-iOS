@@ -324,7 +324,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.showsVerticalScrollIndicator=NO;
     self.ceScrollThumb=[UIView new];
     self.ceScrollThumb.backgroundColor=
-        PCLColor(0xA6A6A6);
+        [PCLColor(0x4890F5) colorWithAlphaComponent:.5];
     self.ceScrollThumb.layer.cornerRadius=2;
     self.ceScrollThumb.hidden=YES;
     self.ceScrollThumb.userInteractionEnabled=NO;
@@ -750,56 +750,30 @@ static UIColor *PCLColor(NSUInteger rgb) {
  NSUInteger z=UIViewAnimationOptionCurveEaseInOut|
   UIViewAnimationOptionBeginFromCurrentState|
   UIViewAnimationOptionAllowUserInteraction;
- if(open){
-  [self.expandedSections addObject:k];
-  [UIView performWithoutAnimation:^{
-   [self.versionTableView reloadData];
-   [self.versionTableView layoutIfNeeded];
-  }];
-  [self updateVersionTableHeight];
-  CGFloat target=hc.constant;
-  hc.constant=old;
-  [self layoutIfNeeded];
-  UIView*h=[self.versionTableView viewWithTag:820+n];
-  UIButton*q=(UIButton*)[h viewWithTag:n];
-  q.imageView.transform=CGAffineTransformIdentity;
-  NSMutableArray*cells=[NSMutableArray array];
-  for(PCLDownloadVersionCell*x in self.versionTableView.visibleCells){
-   NSIndexPath*p=[self.versionTableView indexPathForCell:x];
-   if(p.section==n){x.contentView.alpha=0;[cells addObject:x];}
-  }
-  hc.constant=target;
-  [UIView animateWithDuration:.25 delay:0 options:z animations:^{
-   q.imageView.transform=CGAffineTransformMakeRotation(3.14159);
-   [self layoutIfNeeded];[self updateCEScrollThumb];
-  } completion:^(BOOL done){
-   self.ceAnimatingSection=NO;
-   [self updateVersionTableHeight];[self updateCEScrollThumb];
-  }];
-  [cells enumerateObjectsUsingBlock:^(PCLDownloadVersionCell*x,
-                                      NSUInteger i,BOOL*stop){
-   [UIView animateWithDuration:.12 delay:.018*i options:z
-    animations:^{x.contentView.alpha=1;} completion:nil];
-  }];
- }else{
-  [self.expandedSections removeObject:k];
-  [self updateVersionTableHeight];
-  CGFloat target=hc.constant;
-  [self.expandedSections addObject:k];hc.constant=old;
-  [UIView animateWithDuration:.22 delay:0 options:z animations:^{
-   b.imageView.transform=CGAffineTransformIdentity;
-   hc.constant=target;
-   [self layoutIfNeeded];[self updateCEScrollThumb];
-  } completion:^(BOOL done){
-   [self.expandedSections removeObject:k];
-   [UIView performWithoutAnimation:^{
-    [self.versionTableView reloadData];
-    [self.versionTableView layoutIfNeeded];
-   }];
-   self.ceAnimatingSection=NO;
-   [self updateVersionTableHeight];[self updateCEScrollThumb];
-  }];
- }
+ if(open)[self.expandedSections addObject:k];
+ else [self.expandedSections removeObject:k];
+ [self updateVersionTableHeight];
+ CGFloat target=hc.constant;
+ hc.constant=old;
+ NSIndexSet*set=[NSIndexSet indexSetWithIndex:n];
+ [self.versionTableView reloadSections:set
+  withRowAnimation:open?UITableViewRowAnimationTop:
+                       UITableViewRowAnimationFade];
+ [self.versionTableView layoutIfNeeded];
+ UIView*h=[self.versionTableView viewWithTag:820+n];
+ UIButton*q=(UIButton*)[h viewWithTag:n];
+ q.imageView.transform=open?CGAffineTransformIdentity:
+  CGAffineTransformMakeRotation(3.14159);
+ hc.constant=target;
+ [UIView animateWithDuration:.24 delay:0 options:z animations:^{
+  q.imageView.transform=open?
+   CGAffineTransformMakeRotation(3.14159):
+   CGAffineTransformIdentity;
+  [self layoutIfNeeded];[self updateCEScrollThumb];
+ } completion:^(BOOL done){
+  self.ceAnimatingSection=NO;
+  [self updateVersionTableHeight];[self updateCEScrollThumb];
+ }];
 }
 
 - (void)latestTapped:(UITapGestureRecognizer*)g{NSArray*a=[self versionsForSection:0];if(g.view.tag>=a.count)return;NSDictionary*v=a[g.view.tag];[self downloadVersion:v[@"id"]?:@"" url:v[@"url"]?:v[@"downloadURL"]?:v[@"jar"]?:@"" type:v[@"type"]?:@""];}

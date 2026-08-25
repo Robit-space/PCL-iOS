@@ -152,7 +152,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.scrollView.showsVerticalScrollIndicator=YES;self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
+    self.scrollView.showsVerticalScrollIndicator=NO;self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
     self.scrollView.alwaysBounceVertical = YES;
     self.scrollView.delaysContentTouches=NO;
     self.scrollView.refreshControl = [[UIRefreshControl alloc] init];
@@ -302,7 +302,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     listTitle.hidden=YES;
     [listCard addSubview:listTitle];
 
-    self.versionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+    self.versionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
     self.versionTableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.versionTableView.delegate = self;
     self.versionTableView.dataSource = self;
@@ -311,10 +311,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.rowHeight = 42;
     self.versionTableView.sectionHeaderHeight=55;if(@available(iOS 15.0,*))self.versionTableView.sectionHeaderTopPadding=0;
     self.versionTableView.estimatedSectionHeaderHeight=0;
+    self.versionTableView.estimatedRowHeight=0;
     self.versionTableView.sectionFooterHeight=.01;
     self.versionTableView.scrollEnabled = YES;
     self.versionTableView.delaysContentTouches=NO;
     self.versionTableView.clipsToBounds=YES;
+    self.versionTableView.showsVerticalScrollIndicator=YES;
     self.versionTableView.allowsSelection = YES;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
     [listCard addSubview:self.versionTableView];
@@ -666,7 +668,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:70]);self.versionTableView.scrollEnabled=h>m;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:45]);BOOL x=h>m;self.versionTableView.scrollEnabled=x;self.scrollView.scrollEnabled=!x;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 #pragma mark - UITableViewDataSource
 
@@ -805,7 +807,21 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     cell.versionLabel.text=versionId;
 
-    cell.versionIcon.image=[UIImage imageNamed:[type isEqualToString:@"release"]?@"CEGrass":([type isEqualToString:@"snapshot"]?@"CECommandBlock":@"CEGoldBlock")];
+    NSString*icon=@"CEGoldBlock";
+    if([type isEqualToString:@"release"])
+        icon=@"CEGrass";
+    else if([type isEqualToString:@"snapshot"]||
+            [type isEqualToString:@"pending"])
+        icon=@"CECommandBlock";
+    else if([type hasPrefix:@"old_"])
+        icon=@"CECobbleStone";
+    cell.versionIcon.image=[UIImage imageNamed:icon];
+    cell.versionIcon.transform=
+        CGAffineTransformIdentity;
+    cell.versionLabel.transform=
+        CGAffineTransformIdentity;
+    cell.dateLabel.transform=
+        CGAffineTransformIdentity;
 
     BOOL last=indexPath.row+1==[tableView numberOfRowsInSection:indexPath.section];
 

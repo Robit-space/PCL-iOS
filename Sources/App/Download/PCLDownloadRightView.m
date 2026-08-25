@@ -120,9 +120,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *downloadProgress;
 @property (nonatomic, strong) NSMutableSet<NSNumber *> *expandedSections;
+@property(nonatomic,strong) UIView*ceScrollThumb;
 - (NSArray *)versionsForSection:(NSInteger)section;
 - (void)updateVersionTableHeight;
 - (void)layoutCECards;
+- (void)updateCEScrollThumb;
 @end
 
 @implementation PCLDownloadRightView
@@ -144,7 +146,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (CGFloat)ce:(CGFloat)v{CGFloat k=MAX(.82,MIN(1.18,MIN(self.bounds.size.width/650,self.bounds.size.height/650)));return(NSInteger)(v*k+.5);}
-- (void)layoutSubviews{[super layoutSubviews];self.versionTableView.rowHeight=[self ce:44];[self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];}
+- (void)layoutSubviews{[super layoutSubviews];self.versionTableView.rowHeight=[self ce:44];[self updateVersionTableHeight];[self.versionTableView layoutIfNeeded];[self layoutCECards];
+[self updateCEScrollThumb];
+[self bringSubviewToFront:self.ceScrollThumb];}
 - (void)layoutCECards{for(NSInteger i=1;i<5;i++)[self.versionTableView viewWithTag:810+i].hidden=YES;}
 
 - (void)setupView {
@@ -175,10 +179,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.scrollView addSubview:self.cardStackView];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:18],
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
         [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.trailingAnchor constant:-25],
-        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor constant:-25],
+        [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor],
         [self.cardStackView.widthAnchor constraintEqualToAnchor:self.scrollView.frameLayoutGuide.widthAnchor constant:-50]
     ]];
 
@@ -219,7 +223,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.versionPicker.topAnchor constraintEqualToAnchor:pickerTitle.bottomAnchor constant:4],
         [self.versionPicker.leadingAnchor constraintEqualToAnchor:self.versionPickerContainer.leadingAnchor],
         [self.versionPicker.trailingAnchor constraintEqualToAnchor:self.versionPickerContainer.trailingAnchor],
-        [self.versionPicker.bottomAnchor constraintEqualToAnchor:self.versionPickerContainer.bottomAnchor constant:-8],
+        [self.versionPicker.bottomAnchor constraintEqualToAnchor:self.versionPickerContainer.bottomAnchor],
         [self.versionPicker.heightAnchor constraintEqualToConstant:120]
     ]];
 
@@ -316,7 +320,14 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.scrollEnabled = YES;
     self.versionTableView.delaysContentTouches=NO;
     self.versionTableView.clipsToBounds=YES;
-    self.versionTableView.showsVerticalScrollIndicator=YES;
+    self.versionTableView.showsVerticalScrollIndicator=NO;
+    self.ceScrollThumb=[UIView new];
+    self.ceScrollThumb.backgroundColor=
+        PCLColor(0xA6A6A6);
+    self.ceScrollThumb.layer.cornerRadius=2;
+    self.ceScrollThumb.hidden=YES;
+    self.ceScrollThumb.userInteractionEnabled=NO;
+    [self addSubview:self.ceScrollThumb];
     self.versionTableView.allowsSelection = YES;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
     [listCard addSubview:self.versionTableView];
@@ -668,7 +679,30 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:45]);BOOL x=h>m;self.versionTableView.scrollEnabled=x;self.scrollView.scrollEnabled=!x;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height);BOOL x=h>m;self.versionTableView.scrollEnabled=x;self.scrollView.scrollEnabled=!x;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+
+- (void)updateCEScrollThumb{
+ UIScrollView*v=self.versionTableView;
+ CGFloat h=v.contentSize.height;
+ CGFloat w=v.bounds.size.height;
+ BOOL show=v.scrollEnabled&&h>w+1;
+ self.ceScrollThumb.hidden=!show;
+ if(!show)return;
+ CGRect f=[v.superview convertRect:v.frame
+                            toView:self];
+ CGFloat t=MAX(1,f.size.height-8);
+ CGFloat q=MAX(32,t*w/h);
+ CGFloat m=MAX(1,h-w);
+ CGFloat o=MIN(MAX(v.contentOffset.y,0),m);
+ CGFloat y=f.origin.y+4+(t-q)*o/m;
+ self.ceScrollThumb.frame=
+  CGRectMake(self.bounds.size.width-6,y,4,q);
+}
+
+- (void)scrollViewDidScroll:(UIScrollView*)v{
+ if(v==self.versionTableView)
+  [self updateCEScrollThumb];
+}
 
 #pragma mark - UITableViewDataSource
 
@@ -735,7 +769,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
    insertRowsAtIndexPaths:r
 
-   withRowAnimation:UITableViewRowAnimationTop];
+   withRowAnimation:UITableViewRowAnimationNone];
 
  }else{
   [self.expandedSections removeObject:k];

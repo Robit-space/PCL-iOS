@@ -154,6 +154,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.showsVerticalScrollIndicator=YES;self.scrollView.indicatorStyle=UIScrollViewIndicatorStyleBlack;
     self.scrollView.alwaysBounceVertical = YES;
+    self.scrollView.delaysContentTouches=NO;
     self.scrollView.refreshControl = [[UIRefreshControl alloc] init];
     [self.scrollView.refreshControl addTarget:self action:@selector(refreshData) forControlEvents:UIControlEventValueChanged];
     [self addSubview:self.scrollView];
@@ -311,8 +312,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.versionTableView.sectionHeaderHeight=55;if(@available(iOS 15.0,*))self.versionTableView.sectionHeaderTopPadding=0;
     self.versionTableView.estimatedSectionHeaderHeight=0;
     self.versionTableView.sectionFooterHeight=.01;
-    self.versionTableView.scrollEnabled = NO;
-    self.versionTableView.clipsToBounds=NO;
+    self.versionTableView.scrollEnabled = YES;
+    self.versionTableView.delaysContentTouches=NO;
+    self.versionTableView.clipsToBounds=YES;
     self.versionTableView.allowsSelection = YES;
     [self.versionTableView registerClass:[PCLDownloadVersionCell class] forCellReuseIdentifier:@"VersionCell"];
     [listCard addSubview:self.versionTableView];
@@ -664,7 +666,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*44];else{h=[self ce:77+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:70]);self.versionTableView.scrollEnabled=h>m;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 #pragma mark - UITableViewDataSource
 
@@ -731,7 +733,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
    insertRowsAtIndexPaths:r
 
-   withRowAnimation:UITableViewRowAnimationFade];
+   withRowAnimation:UITableViewRowAnimationTop];
 
  }else{
   [self.expandedSections removeObject:k];

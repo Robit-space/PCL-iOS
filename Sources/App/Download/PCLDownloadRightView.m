@@ -22,6 +22,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UIButton *downloadButton;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, copy) void (^onDownload)(void);
+@property(nonatomic) CGFloat fixedHeight;
 @end
 
 @implementation PCLDownloadVersionCell
@@ -87,7 +88,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 }
 
-- (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.contentView.bounds.size.height;
+- (void)layoutSubviews{[super layoutSubviews];CGFloat w=self.contentView.bounds.size.width,h=self.fixedHeight>0?self.fixedHeight:self.contentView.bounds.size.height;
 
  CGFloat z=MIN(32,h-8);self.versionIcon.frame=CGRectMake(10,(h-z)/2,z,z);self.versionLabel.frame=CGRectMake(50,2,w-60,20);
  self.dateLabel.frame=CGRectMake(50,h-20,w-60,17);self.progressView.frame=CGRectMake(46,h-2,w-54,2);}
@@ -180,7 +181,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.scrollView addSubview:self.cardStackView];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:[self ce:15]],
+        [self.cardStackView.topAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.topAnchor constant:[self ce:22]],
         [self.cardStackView.leadingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.leadingAnchor constant:25],
         [self.cardStackView.trailingAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.trailingAnchor constant:-25],
         [self.cardStackView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor],
@@ -680,7 +681,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     [self updateVersionTableHeight];
 }
-- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*64];else{h=[self ce:92+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:15]);BOOL x=h>m;self.versionTableView.scrollEnabled=x;self.scrollView.scrollEnabled=!x;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
+- (void)updateVersionTableHeight{NSInteger n=[self numberOfSectionsInTableView:self.versionTableView];CGFloat h=0;if(n==1)h=[self ce:self.filteredVersions.count*64];else{h=[self ce:92+MIN(2,[self versionsForSection:0].count)*44];for(NSInteger i=1;i<n;i++)h+=[self ce:44+([self.expandedSections containsObject:@(i)]?[self versionsForSection:i].count*44+34:19)];}CGFloat m=MAX([self ce:300],self.bounds.size.height-[self ce:22]);BOOL x=h>m;self.versionTableView.scrollEnabled=x;self.scrollView.scrollEnabled=!x;h=MIN(h,m);for(NSLayoutConstraint*c in self.versionTableView.constraints)if(c.firstAttribute==NSLayoutAttributeHeight){c.constant=MAX(1,h);break;}}
 
 - (void)updateCEScrollThumb{
  UIScrollView*v=self.versionTableView;
@@ -726,7 +727,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (UIView*)latestHeader:(CGFloat)w{
  NSArray*a=[self versionsForSection:0];CGFloat h=[self ce:62+MIN(2,a.count)*44];UIView*wra=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,h+[self ce:15])];wra.tag=820;UIView*c=[[UIView alloc]initWithFrame:CGRectMake(0,0,w,h)];c.backgroundColor=[UIColor colorWithWhite:.995 alpha:.94];c.layer.cornerRadius=[self ce:11];[wra addSubview:c];
  UIButton*l=[[UIButton alloc]initWithFrame:CGRectMake(12,0,w-24,[self ce:40])];[l setTitle:@"最新版本" forState:0];[l setTitleColor:PCLColor(0x343D4A) forState:0];l.titleLabel.font=[UIFont systemFontOfSize:16 weight:UIFontWeightBold];l.contentHorizontalAlignment=UIControlContentHorizontalAlignmentLeft;[l addGestureRecognizer:[[UIHoverGestureRecognizer alloc]initWithTarget:self action:@selector(latestTitleHover:)]];[c addSubview:l];
- for(NSInteger i=0;i<MIN(2,a.count);i++){NSDictionary*d=a[i];NSString*y=d[@"type"]?:@"",*z=d[@"releaseTime"]?:@"";PCLDownloadVersionCell*r=[[PCLDownloadVersionCell alloc]initWithStyle:0 reuseIdentifier:nil];r.frame=CGRectMake(20,[self ce:49+i*44],w-38,[self ce:44]);r.tag=i;r.contentView.backgroundColor=UIColor.clearColor;r.versionIcon.image=[UIImage imageNamed:[y isEqualToString:@"release"]?@"CEGrass":@"CECommandBlock"];r.versionIcon.transform=CGAffineTransformMakeScale(1.24,1.24);r.versionLabel.transform=CGAffineTransformMakeTranslation(0,5);r.versionLabel.font=[UIFont systemFontOfSize:16 weight:UIFontWeightMedium];r.dateLabel.font=[UIFont systemFontOfSize:14];r.versionLabel.text=d[@"id"]?:@"";NSString*day=z.length>10?[z substringToIndex:10]:z;r.dateLabel.text=[NSString stringWithFormat:@"%@，发布于 %@",[y isEqualToString:@"release"]?@"最新正式版":@"最新预览版",day];[r addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(latestTapped:)]];[c addSubview:r];[r setNeedsLayout];[r layoutIfNeeded];}return wra;
+ for(NSInteger i=0;i<MIN(2,a.count);i++){NSDictionary*d=a[i];NSString*y=d[@"type"]?:@"",*z=d[@"releaseTime"]?:@"";PCLDownloadVersionCell*r=[[PCLDownloadVersionCell alloc]initWithStyle:0 reuseIdentifier:nil];r.frame=CGRectMake(20,[self ce:49+i*44],w-38,[self ce:44]);r.fixedHeight=[self ce:44];r.tag=i;r.contentView.backgroundColor=UIColor.clearColor;r.versionIcon.image=[UIImage imageNamed:[y isEqualToString:@"release"]?@"CEGrass":@"CECommandBlock"];r.versionIcon.transform=CGAffineTransformMakeScale(1.24,1.24);r.versionLabel.transform=CGAffineTransformMakeTranslation(0,5);r.versionLabel.font=[UIFont systemFontOfSize:16 weight:UIFontWeightMedium];r.dateLabel.font=[UIFont systemFontOfSize:14];r.versionLabel.text=d[@"id"]?:@"";NSString*day=z.length>10?[z substringToIndex:10]:z;r.dateLabel.text=[NSString stringWithFormat:@"%@，发布于 %@",[y isEqualToString:@"release"]?@"最新正式版":@"最新预览版",day];[r addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(latestTapped:)]];[c addSubview:r];[r setNeedsLayout];[r layoutIfNeeded];}return wra;
 }
 
 - (UIView*)categoryHeader:(NSInteger)n width:(CGFloat)w{
@@ -742,10 +743,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
  NSInteger n=b.tag;
  NSNumber*k=@(n);
  BOOL open=![self.expandedSections containsObject:k];
- NSLayoutConstraint*hc=nil;
- for(NSLayoutConstraint*c in self.versionTableView.constraints)
-  if(c.firstAttribute==NSLayoutAttributeHeight){hc=c;break;}
- CGFloat old=hc.constant;
+ [self layoutIfNeeded];
  self.ceAnimatingSection=YES;
  NSUInteger z=UIViewAnimationOptionCurveEaseInOut|
   UIViewAnimationOptionBeginFromCurrentState|
@@ -753,20 +751,19 @@ static UIColor *PCLColor(NSUInteger rgb) {
  if(open)[self.expandedSections addObject:k];
  else [self.expandedSections removeObject:k];
  [self updateVersionTableHeight];
- CGFloat target=hc.constant;
- hc.constant=old;
- NSIndexSet*set=[NSIndexSet indexSetWithIndex:n];
- [self.versionTableView reloadSections:set
-  withRowAnimation:open?UITableViewRowAnimationTop:
-                       UITableViewRowAnimationFade];
- [self.versionTableView layoutIfNeeded];
- UIView*h=[self.versionTableView viewWithTag:820+n];
- UIButton*q=(UIButton*)[h viewWithTag:n];
- q.imageView.transform=open?CGAffineTransformIdentity:
-  CGAffineTransformMakeRotation(3.14159);
- hc.constant=target;
+ for(PCLDownloadVersionCell*c in self.versionTableView.visibleCells){
+  NSIndexPath*p=[self.versionTableView indexPathForCell:c];
+  if(p.section==n){
+   [c.layer removeAllAnimations];
+   c.transform=CGAffineTransformIdentity;
+   c.contentView.transform=CGAffineTransformIdentity;
+  }
+ }
+ b.superview.layer.maskedCorners=open?3:15;
  [UIView animateWithDuration:.24 delay:0 options:z animations:^{
-  q.imageView.transform=open?
+  [self.versionTableView beginUpdates];
+  [self.versionTableView endUpdates];
+  b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):
    CGAffineTransformIdentity;
   [self layoutIfNeeded];[self updateCEScrollThumb];
@@ -780,19 +777,16 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)latestTitleHover:(UIHoverGestureRecognizer*)g{UIButton*b=(UIButton*)g.view;BOOL on=g.state==UIGestureRecognizerStateBegan||g.state==UIGestureRecognizerStateChanged;[b setTitleColor:PCLColor(on?0x1370F3:0x343D4A) forState:0];}
 
-- (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{return [self ce:(p.section?44:64)];}
+- (CGFloat)tableView:(UITableView*)t heightForRowAtIndexPath:(NSIndexPath*)p{if([self numberOfSectionsInTableView:t]>1&&p.section&&![self.expandedSections containsObject:@(p.section)])return CGFLOAT_MIN;return [self ce:(p.section?44:64)];}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if([self numberOfSectionsInTableView:tableView]>1&&section==0)return 0;
-    if([self numberOfSectionsInTableView:tableView]>1&&
-
-       ![self.expandedSections containsObject:@(section)])return 0;
-
     return [self versionsForSection:section].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PCLDownloadVersionCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VersionCell" forIndexPath:indexPath];
+    cell.fixedHeight=[self ce:(indexPath.section?44:64)];
     [cell.layer removeAllAnimations];
     [cell.contentView.layer removeAllAnimations];
     cell.transform=CGAffineTransformIdentity;

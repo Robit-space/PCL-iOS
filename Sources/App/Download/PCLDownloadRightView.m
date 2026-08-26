@@ -761,8 +761,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
  }
  b.superview.layer.maskedCorners=open?3:15;
  [UIView animateWithDuration:.24 delay:0 options:z animations:^{
-  [self.versionTableView beginUpdates];
-  [self.versionTableView endUpdates];
+  [self.versionTableView reloadSections:
+   [NSIndexSet indexSetWithIndex:n]
+   withRowAnimation:UITableViewRowAnimationFade];
   b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):
    CGAffineTransformIdentity;
@@ -781,6 +782,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if([self numberOfSectionsInTableView:tableView]>1&&section==0)return 0;
+    if(section&&![self.expandedSections containsObject:@(section)])return 0;
     return [self versionsForSection:section].count;
 }
 

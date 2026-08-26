@@ -11,6 +11,7 @@
 @property(nonatomic,strong) CAGradientLayer *backgroundGradient;
 @property(nonatomic,strong) UIView *shadowView;
 @property(nonatomic) BOOL animatingLeftBackground;
+@property(nonatomic) BOOL loadedInitialData;
 @end
 
 @implementation PCLDownloadViewController
@@ -66,8 +67,6 @@
 
     };
 
-    [self.rightView switchToTab:PCLDownloadTabMinecraft];
-
     self.shadowView=[[UIView alloc] init];
     self.shadowView.backgroundColor=
         [UIColor colorWithWhite:0 alpha:.035];
@@ -105,6 +104,12 @@
 }
 
 - (void)prepareCEEnterAnimation {
+ if(!self.loadedInitialData){
+  self.loadedInitialData=YES;
+  dispatch_async(dispatch_get_main_queue(),^{
+   [self.rightView switchToTab:PCLDownloadTabMinecraft];
+  });
+ }
  [self.leftView prepareCEEnterAnimation];
  [self.rightView prepareCEEnterAnimation];
 }

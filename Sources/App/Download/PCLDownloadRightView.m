@@ -375,7 +375,8 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingIndicator.hidden=YES;
     self.cePick=[UILabel new];
-    self.cePick.text=@"⛏";
+    self.cePick.text=@"⛏︎";
+ self.cePick.textColor=PCLColor(0x4890F5);
     self.cePick.font=[UIFont systemFontOfSize:38];
     self.cePick.translatesAutoresizingMaskIntoConstraints=NO;
     [self.loadingView addSubview:self.cePick];
@@ -403,15 +404,25 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)startCELoading{
  self.loadingView.hidden=NO;
- CABasicAnimation*a=[CABasicAnimation
-  animationWithKeyPath:@"transform.rotation.z"];
- a.fromValue=@(-.35);a.toValue=@(.85);
- a.duration=.55;a.autoreverses=YES;
+ CAKeyframeAnimation*a=
+  [CAKeyframeAnimation
+   animationWithKeyPath:
+   @"transform.rotation.z"];
+ a.values=@[
+  @(.96),@(-.35),@(.52),
+  @(1.12),@(.88),@(.96)
+ ];
+ a.keyTimes=@[
+  @0,@.2,@.62,@.73,@.86,@1
+ ];
+ a.duration=1.8;
  a.repeatCount=HUGE_VALF;
- [self.cePick.layer addAnimation:a forKey:@"pick"];
+ [self.cePick.layer
+  addAnimation:a forKey:@"pick"];
 }
 - (void)stopCELoading{
- [self.cePick.layer removeAllAnimations];
+ [self.cePick.layer
+  removeAllAnimations];
  self.loadingView.hidden=YES;
 }
 
@@ -771,14 +782,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
   }
  }
  if(open)b.superview.layer.maskedCorners=3;
- [self.versionTableView performBatchUpdates:^{
-  if(open)[self.versionTableView
-   insertRowsAtIndexPaths:p
-   withRowAnimation:UITableViewRowAnimationFade];
-  else [self.versionTableView
-   deleteRowsAtIndexPaths:p
-   withRowAnimation:UITableViewRowAnimationFade];
- } completion:nil];
+ [UIView performWithoutAnimation:^{
+ [self.versionTableView reloadData];
+}];
  [UIView animateWithDuration:.24 delay:0 options:z animations:^{
   b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):

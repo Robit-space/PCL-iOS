@@ -115,7 +115,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
 @property (nonatomic, strong) UIView *loadingView;
-@property(nonatomic,strong) UILabel*cePick;
+@property(nonatomic,strong) UIView*cePick;
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic) PCLDownloadTab currentTab;
 @property (nonatomic, strong) UILabel *emptyLabel;
@@ -365,7 +365,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)buildLoadingView {
     self.loadingView = [[UIView alloc] init];
-    self.loadingView.backgroundColor = PCLColor(0xF5F5F5);
+    self.loadingView.backgroundColor = UIColor.clearColor;
     self.loadingView.layer.cornerRadius = 10;
     self.loadingView.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingView.hidden = YES;
@@ -374,12 +374,46 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     self.loadingIndicator.hidden=YES;
-    self.cePick=[UILabel new];
-    self.cePick.text=@"⛏︎";
- self.cePick.textColor=PCLColor(0x4890F5);
-    self.cePick.font=[UIFont systemFontOfSize:38];
+    self.cePick=[UIView new];
+
     self.cePick.translatesAutoresizingMaskIntoConstraints=NO;
+
     [self.loadingView addSubview:self.cePick];
+
+    CAShapeLayer*k=[CAShapeLayer layer];
+
+    UIBezierPath*q=[UIBezierPath bezierPath];
+
+    [q moveToPoint:CGPointMake(7,12)];
+
+    [q addCurveToPoint:CGPointMake(43,9)
+
+     controlPoint1:CGPointMake(18,3)
+
+     controlPoint2:CGPointMake(34,3)];
+
+    [q moveToPoint:CGPointMake(29,9)];
+    [q addLineToPoint:CGPointMake(48,40)];
+
+    k.path=q.CGPath;
+
+    k.strokeColor=PCLColor(0x4890F5).CGColor;
+
+    k.fillColor=UIColor.clearColor.CGColor;
+
+    k.lineWidth=3;
+
+    k.lineCap=kCALineCapRound;
+
+    k.bounds=CGRectMake(0,0,54,46);
+
+    k.position=CGPointMake(31,25);
+
+    k.anchorPoint=CGPointMake(.76,.8);
+
+    k.transform=CATransform3DMakeRotation(.96,0,0,1);
+
+    [self.cePick.layer addSublayer:k];
 
     UILabel *loadingLabel = [[UILabel alloc] init];
     loadingLabel.text = @"正在加载版本列表...";
@@ -389,13 +423,13 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [self.loadingView addSubview:loadingLabel];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.loadingView.topAnchor constraintEqualToAnchor:self.topAnchor constant:16],
+        [self.loadingView.topAnchor constraintEqualToAnchor:self.centerYAnchor],
         [self.loadingView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16],
         [self.loadingView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16],
         [self.loadingView.heightAnchor constraintEqualToConstant:120],
 
-        [self.cePick.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor constant:-60],
-        [self.cePick.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
+        [self.cePick.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor],
+        [self.cePick.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor constant:-14],
 
         [loadingLabel.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
         [loadingLabel.leadingAnchor constraintEqualToAnchor:self.cePick.trailingAnchor constant:8]
@@ -404,24 +438,22 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
 - (void)startCELoading{
  self.loadingView.hidden=NO;
- CAKeyframeAnimation*a=
-  [CAKeyframeAnimation
-   animationWithKeyPath:
-   @"transform.rotation.z"];
- a.values=@[
-  @(.96),@(-.35),@(.52),
-  @(1.12),@(.88),@(.96)
- ];
- a.keyTimes=@[
-  @0,@.2,@.62,@.73,@.86,@1
- ];
+ [self bringSubviewToFront:self.loadingView];
+
+ CAKeyframeAnimation*a=[CAKeyframeAnimation
+  animationWithKeyPath:@"transform.rotation.z"];
+ a.values=@[@(.96),@(-.35),@(.52),
+  @(1.1),@(.86),@(.96)];
+ a.keyTimes=@[@0,@.2,@.62,@.73,@.86,@1];
  a.duration=1.8;
  a.repeatCount=HUGE_VALF;
- [self.cePick.layer
+ a.calculationMode=kCAAnimationCubic;
+
+ [self.cePick.layer.sublayers.firstObject
   addAnimation:a forKey:@"pick"];
 }
 - (void)stopCELoading{
- [self.cePick.layer
+ [self.cePick.layer.sublayers.firstObject
   removeAllAnimations];
  self.loadingView.hidden=YES;
 }
@@ -757,6 +789,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 - (UIView*)tableView:(UITableView*)t viewForFooterInSection:(NSInteger)n{UIView*v=[UIView new];if(!n||![self.expandedSections containsObject:@(n)])return v;UIView*f=[[UIView alloc]initWithFrame:CGRectMake(0,0,t.bounds.size.width,[self ce:15])];f.backgroundColor=[UIColor colorWithWhite:.995 alpha:.9];f.layer.cornerRadius=[self ce:11];f.layer.maskedCorners=kCALayerMinXMaxYCorner|kCALayerMaxXMaxYCorner;[v addSubview:f];return v;}
 
 - (void)toggleVersionSection:(UIButton*)b{
+ if(self.ceAnimatingSection)return;
  NSInteger n=b.tag;
  NSNumber*k=@(n);
  BOOL open=![self.expandedSections containsObject:k];
@@ -770,9 +803,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
  NSUInteger z=UIViewAnimationOptionCurveEaseInOut|
   UIViewAnimationOptionBeginFromCurrentState|
   UIViewAnimationOptionAllowUserInteraction;
- if(open)[self.expandedSections addObject:k];
- else [self.expandedSections removeObject:k];
- [self updateVersionTableHeight];
+
  for(PCLDownloadVersionCell*c in self.versionTableView.visibleCells){
   NSIndexPath*p=[self.versionTableView indexPathForCell:c];
   if(p.section==n){
@@ -782,9 +813,17 @@ static UIColor *PCLColor(NSUInteger rgb) {
   }
  }
  if(open)b.superview.layer.maskedCorners=3;
- [UIView performWithoutAnimation:^{
- [self.versionTableView reloadData];
-}];
+ [self.versionTableView performBatchUpdates:^{
+  if(open)[self.expandedSections addObject:k];
+  else [self.expandedSections removeObject:k];
+
+  if(open)[self.versionTableView
+   insertRowsAtIndexPaths:p
+   withRowAnimation:UITableViewRowAnimationFade];
+  else [self.versionTableView
+   deleteRowsAtIndexPaths:p
+   withRowAnimation:UITableViewRowAnimationFade];
+ } completion:nil];
  [UIView animateWithDuration:.24 delay:0 options:z animations:^{
   b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):
@@ -819,7 +858,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
     cell.contentView.layer.cornerRadius=0;
     cell.contentView.layer.maskedCorners=0;
 
-    NSDictionary *version = [self versionsForSection:indexPath.section][indexPath.row];
+    NSArray*rows=
+        [self versionsForSection:indexPath.section];
+    if(indexPath.row>=rows.count)return cell;
+    NSDictionary*version=rows[indexPath.row];
     NSString *versionId = version[@"id"] ?: version[@"version"] ?: @"";
     NSString *type = version[@"type"] ?: @"";
     NSString *releaseTime = version[@"releaseTime"] ?: @"";

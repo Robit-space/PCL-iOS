@@ -115,6 +115,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
 @property (nonatomic, strong) UIView *loadingView;
+@property(nonatomic,strong) UILabel*cePick;
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic) PCLDownloadTab currentTab;
 @property (nonatomic, strong) UILabel *emptyLabel;
@@ -372,7 +373,12 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.loadingView addSubview:self.loadingIndicator];
+    self.loadingIndicator.hidden=YES;
+    self.cePick=[UILabel new];
+    self.cePick.text=@"⛏";
+    self.cePick.font=[UIFont systemFontOfSize:38];
+    self.cePick.translatesAutoresizingMaskIntoConstraints=NO;
+    [self.loadingView addSubview:self.cePick];
 
     UILabel *loadingLabel = [[UILabel alloc] init];
     loadingLabel.text = @"正在加载版本列表...";
@@ -387,12 +393,26 @@ static UIColor *PCLColor(NSUInteger rgb) {
         [self.loadingView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16],
         [self.loadingView.heightAnchor constraintEqualToConstant:120],
 
-        [self.loadingIndicator.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor constant:-60],
-        [self.loadingIndicator.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
+        [self.cePick.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor constant:-60],
+        [self.cePick.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
 
         [loadingLabel.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
-        [loadingLabel.leadingAnchor constraintEqualToAnchor:self.loadingIndicator.trailingAnchor constant:8]
+        [loadingLabel.leadingAnchor constraintEqualToAnchor:self.cePick.trailingAnchor constant:8]
     ]];
+}
+
+- (void)startCELoading{
+ self.loadingView.hidden=NO;
+ CABasicAnimation*a=[CABasicAnimation
+  animationWithKeyPath:@"transform.rotation.z"];
+ a.fromValue=@(-.35);a.toValue=@(.85);
+ a.duration=.55;a.autoreverses=YES;
+ a.repeatCount=HUGE_VALF;
+ [self.cePick.layer addAnimation:a forKey:@"pick"];
+}
+- (void)stopCELoading{
+ [self.cePick.layer removeAllAnimations];
+ self.loadingView.hidden=YES;
 }
 
 - (void)switchToTab:(PCLDownloadTab)tab {
@@ -439,13 +459,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadMinecraftVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
     self.emptyLabel.hidden = YES;
 
     [[PCLVersionManager sharedManager] fetchRemoteManifest:^(NSArray<NSDictionary *> *versions, NSError *error) {
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         if (error) {
@@ -481,12 +499,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadForgeVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     [[PCLModLoaderAPI sharedAPI] fetchForgeVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         if (error) {
@@ -515,12 +531,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadFabricVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     [[PCLModLoaderAPI sharedAPI] fetchFabricVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         [self.allVersions removeAllObjects];
@@ -544,12 +558,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadNeoForgeVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     [[PCLModLoaderAPI sharedAPI] fetchNeoForgeVersions:self.selectedGameVersion completion:^(NSArray *versions, NSError *error) {
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         [self.allVersions removeAllObjects];
@@ -572,12 +584,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadOptiFineVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     [[PCLModLoaderAPI sharedAPI] fetchOptiFineVersions:^(NSArray<NSDictionary *> *versions, NSError *error) {
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         [self.allVersions removeAllObjects];
@@ -595,12 +605,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadLiteLoaderVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
         [self.scrollView.refreshControl endRefreshing];
 
         [self.allVersions removeAllObjects];
@@ -629,12 +637,10 @@ static UIColor *PCLColor(NSUInteger rgb) {
 }
 
 - (void)loadFabricAPIVersions {
-    self.loadingView.hidden = NO;
-    [self.loadingIndicator startAnimating];
+    [self startCELoading];
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.loadingView.hidden = YES;
-        [self.loadingIndicator stopAnimating];
+        [self stopCELoading];
 
         [self.allVersions removeAllObjects];
         [self.allVersions addObjectsFromArray:@[
@@ -743,6 +749,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
  NSInteger n=b.tag;
  NSNumber*k=@(n);
  BOOL open=![self.expandedSections containsObject:k];
+ NSArray*v=[self versionsForSection:n];
+ NSMutableArray*p=[NSMutableArray array];
+ for(NSInteger i=0;i<v.count;i++)
+  [p addObject:[NSIndexPath
+   indexPathForRow:i inSection:n]];
  [self layoutIfNeeded];
  self.ceAnimatingSection=YES;
  NSUInteger z=UIViewAnimationOptionCurveEaseInOut|
@@ -759,11 +770,16 @@ static UIColor *PCLColor(NSUInteger rgb) {
    c.contentView.transform=CGAffineTransformIdentity;
   }
  }
- b.superview.layer.maskedCorners=open?3:15;
- [UIView animateWithDuration:.24 delay:0 options:z animations:^{
-  [self.versionTableView reloadSections:
-   [NSIndexSet indexSetWithIndex:n]
+ if(open)b.superview.layer.maskedCorners=3;
+ [self.versionTableView performBatchUpdates:^{
+  if(open)[self.versionTableView
+   insertRowsAtIndexPaths:p
    withRowAnimation:UITableViewRowAnimationFade];
+  else [self.versionTableView
+   deleteRowsAtIndexPaths:p
+   withRowAnimation:UITableViewRowAnimationFade];
+ } completion:nil];
+ [UIView animateWithDuration:.24 delay:0 options:z animations:^{
   b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):
    CGAffineTransformIdentity;

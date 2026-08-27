@@ -819,19 +819,21 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
   if(open)[self.versionTableView
    insertRowsAtIndexPaths:p
-   withRowAnimation:UITableViewRowAnimationFade];
+   withRowAnimation:UITableViewRowAnimationNone];
   else [self.versionTableView
    deleteRowsAtIndexPaths:p
-   withRowAnimation:UITableViewRowAnimationFade];
+   withRowAnimation:UITableViewRowAnimationNone];
  } completion:nil];
- [UIView animateWithDuration:.24 delay:0 options:z animations:^{
+ [self updateVersionTableHeight];
+ [UIView animateWithDuration:.32 delay:0 options:z animations:^{
   b.imageView.transform=open?
    CGAffineTransformMakeRotation(3.14159):
    CGAffineTransformIdentity;
   [self layoutIfNeeded];[self updateCEScrollThumb];
  } completion:^(BOOL done){
+  b.superview.layer.maskedCorners=open?3:15;
   self.ceAnimatingSection=NO;
-  [self updateVersionTableHeight];[self updateCEScrollThumb];
+  [self updateCEScrollThumb];
  }];
 }
 

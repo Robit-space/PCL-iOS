@@ -116,6 +116,9 @@ static UIColor *PCLColor(NSUInteger rgb) {
 @property (nonatomic, strong) UILabel *subtitleLabel;
 @property (nonatomic, strong) UIView *loadingView;
 @property(nonatomic,strong) UIView*cePick;
+@property(nonatomic,strong) CAShapeLayer*cePickLayer;
+@property(nonatomic,strong) CAShapeLayer*ceLeftChip;
+@property(nonatomic,strong) CAShapeLayer*ceRightChip;
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic) PCLDownloadTab currentTab;
 @property (nonatomic, strong) UILabel *emptyLabel;
@@ -376,11 +379,11 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingIndicator.hidden=YES;
     self.cePick=[UIView new];
 
-    self.cePick.translatesAutoresizingMaskIntoConstraints=NO;
+    self.cePicself.cePickLayer.translatesAutoresizingMaskIntoConstraints=NO;
 
     [self.loadingView addSubview:self.cePick];
 
-    CAShapeLayer*k=[CAShapeLayer layer];
+    self.cePickLayer=[CAShapeLayer layer];
 
     UIBezierPath*q=[UIBezierPath bezierPath];
 
@@ -395,67 +398,142 @@ static UIColor *PCLColor(NSUInteger rgb) {
     [q moveToPoint:CGPointMake(29,9)];
     [q addLineToPoint:CGPointMake(48,40)];
 
-    k.path=q.CGPath;
+    self.cePickLayer.path=q.CGPath;
 
-    k.strokeColor=PCLColor(0x4890F5).CGColor;
+    self.cePickLayer.strokeColor=PCLColor(0x4890F5).CGColor;
 
-    k.fillColor=UIColor.clearColor.CGColor;
+    self.cePickLayer.fillColor=UIColor.clearColor.CGColor;
 
-    k.lineWidth=3;
+    self.cePickLayer.lineWidth=3;
 
-    k.lineCap=kCALineCapRound;
+    self.cePickLayer.lineCap=kCALineCapRound;
 
-    k.bounds=CGRectMake(0,0,54,46);
+    self.cePickLayer.bounds=CGRectMake(0,0,54,46);
 
-    k.position=CGPointMake(31,25);
+    self.cePickLayer.position=CGPointMake(31,25);
 
-    k.anchorPoint=CGPointMake(.76,.8);
+    self.cePickLayer.anchorPoint=CGPointMake(.76,.8);
 
-    k.transform=CATransform3DMakeRotation(.96,0,0,1);
+    self.cePickLayer.transform=CATransform3DMakeRotation(.96,0,0,1);
 
-    [self.cePick.layer addSublayer:k];
+    [self.cePicself.cePickLayer.layer addSublayer:self.cePickLayer];
 
-    UILabel *loadingLabel = [[UILabel alloc] init];
-    loadingLabel.text = @"正在加载版本列表...";
-    loadingLabel.font = [UIFont systemFontOfSize:14];
-    loadingLabel.textColor = PCLColor(0x8C8C8C);
-    loadingLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    UILabel*loadingLabel=[UILabel new];
+    loadingLabel.text=@"正在加载版本列表...";
+    loadingLabel.font=[UIFont systemFontOfSize:16];
+    loadingLabel.textColor=PCLColor(0x4890F5);
+    loadingLabel.translatesAutoresizingMaskIntoConstraints=NO;
     [self.loadingView addSubview:loadingLabel];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.loadingView.topAnchor constraintEqualToAnchor:self.centerYAnchor],
-        [self.loadingView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16],
-        [self.loadingView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16],
-        [self.loadingView.heightAnchor constraintEqualToConstant:120],
 
-        [self.cePick.centerXAnchor constraintEqualToAnchor:self.loadingView.centerXAnchor],
-        [self.cePick.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor constant:-14],
+     [self.loadingView.topAnchor
 
-        [loadingLabel.centerYAnchor constraintEqualToAnchor:self.loadingView.centerYAnchor],
-        [loadingLabel.leadingAnchor constraintEqualToAnchor:self.cePick.trailingAnchor constant:8]
+      constraintEqualToAnchor:self.topAnchor],
+
+     [self.loadingView.bottomAnchor
+
+      constraintEqualToAnchor:self.bottomAnchor],
+
+     [self.loadingView.leadingAnchor
+
+      constraintEqualToAnchor:self.leadingAnchor],
+
+     [self.loadingView.trailingAnchor
+
+      constraintEqualToAnchor:self.trailingAnchor],
+
+     [self.cePick.widthAnchor constraintEqualToConstant:60],
+
+     [self.cePick.heightAnchor constraintEqualToConstant:47],
+     [self.cePick.centerXAnchor
+
+      constraintEqualToAnchor:self.loadingView.centerXAnchor],
+
+     [self.cePick.centerYAnchor
+
+      constraintEqualToAnchor:self.loadingView.centerYAnchor
+
+      constant:-25],
+
+     [loadingLabel.topAnchor
+
+      constraintEqualToAnchor:self.cePick.bottomAnchor
+
+      constant:9],
+
+     [loadingLabel.centerXAnchor
+
+      constraintEqualToAnchor:self.loadingView.centerXAnchor]
+
     ]];
 }
 
 - (void)startCELoading{
+
+ self.scrollView.hidden=YES;
+
+ self.ceScrollThumb.hidden=YES;
+
  self.loadingView.hidden=NO;
+
  [self bringSubviewToFront:self.loadingView];
 
+ [self.cePickLayer removeAllAnimations];
+
  CAKeyframeAnimation*a=[CAKeyframeAnimation
+
   animationWithKeyPath:@"transform.rotation.z"];
+
  a.values=@[@(.96),@(-.35),@(.52),
-  @(1.1),@(.86),@(.96)];
- a.keyTimes=@[@0,@.2,@.62,@.73,@.86,@1];
- a.duration=1.8;
+
+  @(1.08),@(.84),@(.99),@(.94),@(.96)];
+
+ a.keyTimes=@[@0,@.24,@.59,@.69,@.78,@.86,@.93,@1];
+
+ a.duration=2.2;
+
  a.repeatCount=HUGE_VALF;
+
  a.calculationMode=kCAAnimationCubic;
 
- [self.cePick.layer.sublayers.firstObject
-  addAnimation:a forKey:@"pick"];
+ [self.cePickLayer addAnimation:a forKey:@"ce.hit"];
+
+ for(CAShapeLayer*c in
+
+     @[self.ceLeftChip,self.ceRightChip]){
+
+  CAKeyframeAnimation*o=[CAKeyframeAnimation
+
+   animationWithKeyPath:@"opacity"];
+
+  o.values=@[@0,@0,@1,@0,@0];
+  o.keyTimes=@[@0,@.58,@.61,@.73,@1];
+
+  o.duration=2.2;
+
+  o.repeatCount=HUGE_VALF;
+
+  [c addAnimation:o forKey:@"ce.chip"];
+
+ }
+
 }
+
 - (void)stopCELoading{
- [self.cePick.layer.sublayers.firstObject
-  removeAllAnimations];
+
+ [self.cePickLayer removeAllAnimations];
+
+ [self.ceLeftChip removeAllAnimations];
+
+ [self.ceRightChip removeAllAnimations];
+
  self.loadingView.hidden=YES;
+
+ self.scrollView.hidden=NO;
+
+ [self updateCEScrollThumb];
+
 }
 
 - (void)switchToTab:(PCLDownloadTab)tab {

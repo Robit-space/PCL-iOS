@@ -379,7 +379,7 @@ static UIColor *PCLColor(NSUInteger rgb) {
     self.loadingIndicator.hidden=YES;
     self.cePick=[UIView new];
 
-    self.cePicself.cePickLayer.translatesAutoresizingMaskIntoConstraints=NO;
+    self.cePick.translatesAutoresizingMaskIntoConstraints=NO;
 
     [self.loadingView addSubview:self.cePick];
 
@@ -416,7 +416,24 @@ static UIColor *PCLColor(NSUInteger rgb) {
 
     self.cePickLayer.transform=CATransform3DMakeRotation(.96,0,0,1);
 
-    [self.cePicself.cePickLayer.layer addSublayer:self.cePickLayer];
+    [self.cePick.layer addSublayer:self.cePickLayer];
+    CAShapeLayer*g=[CAShapeLayer layer];
+    g.path=[UIBezierPath bezierPathWithRect:
+     CGRectMake(17,44,26,2)].CGPath;
+    g.fillColor=PCLColor(0x4890F5).CGColor;
+    [self.cePick.layer addSublayer:g];
+    self.ceLeftChip=[CAShapeLayer layer];
+    self.ceRightChip=[CAShapeLayer layer];
+    for(CAShapeLayer*c in
+        @[self.ceLeftChip,self.ceRightChip]){
+     c.path=[UIBezierPath bezierPathWithRect:
+      CGRectMake(0,0,3,4)].CGPath;
+     c.fillColor=PCLColor(0x4890F5).CGColor;
+     c.opacity=0;
+     [self.cePick.layer addSublayer:c];
+    }
+    self.ceLeftChip.position=CGPointMake(20,40);
+    self.ceRightChip.position=CGPointMake(37,40);
 
     UILabel*loadingLabel=[UILabel new];
     loadingLabel.text=@"正在加载版本列表...";
